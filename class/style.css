@@ -45,3 +45,14 @@
 .button:pressed {
     -fx-background-color: #1e40af; /* Even darker blue when pressed */
 }
+
+.separator {
+    -fx-background-color: black; /* Example: change color to red */
+    -fx-padding: 0.5px;         /* Example: add some padding */
+}
+
+.separator .line {
+    -fx-background-color: black;
+    -fx-pref-height: 5;
+    -fx-border-color: null ;
+}

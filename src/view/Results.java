@@ -16,8 +16,8 @@ public class Results extends Application {
         root.setTop(topBar);
 
         // Map and Search Bar
-        StatsResult rennesStats = new StatsResult("Rennes", 227190, 9, 4733);
-        BorderPane.setMargin(rennesStats, new Insets(20, 100, 30, 100)); // Add margin here
+        StatsResult rennesStats = new StatsResult();
+        BorderPane.setMargin(rennesStats, new Insets(20, 20, 30, 20)); // Add margin here
         root.setCenter(rennesStats);
 
         Scene scene = new Scene(root);

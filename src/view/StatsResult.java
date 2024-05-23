@@ -1,48 +1,52 @@
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
-public class StatsResult extends VBox {
+public class StatsResult extends HBox {
 
-    // Données pour chaque ville
-    private String nomVille;
-    private int nbHabitants;
-    private int indiceTransport;
-    private int prixM2;
+    public StatsResult() {
+        // Left Group
+        Image leftImage = new Image(getClass().getResourceAsStream("map.png"));
+        ImageView leftImageView = new ImageView(leftImage);
+        leftImageView.setPreserveRatio(true);
+        leftImageView.setFitHeight(350);
 
-    // Composants graphiques
-    private Label lblNomVille;
-    private Label lblNbHabitants;
-    private Label lblIndiceTransport;
-    private Label lblPrixM2;
+        Label leftLabel = new Label("Map Data");
+        Button leftButton = new Button("View Details");
 
-    public StatsResult(String nomVille, int nbHabitants, int indiceTransport, int prixM2) {
-        this.nomVille = nomVille;
-        this.nbHabitants = nbHabitants;
-        this.indiceTransport = indiceTransport;
-        this.prixM2 = prixM2;
+        VBox leftGroup = new VBox(10);
+        leftGroup.getChildren().addAll(leftImageView, leftLabel, leftButton);
+        leftGroup.setAlignment(Pos.CENTER);
+        HBox.setHgrow(leftGroup, Priority.ALWAYS);
 
-        // Création des labels avec les données
-        lblNomVille = new Label(nomVille);
-        lblNbHabitants = new Label(String.valueOf(nbHabitants));
-        lblIndiceTransport = new Label(indiceTransport + "/10");
-        lblPrixM2 = new Label(String.valueOf(prixM2));
+        // Separator
+        Separator separator = new Separator(Orientation.VERTICAL);
+        separator.getStyleClass().add("separator"); // Add a custom CSS class
+        HBox.setMargin(separator, new Insets(0, 20, 0, 20)); // 10px margin on left and right
 
-        // Création du layout (HBox pour chaque ligne)
-        HBox hbNomVille = new HBox(lblNomVille);
-        HBox hbNbHabitants = new HBox(lblNbHabitants);
-        HBox hbIndiceTransport = new HBox(lblIndiceTransport);
-        HBox hbPrixM2 = new HBox(lblPrixM2);
+        // Right Group
+        Image rightImage = new Image(getClass().getResourceAsStream("map.png"));
+        ImageView rightImageView = new ImageView(rightImage);
+        rightImageView.setPreserveRatio(true);
+        rightImageView.setFitHeight(350);
 
-        // Style (exemple, à personnaliser)
-        this.setPadding(new Insets(10));
-        this.setSpacing(5);
-        this.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        // Style pour les labels (à personnaliser)
-        lblNomVille.setStyle("-fx-font-weight: bold;");
+        Label rightLabel = new Label("Other Stats");
+        Button rightButton = new Button("Analyze");
 
-        // Ajout des HBox au VBox principal
-        this.getChildren().addAll(hbNomVille, hbNbHabitants, hbIndiceTransport, hbPrixM2);
+        VBox rightGroup = new VBox(10);
+        rightGroup.getChildren().addAll(rightImageView, rightLabel, rightButton);
+        rightGroup.setAlignment(Pos.CENTER);
+        HBox.setHgrow(rightGroup, Priority.ALWAYS);
+
+        // Layout
+        this.getChildren().addAll(leftGroup, separator, rightGroup);
     }
 }
