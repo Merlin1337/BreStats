@@ -3,46 +3,52 @@ import javafx.concurrent.Worker;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox; // Import for horizontal layout
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.ChangeListener;
 
 public class SearchMap extends VBox {
     private TextField searchBar;
     private WebView mapView;
 
     public SearchMap() {
-
         searchBar = new TextField();
-        searchBar.getStyleClass().add("text-field"); // Add style class
+        searchBar.getStyleClass().add("text-field");
         searchBar.setFocusTraversable(false);
         searchBar.setPromptText("Rechercher une commune ou un département ...");
         Button searchButton = new Button("Rechercher");
-        searchButton.getStyleClass().add("button"); // Add style class for the button
+        searchButton.getStyleClass().add("button");
 
-        HBox searchBox = new HBox(searchBar, searchButton); 
+        HBox searchBox = new HBox(searchBar, searchButton);
         searchBox.setSpacing(10);
-        HBox.setHgrow(searchBar, Priority.ALWAYS); 
+        HBox.setHgrow(searchBar, Priority.ALWAYS);
         searchBar.setMaxWidth(Double.MAX_VALUE);
 
         mapView = new WebView();
         final WebEngine webEngine = mapView.getEngine();
         webEngine.loadContent(getGoogleMapHTML());
 
-        // Load the map only after the web engine is ready
-        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
-            if (newState == Worker.State.SUCCEEDED) {
-                Platform.runLater(() -> {
-                    getChildren().add(mapView); // Add the map view
-                    setAlignment(Pos.CENTER);
-                    setSpacing(10);
-                });
+        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
+            public void changed(ObservableValue<? extends Worker.State> obs, Worker.State oldState, Worker.State newState) {
+                if (newState == Worker.State.SUCCEEDED) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            getChildren().add(mapView);
+                            setAlignment(Pos.CENTER);
+                            setSpacing(10);
+                        }
+                    });
+                }
             }
         });
 
-        getChildren().addAll(searchBox, mapView); // Add the search box (HBox)
+        getChildren().addAll(searchBox, mapView);
         setAlignment(Pos.CENTER);
         setSpacing(10);
     }
@@ -70,16 +76,12 @@ public class SearchMap extends VBox {
 <body>
   <div id="mapDiv"></div>
   <script>
-    // position we will use later
-    var lat = 48.2; // Latitude to center on Brittany, France
-    var lon = -3.0; // Longitude to center on Brittany, France
-    // initialize map
+    var lat = 48.2; 
+    var lon = -3.0; 
     var map = L.map('mapDiv').setView([lat, lon], 8);
-    // set map tiles source
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
     }).addTo(map);
-    // add marker to the map
   </script>
 </body>
 </html>""";
