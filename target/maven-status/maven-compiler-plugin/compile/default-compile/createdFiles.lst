@@ -10,7 +10,5 @@ com/brestats/view/SearchMap.class
 com/brestats/model/data/Aeroport.class
 com/brestats/model/data/Gare.class
 module-info.class
-com/brestats/view/SearchMap$1$1.class
 com/brestats/view/Home.class
-com/brestats/view/SearchMap$1.class
 com/brestats/model/data/Departement.class

@@ -1,5 +1,9 @@
 package com.brestats.view;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.geometry.Pos;
@@ -56,6 +60,20 @@ public class SearchMap extends VBox {
     }
 
     private String getGoogleMapHTML() {
-        return "";
+        // System.out.println(getClass().getResource("/com/brestats/files/map.html").getFile());
+        String html = "";
+        try (BufferedReader file = new BufferedReader(new FileReader(getClass().getResource("/com/brestats/files/map.html").getFile()))) {
+            String line = file.readLine();
+            while(line != null) {
+                // System.out.println(line);
+                html += line + "\n";
+                line = file.readLine();
+            }
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return html;
     }
 }

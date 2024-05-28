@@ -1,6 +1,5 @@
 package com.brestats;
 
-import com.brestats.view.Home;
 import com.brestats.view.SearchMap;
 import com.brestats.view.TopBar1;
 
