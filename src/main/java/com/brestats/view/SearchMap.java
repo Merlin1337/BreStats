@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -18,15 +20,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ChangeListener;
 
 public class SearchMap extends VBox {
+    private Button searchButton;
     private TextField searchBar;
     private WebView mapView;
 
     public SearchMap() {
+
         searchBar = new TextField();
         searchBar.getStyleClass().add("text-field");
         searchBar.setFocusTraversable(false);
         searchBar.setPromptText("Rechercher une commune ou un département ...");
-        Button searchButton = new Button("Rechercher");
+        this.searchButton = new Button("Rechercher");
         searchButton.getStyleClass().add("button");
 
         HBox searchBox = new HBox(searchBar, searchButton);
@@ -57,6 +61,18 @@ public class SearchMap extends VBox {
         getChildren().addAll(searchBox, mapView);
         setAlignment(Pos.CENTER);
         setSpacing(10);
+
+
+
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+
+            }
+        });
+    }
+
+    public Button getSearchButton() {
+        return this.searchButton;
     }
 
     private String getGoogleMapHTML() {

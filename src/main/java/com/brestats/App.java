@@ -1,5 +1,6 @@
 package com.brestats;
 
+import com.brestats.control.Controller;
 import com.brestats.view.SearchMap;
 import com.brestats.view.TopBar1;
 
@@ -13,6 +14,9 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
+        SearchMap mapAndSearchBar = new SearchMap();
+        Controller control = new Controller(primaryStage, mapAndSearchBar);
+
         BorderPane root = new BorderPane();
 
         // TopBar1 (from your code)
@@ -20,7 +24,6 @@ public class App extends Application {
         root.setTop(topBar);
 
         // Map and Search Bar
-        SearchMap mapAndSearchBar = new SearchMap();
         BorderPane.setMargin(mapAndSearchBar, new Insets(20, 100, 30, 100)); // Add margin here
         root.setCenter(mapAndSearchBar);
 
@@ -30,8 +33,11 @@ public class App extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
 
         primaryStage.setScene(scene);
-        primaryStage.sizeToScene();
+        primaryStage.setMaximized(true);
         primaryStage.show();
+
+        //temp
+        mapAndSearchBar.getSearchButton().setOnAction(control);
     }
 
     public static void main(String[] args) {
