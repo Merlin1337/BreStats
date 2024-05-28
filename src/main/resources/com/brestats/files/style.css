@@ -1,0 +1,58 @@
+/* Search Bar */
+.text-field {
+    -fx-background-color: white; 
+    -fx-background-radius: 10px;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px 12px 12px 40px;
+    -fx-text-fill: #1f2937; 
+    -fx-font-size: 14px; 
+    -fx-prompt-text-fill: #9ca3af;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0, 0, 2);
+    -fx-background-image: url("https://static-00.iconduck.com/assets.00/search-icon-2048x2048-cmujl7en.png");
+    -fx-background-size: 20px 20px; /* Width and height */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 15px center; /* Adjust if needed */
+    -fx-padding-left: 35px; /* Add extra padding for the icon */
+    -fx-translate-y: -50%; /* Vertically center the icon */
+
+}
+
+.text-field:focused {
+    -fx-border-color: #1f2937; 
+    -fx-border-width: 1px;
+    -fx-outline: none;
+}
+
+
+/* Search Button */
+.button {
+    -fx-background-color: #2563eb; /* Blue background */
+    -fx-text-fill: white; 
+    -fx-border-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 20px;   
+    -fx-font-size: 14px; 
+    -fx-cursor: hand; 
+}
+
+.button:hover {
+    -fx-background-color: #1d4ed8; /* Slightly darker blue on hover */
+}
+
+.button:pressed {
+    -fx-background-color: #1e40af; /* Even darker blue when pressed */
+}
+
+.separator {
+    -fx-background-color: black; /* Example: change color to red */
+    -fx-padding: 0.5px;         /* Example: add some padding */
+}
+
+.separator .line {
+    -fx-background-color: black;
+    -fx-pref-height: 5;
+    -fx-border-color: null ;
+}

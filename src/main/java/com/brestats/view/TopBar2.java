@@ -16,19 +16,19 @@ public class TopBar2 extends HBox {
         setStyle("-fx-background-color: #394e51; -fx-border-color: black; -fx-border-width: 0 0 3 0;");
 
         // Load and set up left image (logo)
-        Image leftImage = new Image(getClass().getResourceAsStream("logo.png"));
+        Image leftImage = new Image(getClass().getResource("/com/brestats/files/img/logo.png").toExternalForm());
         ImageView leftImageView = new ImageView(leftImage);
         leftImageView.setFitHeight(45);
         leftImageView.setPreserveRatio(true);
 
         // Load and set up center image (logotext)
-        Image centerImage = new Image(getClass().getResourceAsStream("logotext.png"));
+        Image centerImage = new Image(getClass().getResource("/com/brestats/files/img/logotext.png").toExternalForm());
         ImageView centerImageView = new ImageView(centerImage);
         centerImageView.setFitHeight(30);
         centerImageView.setPreserveRatio(true);
 
         // Load and set up right image 
-        Image rightImage = new Image(getClass().getResourceAsStream("whiteback.png")); // Replace with your image file
+        Image rightImage = new Image(getClass().getResource("/com/brestats/files/img/whiteback.png").toExternalForm()); // Replace with your image file
         ImageView rightImageView = new ImageView(rightImage);
         rightImageView.setFitHeight(35); // Adjust height as needed
         rightImageView.setPreserveRatio(true);

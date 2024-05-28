@@ -25,7 +25,7 @@ public class Home extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         primaryStage.setTitle("Bre'Stats");
-        primaryStage.getIcons().add(new Image(Home.class.getResourceAsStream("favicon.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
 
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();

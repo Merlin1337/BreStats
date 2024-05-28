@@ -19,7 +19,7 @@ public class StatsResult extends HBox {
 
   public StatsResult() {
     // Left Group
-    Image leftImage = new Image(getClass().getResourceAsStream("map.png"));
+    Image leftImage = new Image(getClass().getResource("/com/brestats/files/img/map.png").toExternalForm());
     ImageView leftImageView = new ImageView(leftImage);
     leftImageView.setPreserveRatio(true);
     leftImageView.setFitHeight(350);
@@ -38,7 +38,7 @@ public class StatsResult extends HBox {
     HBox.setMargin(separator, new Insets(0, 20, 0, 20)); // 10px margin on left and right
 
     // Right Group
-    Image rightImage = new Image(getClass().getResourceAsStream("map.png"));
+    Image rightImage = new Image(getClass().getResource("/com/brestats/files/img/map.png").toExternalForm());
     ImageView rightImageView = new ImageView(rightImage);
     rightImageView.setPreserveRatio(true);
     rightImageView.setFitHeight(350);

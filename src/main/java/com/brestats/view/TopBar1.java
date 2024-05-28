@@ -16,13 +16,13 @@ public class TopBar1 extends HBox {
         setStyle("-fx-background-color: #394e51; -fx-border-color: black; -fx-border-width: 0 0 3 0;");
 
         // Load and set up left image (logo)
-        Image leftImage = new Image(getClass().getResourceAsStream("logo.png"));
+        Image leftImage = new Image(getClass().getResource("/com/brestats/files/img/logo.png").toExternalForm());
         ImageView leftImageView = new ImageView(leftImage);
         leftImageView.setFitHeight(50);
         leftImageView.setPreserveRatio(true);
 
         // Load and set up center image (logotext)
-        Image centerImage = new Image(getClass().getResourceAsStream("logotext.png"));
+        Image centerImage = new Image(getClass().getResource("/com/brestats/files/img/logotext.png").toExternalForm());
         ImageView centerImageView = new ImageView(centerImage);
         centerImageView.setFitHeight(30);
         centerImageView.setPreserveRatio(true);
@@ -32,5 +32,6 @@ public class TopBar1 extends HBox {
         HBox.setHgrow(spacer, Priority.ALWAYS); // Make the spacer grow to push center image to the center
 
         getChildren().addAll(leftImageView, centerImageView, spacer);
+       
     }
 }

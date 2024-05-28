@@ -1,4 +1,8 @@
-package com.brestats.view;
+package com.brestats;
+
+import com.brestats.view.Home;
+import com.brestats.view.SearchMap;
+import com.brestats.view.TopBar1;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -7,23 +11,22 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class Results extends Application {
-
+public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
 
-        // TopBar2 (from your code)
-        TopBar2 topBar = new TopBar2();
+        // TopBar1 (from your code)
+        TopBar1 topBar = new TopBar1();
         root.setTop(topBar);
 
         // Map and Search Bar
-        StatsResult statsResult = new StatsResult();
-        BorderPane.setMargin(statsResult, new Insets(20, 20, 30, 20)); // Add margin here
-        root.setCenter(statsResult);
+        SearchMap mapAndSearchBar = new SearchMap();
+        BorderPane.setMargin(mapAndSearchBar, new Insets(20, 100, 30, 100)); // Add margin here
+        root.setCenter(mapAndSearchBar);
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
         primaryStage.setTitle("Bre'Stats");
         primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
 
