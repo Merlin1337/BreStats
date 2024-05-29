@@ -1,6 +1,8 @@
 package com.brestats.model.data;
 
-public class Departement {
+import com.brestats.model.Model;
+
+public class Departement implements Model {
 
 	private int idDep;
 	private String nomDep;

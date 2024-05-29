@@ -1,6 +1,8 @@
 package com.brestats.model.data;
 
-public class Aeroport {
+import com.brestats.model.Model;
+
+public class Aeroport implements Model {
 
 	private Departement LeDep;
 	private String nom;

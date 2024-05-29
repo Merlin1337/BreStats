@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 
 import java.util.ArrayList;
 
-public class ConnectDB<T>  {
+import com.brestats.model.Model;
+
+public abstract class ConnectDB<T extends Model>  {
     private final String driverClassName = "com.mysql.cj.jdbc.Driver";
     private final String url = "jdbc:mysql://45.147.98.227:3306/brestats_db";
     private final String username = "brestats_db";
@@ -18,7 +20,7 @@ public class ConnectDB<T>  {
     private Connection con;
     protected ArrayList<T> list;
 
-    public ConnectDB(T model){
+    public ConnectDB(){
         try {
             this.con = this.getConnection();
             PreparedStatement statement = con.prepareStatement("SELECT * FROM departement");
@@ -41,10 +43,13 @@ public class ConnectDB<T>  {
         ResultSet result = statement.executeQuery(query);
 
         while(result.next()) {
-            
+            System.out.println(result.getFetchSize());
+            // this.constructor(result.getString(0));
         }
 
     }
+
+    protected abstract T constructor(String... args) throws IllegalArgumentException;
 
 
     private Connection getConnection () throws SQLException {

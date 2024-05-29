@@ -3,7 +3,9 @@ package com.brestats.model.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Commune {
+import com.brestats.model.Model;
+
+public class Commune implements Model {
 
 	private ArrayList<Commune> voisins;
 	private int idCommune;

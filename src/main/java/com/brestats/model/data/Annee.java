@@ -1,6 +1,8 @@
 package com.brestats.model.data;
 
-public class Annee {
+import com.brestats.model.Model;
+
+public class Annee implements Model {
 
 	private int annee;
 	private double tauxInflation;

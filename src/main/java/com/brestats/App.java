@@ -2,6 +2,7 @@ package com.brestats;
 
 import com.brestats.control.Controller;
 import com.brestats.model.dao.ConnectDB;
+import com.brestats.model.data.Departement;
 import com.brestats.view.SearchMap;
 import com.brestats.view.TopBar1;
 
@@ -15,7 +16,25 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
-        new ConnectDB<String>("test");
+        new ConnectDB<Departement>() {
+            protected Departement constructor(String... args) {
+                Departement ret = null;
+                if(args.length == 3) {
+                    try {
+                        int id = Integer.parseInt(args[0]);
+                        String name = args[1];
+                        double inves = Double.parseDouble(args[2]);
+
+                        ret = new Departement(id, name, inves);
+                    } catch(NumberFormatException e) {
+                        throw new IllegalArgumentException("Bad argument type");
+                    }
+                } else {
+                    throw new IllegalArgumentException("Bad amount of arguments");
+                }
+                return ret;
+            }
+        };
         SearchMap mapAndSearchBar = new SearchMap();
         Controller control = new Controller(primaryStage, mapAndSearchBar);
 

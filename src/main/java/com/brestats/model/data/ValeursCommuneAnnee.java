@@ -1,6 +1,8 @@
 package com.brestats.model.data;
 
-public class ValeursCommuneAnnee {
+import com.brestats.model.Model;
+
+public class ValeursCommuneAnnee implements Model {
 
 	private int nbMaison;
 	private int nbAppart;

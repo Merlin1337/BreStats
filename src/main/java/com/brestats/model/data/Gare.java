@@ -1,6 +1,8 @@
 package com.brestats.model.data;
 
-public class Gare {
+import com.brestats.model.Model;
+
+public class Gare implements Model {
 
 	private int codeGare;
 	private String nomGare;
