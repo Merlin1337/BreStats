@@ -1,33 +1,29 @@
 package com.brestats;
 
-import com.brestats.control.Controller;
-import com.brestats.view.SearchMap;
-import com.brestats.view.TopBar1;
+import java.io.IOException;
+
+import com.brestats.model.dao.DAO;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class App extends Application {
+public class App extends Application  {
     @Override
-    public void start(Stage primaryStage) {
-        SearchMap mapAndSearchBar = new SearchMap();
-        Controller control = new Controller(primaryStage, mapAndSearchBar);
+    public void start(Stage primaryStage) throws IOException {
+        DAO test = new DAO();
 
-        BorderPane root = new BorderPane();
+        // SearchMap mapAndSearchBar = new SearchMap();
+        Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Main.fxml"));
+        // Controller control = new Controller(primaryStage, mapAndSearchBar);
 
-        // TopBar1 (from your code)
-        TopBar1 topBar = new TopBar1();
-        root.setTop(topBar);
 
-        // Map and Search Bar
-        BorderPane.setMargin(mapAndSearchBar, new Insets(20, 100, 30, 100)); // Add margin here
-        root.setCenter(mapAndSearchBar);
-
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(main);
         scene.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
         primaryStage.setTitle("Bre'Stats");
         primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
@@ -37,7 +33,7 @@ public class App extends Application {
         primaryStage.show();
 
         //temp
-        mapAndSearchBar.getSearchButton().setOnAction(control);
+        // mapAndSearchBar.getSearchButton().setOnAction(control);
     }
 
     public static void main(String[] args) {

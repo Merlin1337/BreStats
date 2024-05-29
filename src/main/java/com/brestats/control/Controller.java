@@ -12,10 +12,10 @@ public class Controller implements EventHandler<ActionEvent> {
     private Stage stage;
     private SearchMap searchMap;
 
-    public Controller(Stage stage, SearchMap searchMap) {
-        this.searchMap = searchMap;
-        this.stage = stage;
-    }
+    // public Controller(Stage stage, SearchMap searchMap) {
+    //     this.searchMap = searchMap;
+    //     this.stage = stage;
+    // }
     
     public void handle(ActionEvent e) {
         System.out.println("change");
