@@ -2,6 +2,7 @@ package com.brestats.model.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -20,6 +21,13 @@ public class ConnectDB<T>  {
     public ConnectDB(T model){
         try {
             this.con = this.getConnection();
+            PreparedStatement statement = con.prepareStatement("SELECT * FROM departement");
+            ResultSet set = statement.executeQuery();
+
+            while(set.next()) {
+                System.out.println(set.getString("nomDep"));
+            }
+
         } catch (SQLException ex) {
             ex.printStackTrace ();
         }
