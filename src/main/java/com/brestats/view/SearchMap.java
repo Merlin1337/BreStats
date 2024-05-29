@@ -50,15 +50,13 @@ public class SearchMap extends VBox {
                         @Override
                         public void run() {
                             getChildren().add(mapView);
-                            setAlignment(Pos.CENTER);
-                            setSpacing(10);
                         }
                     });
                 }
             }
         });
 
-        getChildren().addAll(searchBox, mapView);
+        getChildren().add(searchBox);
         setAlignment(Pos.CENTER);
         setSpacing(10);
 
