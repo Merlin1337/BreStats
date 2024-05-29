@@ -13,7 +13,7 @@ public class TopBar1 extends HBox {
         setPadding(new Insets(10, 0, 10, 0));
         setAlignment(Pos.CENTER_LEFT); // Align content to the left
         setSpacing(10);
-        setStyle("-fx-background-color: #394e51; -fx-border-color: black; -fx-border-width: 0 0 3 0;");
+        getStyleClass().add("header");
 
         // Load and set up left image (logo)
         Image leftImage = new Image(getClass().getResource("/com/brestats/files/img/logo.png").toExternalForm());

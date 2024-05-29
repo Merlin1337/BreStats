@@ -56,3 +56,9 @@
     -fx-pref-height: 5;
     -fx-border-color: null ;
 }
+
+.header {
+    -fx-background-color: #394e51; 
+    -fx-border-color: black; 
+    -fx-border-width: 0 0 3 0;
+}
