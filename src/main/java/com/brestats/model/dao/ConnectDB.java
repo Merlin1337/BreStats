@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
@@ -23,27 +24,20 @@ public abstract class ConnectDB<T extends Model>  {
     public ConnectDB(){
         try {
             this.con = this.getConnection();
-            PreparedStatement statement = con.prepareStatement("SELECT * FROM departement");
-            ResultSet set = statement.executeQuery();
-
-            while(set.next()) {
-                System.out.println(set.getString("nomDep"));
-            }
-
         } catch (SQLException ex) {
             ex.printStackTrace ();
         }
 
         this.list = new ArrayList<T>();
-
     }
 
-    protected void selectQuery(String query) throws SQLException {
+    public void selectQuery(String query) throws SQLException {
         Statement statement = this.con.prepareStatement(query);
         ResultSet result = statement.executeQuery(query);
 
         while(result.next()) {
             System.out.println(result.getFetchSize());
+            System.out.println();
             // this.constructor(result.getString(0));
         }
 
