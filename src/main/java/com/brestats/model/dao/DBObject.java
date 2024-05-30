@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 
 import java.util.ArrayList;
 
+import com.brestats.exceptions.IncorectConstructorArguments;
 import com.brestats.model.Model;
 
 public abstract class DBObject<T extends Model>  {
@@ -34,7 +35,7 @@ public abstract class DBObject<T extends Model>  {
      * @param i the id in the DB
      * @return the ith element in the list
      */
-    public T getItem(String id) {
+    public T getItem(String id, DBObject<? extends Model>[] db) {
         T item = null;
         boolean isInList = false;
         int i = 0;
@@ -49,7 +50,7 @@ public abstract class DBObject<T extends Model>  {
         if(!isInList) {
             String query = "SELECT * FROM " + item.getClass().toString().toUpperCase() + " WHERE ";
             try {
-                this.selectQuery(query);
+                this.selectQuery(query, db);
                 item = this.list.get(this.list.size()-1);
             } catch(SQLException e) {
                 System.out.println("Unexpected exception with query : " + query);
@@ -66,7 +67,7 @@ public abstract class DBObject<T extends Model>  {
      * @return An array of constructed objects
      * @throws SQLException If a problem occur in the sql query
      */
-    public ArrayList<T> selectQuery(String query) throws SQLException {
+    public ArrayList<T> selectQuery(String query, DBObject<? extends Model>[] db) throws SQLException {
         PreparedStatement statement = this.con.prepareStatement(query);
         ResultSet result = statement.executeQuery();
         ArrayList<T> resultList = new ArrayList<T>();
@@ -77,17 +78,21 @@ public abstract class DBObject<T extends Model>  {
                 args[i-1] = result.getString(i);
             }
 
-            T object = this.constructor(args);
-            resultList.add(object);
-            if(!this.list.contains(object)) {
-                this.list.add(object);
+            try {
+                T object = this.constructor(args, db);
+                resultList.add(object);
+                if(!this.list.contains(object)) {
+                    this.list.add(object);
+                }
+            } catch(IncorectConstructorArguments e) {
+                e.printStackTrace();
             }
         }
 
         return resultList;
     }
 
-    protected abstract T constructor(String[] args) throws IllegalArgumentException;
+    protected abstract T constructor(String[] args, DBObject<? extends Model>[] dbObj) throws IncorectConstructorArguments;
 
 
     private Connection getConnection () throws SQLException {

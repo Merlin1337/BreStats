@@ -1,14 +1,15 @@
 package com.brestats.model.dao;
 
+import com.brestats.exceptions.IncorectConstructorArguments;
 import com.brestats.model.data.Departement;
 
-public class DBDepartement extends DBObject<Departement> {
+public class DBDepartement extends DBRawObject<Departement> {
     
     public DBDepartement() {
         super();
     }
 
-    protected Departement constructor(String[] args) {
+    protected Departement constructor(String[] args) throws IncorectConstructorArguments {
         Departement ret = null;
         if(args.length == 3) {
             try {
@@ -18,10 +19,10 @@ public class DBDepartement extends DBObject<Departement> {
 
                 ret = new Departement(id, name, inves);
             } catch(NumberFormatException e) {
-                throw new IllegalArgumentException("Bad argument type");
+                throw new IncorectConstructorArguments("Bad argument type");
             }
         } else {
-            throw new IllegalArgumentException("Bad amount of arguments");
+            throw new IncorectConstructorArguments("Bad amount of arguments");
         }
         return ret;
     }

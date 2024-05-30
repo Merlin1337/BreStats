@@ -1,13 +1,14 @@
 package com.brestats.model.dao;
 
+import com.brestats.exceptions.IncorectConstructorArguments;
 import com.brestats.model.data.Annee;
 
-public class DBAnnee extends DBObject<Annee> {
+public class DBAnnee extends DBRawObject<Annee> {
     public DBAnnee() {
         super();
     }
 
-    protected Annee constructor(String[] args) {
+    protected Annee constructor(String[] args) throws IncorectConstructorArguments {
         Annee ret = null;
 
         if(args.length == 2) {
@@ -17,10 +18,10 @@ public class DBAnnee extends DBObject<Annee> {
 
                 ret = new Annee(annee, taux);
             } catch(NumberFormatException e) {
-                throw new IllegalArgumentException("Bad argument type");
+                throw new IncorectConstructorArguments("Bad argument type");
             }
         } else {
-            throw new IllegalArgumentException("Bad amount of arguments");
+            throw new IncorectConstructorArguments("Bad amount of arguments");
         }
 
         return ret;
