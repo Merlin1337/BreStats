@@ -59,9 +59,16 @@ public abstract class DBObject<T extends Model>  {
         return item;
     }
 
-    public void selectQuery(String query) throws SQLException {
+    /**
+     * Send a select query to the database and return an arrayList of objects representing results. Query must return all necessary data to contruct the corresponding object
+     * @param query The sql query
+     * @return An array of constructed objects
+     * @throws SQLException If a problem occur in the sql query
+     */
+    public ArrayList<T> selectQuery(String query) throws SQLException {
         PreparedStatement statement = this.con.prepareStatement(query);
         ResultSet result = statement.executeQuery();
+        ArrayList<T> resultList = new ArrayList<T>();
 
         while(result.next()) {
             String[] args = new String[result.getMetaData().getColumnCount()];
@@ -69,8 +76,14 @@ public abstract class DBObject<T extends Model>  {
                 args[i-1] = result.getString(i);
             }
 
-            this.list.add(this.constructor(args));
+            T object = this.constructor(args);
+            resultList.add(object);
+            if(!this.list.contains(object)) {
+                this.list.add(object);
+            }
         }
+
+        return resultList;
     }
 
     protected abstract T constructor(String[] args) throws IllegalArgumentException;

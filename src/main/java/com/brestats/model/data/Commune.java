@@ -83,12 +83,11 @@ public class Commune implements Model {
 			throw new NullPointerException("commune is null");
 		}
 
-		if(this.voisins.contains(c)) {
-			throw new RuntimeException("La commune est déjà présente comme voisin");
+		if(!this.voisins.contains(c)) {
+			this.voisins.add(c);
+			c.ajouterVoisin(this);
 		}
 
-		this.voisins.add(c);
-		c.ajouterVoisin(this);
 	}
 
 	public boolean estBordureDep() {

@@ -1,5 +1,6 @@
 package com.brestats.model.dao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.brestats.model.data.Commune;
@@ -34,6 +35,15 @@ public class DBCommune extends DBObject<Commune> {
     }
 
     private void fullfillNeighbours(Commune com) {
+        try {
+            ArrayList<Commune> neighbourList = this.selectQuery("SELECT c2.* FROM commune c1 JOIN voisinage ON idCommune = commune JOIN commune ON communeVoisine = idCommune WHERE c1.idCommune = " + com.getId());
+
+            for (Commune voisin : neighbourList) {
+                com.ajouterVoisin(voisin);
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
         
     }
  
