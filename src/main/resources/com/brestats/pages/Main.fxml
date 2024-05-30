@@ -44,10 +44,11 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
                   <TextField alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" />
-                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher">
+                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" fx:id="searchButton" onAction="#handleSearch">
                      <HBox.margin>
                         <Insets left="5.0" />
-                     </HBox.margin></Button>
+                     </HBox.margin>
+                  </Button>
                </children>
                <GridPane.margin>
                   <Insets left="100.0" right="100.0" />

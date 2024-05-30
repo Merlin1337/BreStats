@@ -1,24 +1,47 @@
 package com.brestats.control;
 
+import java.io.IOException;
+
 import com.brestats.view.Results;
-import com.brestats.view.SearchMap;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class Controller implements EventHandler<ActionEvent> {
-    private Stage stage;
-    private SearchMap searchMap;
+public class Controller {
+    @FXML
+    Button searchButton;
 
-    // public Controller(Stage stage, SearchMap searchMap) {
-    //     this.searchMap = searchMap;
-    //     this.stage = stage;
-    // }
-    
-    public void handle(ActionEvent e) {
-        System.out.println("change");
-        this.stage.setScene(new Scene(new Results()));
+    @FXML
+    public void handleSearch(ActionEvent ev) {
+        try {
+            Parent results = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Results.fxml"));
+            Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
+            stage.setScene(new Scene(results));
+            System.out.println("change");
+        } catch(IOException ex) {
+            System.out.println("Cannot change scene");
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleBack(MouseEvent ev) {
+        try {
+            Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Main.fxml"));
+            Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
+            stage.setScene(new Scene(main));
+            System.out.println("change");
+        } catch(IOException ex) {
+            System.out.println("Cannot change scene");
+            ex.printStackTrace();
+        }
     }
 }

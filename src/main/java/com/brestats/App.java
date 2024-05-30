@@ -2,6 +2,7 @@ package com.brestats;
 
 import java.io.IOException;
 
+import com.brestats.control.Controller;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,9 +19,8 @@ public class App extends Application  {
     @Override
     public void start(Stage primaryStage) throws IOException {
         // SearchMap mapAndSearchBar = new SearchMap();
-        Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Results.fxml"));
-        // Controller control = new Controller(primaryStage, mapAndSearchBar);
-
+        Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Main.fxml"));
+        
         Scene scene = new Scene(main);
         // Font newFont = Font.loadFont(getClass().getResourceAsStream("/com/brestats/files/fonts/Inter.ttf"), 14); // Adjust font size as needed
         // scene.getRoot().setStyle("-fx-font-family: '" + newFont.getFamily() + "'; -fx-font-size: " + newFont.getSize() + "px; -fx-font-weight: 600");

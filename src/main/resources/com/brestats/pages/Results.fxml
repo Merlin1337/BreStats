@@ -41,7 +41,7 @@
                   </ImageView>
                </center>
                <right>
-                  <ImageView fitHeight="60.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                  <ImageView fitHeight="60.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" onMouseClicked="#handleBack">
                      <image>
                         <Image url="@../files/img/whiteback.png" />
                      </image>
