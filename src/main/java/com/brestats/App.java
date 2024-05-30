@@ -2,7 +2,7 @@ package com.brestats;
 
 import java.io.IOException;
 
-import com.brestats.control.Controller;
+import com.brestats.control.MainControl;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

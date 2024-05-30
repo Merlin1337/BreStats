@@ -12,7 +12,7 @@
 
 <BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css"
    xmlns="http://javafx.com/javafx/8"
-   xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.Controller">
+   xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
    <top>
       <GridPane prefHeight="116.0" prefWidth="1171.0" BorderPane.alignment="CENTER">
          <columnConstraints>

@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.Controller">
+<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.MainControl">
    <top>
       <GridPane prefHeight="213.0" prefWidth="1525.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -44,8 +44,7 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
                   <TextField alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" />
-                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" fx:id="searchButton" >
-                  <!-- onAction="#handleSearch" -->
+                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" fx:id="searchButton" onAction="#handleSearch">
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin>
