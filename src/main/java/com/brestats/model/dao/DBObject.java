@@ -47,11 +47,12 @@ public abstract class DBObject<T extends Model>  {
         }
 
         if(!isInList) {
+            String query = "SELECT * FROM " + item.getClass().toString().toUpperCase() + " WHERE ";
             try {
-                this.selectQuery("SELECT * FROM " + item.getClass().toString().toUpperCase());
+                this.selectQuery(query);
                 item = this.list.get(this.list.size()-1);
             } catch(SQLException e) {
-                System.out.println("Unexpected exception with class or table : " + item.getClass().toString().toUpperCase());
+                System.out.println("Unexpected exception with query : " + query);
                 e.printStackTrace();
             }
         }
