@@ -10,7 +10,7 @@
     -fx-font-size: 14px; 
     -fx-prompt-text-fill: #9ca3af;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0, 0, 2);
-    -fx-background-image: url("https://static-00.iconduck.com/assets.00/search-icon-2048x2048-cmujl7en.png");
+    -fx-background-image: url("img/search-icon.png");
     -fx-background-size: 20px 20px; /* Width and height */
     -fx-background-repeat: no-repeat;
     -fx-background-position: 15px center; /* Adjust if needed */
@@ -55,4 +55,10 @@
     -fx-background-color: black;
     -fx-pref-height: 5;
     -fx-border-color: null ;
+}
+
+.header {
+    -fx-background-color: #394e51; 
+    -fx-border-color: black; 
+    -fx-border-width: 0 0 3 0;
 }

@@ -2,7 +2,6 @@ package com.brestats;
 
 import java.io.IOException;
 
-import com.brestats.model.dao.DAO;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,15 +15,11 @@ import javafx.stage.Stage;
 public class App extends Application  {
     @Override
     public void start(Stage primaryStage) throws IOException {
-        DAO test = new DAO();
-
         // SearchMap mapAndSearchBar = new SearchMap();
         Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Main.fxml"));
         // Controller control = new Controller(primaryStage, mapAndSearchBar);
 
-
         Scene scene = new Scene(main);
-        scene.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
         primaryStage.setTitle("Bre'Stats");
         primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
 

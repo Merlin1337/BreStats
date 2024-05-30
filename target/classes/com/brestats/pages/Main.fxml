@@ -8,8 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane prefHeight="799.0" prefWidth="1171.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.Controller">
+<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.Controller">
    <top>
       <GridPane prefHeight="213.0" prefWidth="1525.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -20,48 +19,44 @@
           <RowConstraints maxHeight="118.0" minHeight="0.0" prefHeight="34.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <GridPane alignment="CENTER" styleClass="header" stylesheets="@../files/style.css">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="653.0" minWidth="10.0" prefWidth="163.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1151.0" minWidth="10.0" prefWidth="1008.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <ImageView fitHeight="92.0" fitWidth="338.0" pickOnBounds="true" preserveRatio="true">
+            <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="header" stylesheets="@../files/style.css">
+               <left>
+                  <ImageView fitHeight="90.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
                         <Image url="@../files/img/logo.png" />
                      </image>
+                     <BorderPane.margin>
+                        <Insets left="20.0" />
+                     </BorderPane.margin>
                   </ImageView>
-                  <ImageView fitHeight="57.0" fitWidth="299.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+               </left>
+               <center>
+                  <ImageView fitHeight="58.0" fitWidth="284.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
                         <Image url="@../files/img/logotext.png" />
                      </image>
                   </ImageView>
-               </children>
-            </GridPane>
-            <GridPane alignment="CENTER_RIGHT" prefHeight="177.0" prefWidth="1525.0" GridPane.rowIndex="1">
-              <columnConstraints>
-                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="958.0" minWidth="10.0" prefWidth="438.0" />
-                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="958.0" minWidth="10.0" prefWidth="544.0" />
-                <ColumnConstraints hgrow="ALWAYS" maxWidth="807.0" minWidth="10.0" prefWidth="578.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+               </center>
+               <right>
+                  <Pane prefHeight="115.0" prefWidth="148.0" BorderPane.alignment="CENTER" />
+               </right>
+            </BorderPane>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
-                  <Button mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" GridPane.columnIndex="2" />
-                  <TextField prefHeight="39.0" prefWidth="623.0" promptText="Recherchre une commune ou un derpartement ..." styleClass="text-field" stylesheets="@../files/style.css" GridPane.columnIndex="1" />
+                  <TextField alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" />
+                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin></Button>
                </children>
                <GridPane.margin>
-                  <Insets top="100.0" />
+                  <Insets left="100.0" right="100.0" />
                </GridPane.margin>
-            </GridPane>
+            </HBox>
          </children>
       </GridPane>
    </top>
    <center>
-      <WebView maxHeight="-1.0" maxWidth="-1.0" prefHeight="847.0" prefWidth="1479.0" BorderPane.alignment="CENTER" />
+      <WebView fx:id="webView" maxHeight="-1.0" maxWidth="-1.0" prefHeight="847.0" prefWidth="1479.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
