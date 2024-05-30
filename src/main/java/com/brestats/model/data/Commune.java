@@ -34,6 +34,10 @@ public class Commune implements Model {
 		return this.idCommune;
 	}
 
+	public String getId() {
+		return String.valueOf(this.idCommune);
+	}
+
 	/**
 	 * 
 	 * @param idCommune

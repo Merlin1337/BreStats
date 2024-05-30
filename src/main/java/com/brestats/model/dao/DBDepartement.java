@@ -2,13 +2,13 @@ package com.brestats.model.dao;
 
 import com.brestats.model.data.Departement;
 
-public class DepartementDB extends ConnectDB {
+public class DBDepartement extends DBObject<Departement> {
     
-    public DepartementDB() {
+    public DBDepartement() {
         super();
     }
 
-    protected Departement constructor(String... args) {
+    protected Departement constructor(String[] args) {
         Departement ret = null;
         if(args.length == 3) {
             try {
@@ -25,4 +25,6 @@ public class DepartementDB extends ConnectDB {
         }
         return ret;
     }
+
+    
 }

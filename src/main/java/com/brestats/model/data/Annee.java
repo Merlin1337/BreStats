@@ -16,6 +16,10 @@ public class Annee implements Model {
 		return this.annee;
 	}
 
+	public String getId() {
+		return String.valueOf(this.annee);
+	}
+
 	/**
 	 * 
 	 * @param annee

@@ -3,7 +3,7 @@ package com.brestats;
 import java.sql.SQLException;
 
 import com.brestats.control.Controller;
-import com.brestats.model.dao.DepartementDB;
+import com.brestats.model.dao.DBDepartement;
 import com.brestats.model.data.Departement;
 import com.brestats.view.SearchMap;
 import com.brestats.view.TopBar1;
@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
-        DepartementDB test = new DepartementDB();
+        DBDepartement test = new DBDepartement();
         try {
             test.selectQuery("SELECT * FROM departement");
         } catch(SQLException e) {

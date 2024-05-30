@@ -34,6 +34,10 @@ public class Gare implements Model {
 		return this.codeGare;
 	}
 
+	public String getId() {
+		return String.valueOf(this.codeGare);
+	}
+
 	/**
 	 * 
 	 * @param codeGare

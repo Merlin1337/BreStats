@@ -62,6 +62,10 @@ public class ValeursCommuneAnnee implements Model {
 		this.population = pop;
 	}
 
+	public String getId() {
+		return String.valueOf(this.laCom.getId()) + String.valueOf(this.lAnnee.getId());
+	}
+
 	public int getNbMaison() {
 		return this.nbMaison;
 	}

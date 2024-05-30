@@ -24,6 +24,10 @@ public class Aeroport implements Model {
 		this.LeDep = dep;
 	}
 
+	public String getId() {
+		return this.nom;
+	}
+
 	public String getNom() {
 		return this.nom;
 	}

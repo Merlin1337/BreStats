@@ -40,6 +40,10 @@ public class Departement implements Model {
 		return this.idDep;
 	}
 
+	public String getId() {
+		return String.valueOf(this.idDep);
+	}
+
 	/**
 	 * 
 	 * @param idDep
