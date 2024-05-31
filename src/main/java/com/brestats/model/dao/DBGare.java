@@ -1,23 +1,44 @@
 package com.brestats.model.dao;
 
 import com.brestats.exceptions.IncorectConstructorArguments;
-import com.brestats.model.Model;
 import com.brestats.model.data.Commune;
 import com.brestats.model.data.Gare;
 
+/**
+ * Implement the connection to the database for the table "gare"
+ * @see com.brestats.model.dao.DBObject
+ * @see com.brestats.model.data.Gare
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ */
 public class DBGare extends DBObject<Gare> {
+    private DBCommune dbCom;
     
-    public DBGare() {
+    /**
+     * Initiate the connection to the database for the table "donnnesannuelles". This class require the connection to the table "commune", while it has references to this object.
+     * @param dbCom An instance of the connection to the table "commune"
+     */
+    public DBGare(DBCommune dbCom) {
         super();
+        this.dbCom = dbCom;
     }
 
-    protected Gare constructor(String[] args, DBObject<? extends Model>[] db) throws IncorectConstructorArguments {
-        if(db.getClass().toString().equals("DBCommune[]") || db.length != 1) {
-            throw new IncorectConstructorArguments("db[0] must be of DBCommune type");
-        }
+    /**
+     * Return a constructed {@link com.brestats.model.data.Gare Gare} object from the query's result through a {@link String String[]} argument
+     * @param args The {@link String String[]} argument which contains all the required data to initiate the object.
+     * <ul>
+     *  <li> <span style="color: blue">int</span> code </li>
+     *  <li> {@link String <span style="color: blue">String</span>} nom </li>
+     *  <li> {@link com.brestats.model.data.Commune <span style="color: blue">Commune</span>} com </li>
+     *  <li> <span style="color: blue">boolean</span> estFret </li>
+     *  <li> <span style="color: blue">boolean</span> estVoyageur </li>
+     * </ul>
+     * @return The initialised {@link com.brestats.model.data.Gare Gare} object
+     * @throws IncorectConstructorArguments if args does not contains the right arguments
+     * @see com.brestats.model.data.Gare#Gare(int, String, Commune, boolean, boolean)
+     */
+    protected Gare constructor(String[] args) throws IncorectConstructorArguments {
         
         Gare ret = null;
-        DBCommune dbCom = (DBCommune) db[0];
 
         if(args.length == 5) {
             try {
@@ -25,7 +46,7 @@ public class DBGare extends DBObject<Gare> {
                 String name = args[1];
                 boolean isTraveller = Boolean.parseBoolean(args[2]);
                 boolean isFreight = Boolean.parseBoolean(args[3]);
-                Commune com = dbCom.getItem(args[4], db);
+                Commune com = this.dbCom.getItem(args[4]);
 
                 ret = new Gare(code, name, com, isFreight, isTraveller);
             } catch(NumberFormatException e) {
@@ -38,4 +59,11 @@ public class DBGare extends DBObject<Gare> {
         return ret;
     }
  
+    /**
+     * Return the query to select an item from its id in the table
+     * @return The select query
+     */
+    protected String getSelectItemQuery(String id) {
+        return "SELECT * FROM annee WHERE code = " + id + ";";
+    }
 }

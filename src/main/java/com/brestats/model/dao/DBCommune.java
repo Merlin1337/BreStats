@@ -4,23 +4,43 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.brestats.exceptions.IncorectConstructorArguments;
-import com.brestats.model.Model;
 import com.brestats.model.data.Commune;
 import com.brestats.model.data.Departement;
 
+/**
+ * Implement the connection to the database for the table "commune"
+ * @see com.brestats.model.dao.DBObject
+ * @see com.brestats.model.data.Commune
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ */
 public class DBCommune extends DBObject<Commune> {
+    private DBDepartement dbDep;
     
-    public DBCommune() {
+    /**
+     * Initiate the connection to the database for the table "commune". This class require the connection to the table "departement", while it has references to this object.
+     * @param dbDep An instance of the connection to the table "departement"
+     */
+    public DBCommune(DBDepartement dbDep) {
         super();
+        this.dbDep = dbDep;
     }
 
-    protected Commune constructor(String[] args, DBObject<? extends Model>[] db) throws IncorectConstructorArguments {
-        if(db.getClass().toString().equals("DBDepartement")) {
-            throw new IncorectConstructorArguments("db[0] must be of DBDepartement type");
-        }
+    /**
+     * Return a constructed {@link com.brestats.model.data.Commune Commune} object from the query's result through a {@link String String[]} argument
+     * @param args The {@link String String[]} argument which contains all the required data to initiate the object.
+     * <ul>
+     *  <li> <span style="color: blue">int</span> id </li>
+     *  <li> {@link String <span style="color: blue">String</span>} nom </li>
+     *  <li> {@link com.brestats.model.data.Departement <span style="color: blue">Departement</span>} dep </li>
+     *  <li> <span style="color: blue">{@link java.util.ArrayList ArrayList}&lt;{@link com.brestats.model.data.Commune Commune}&gt;</span> voisins </li>
+     * </ul>
+     * @return The initialised {@link com.brestats.model.data.Commune Commune} object
+     * @throws IncorectConstructorArguments if args does not contains the right arguments
+     * @see com.brestats.model.data.Commune#Commune(int, String, Departement, ArrayList)
+     */
+    protected Commune constructor(String[] args) throws IncorectConstructorArguments {
         
         Commune ret = null;
-        DBDepartement dbDep = (DBDepartement) db[0];
         
         if(args.length == 4) {
             try {
@@ -29,7 +49,7 @@ public class DBCommune extends DBObject<Commune> {
                 Departement dep = dbDep.getItem(args[2]);
                 
                 ret = new Commune(id, name, dep, new ArrayList<Commune>());
-                fullfillNeighbours(ret, (DBDepartement[]) db);
+                fullfillNeighbours(ret);
             } catch(NumberFormatException e) {
                 throw new IncorectConstructorArguments("Bad argument type");
             }
@@ -40,9 +60,9 @@ public class DBCommune extends DBObject<Commune> {
         return ret;
     }
 
-    private void fullfillNeighbours(Commune com, DBDepartement[] dbDep) {
+    private void fullfillNeighbours(Commune com) {
         try {
-            ArrayList<Commune> neighbourList = this.selectQuery("SELECT c2.* FROM commune c1 JOIN voisinage ON idCommune = commune JOIN commune ON communeVoisine = idCommune WHERE c1.idCommune = " + com.getId(), dbDep);
+            ArrayList<Commune> neighbourList = this.selectQuery("SELECT c2.* FROM commune c1 JOIN voisinage ON idCommune = commune JOIN commune ON communeVoisine = idCommune WHERE c1.idCommune = " + com.getId());
 
             for (Commune voisin : neighbourList) {
                 com.ajouterVoisin(voisin);
@@ -53,4 +73,11 @@ public class DBCommune extends DBObject<Commune> {
         
     }
  
+    /**
+     * Return the query to select an item from its id in the table
+     * @return The select query
+     */
+    protected String getSelectItemQuery(String id) {
+        return "SELECT * FROM annee WHERE idCommune = " + id + ";";
+    }
 }

@@ -1,28 +1,47 @@
 package com.brestats.model.dao;
 
 import com.brestats.exceptions.IncorectConstructorArguments;
-import com.brestats.model.Model;
 import com.brestats.model.data.Aeroport;
 import com.brestats.model.data.Departement;
 
+/**
+ * Implement the connection to the database for the table "aeroport"
+ * @see com.brestats.model.dao.DBObject
+ * @see com.brestats.model.data.Aeroport
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ */
 public class DBAeroport extends DBObject<Aeroport> {
-    public DBAeroport() {
+    private DBDepartement dbDep;
+
+    /**
+     * Initiate the connection to the database for the table "aeroport". This class require the connection to the table "departement", while it has references to this object.
+     * @param dbDep An instance of the connection to the table "departement"
+     */
+    public DBAeroport(DBDepartement dbDep) {
         super();
+        this.dbDep = dbDep;
     }
 
-    protected Aeroport constructor(String[] args, DBObject<? extends Model>[] db) throws IncorectConstructorArguments {
-        if(db.getClass().toString().equals("DBDepartement")) {
-            throw new IncorectConstructorArguments("db[0] must be of DBDepartement type");
-        }
-        
+    /**
+     * Return a constructed {@link com.brestats.model.data.Aeroport Aeroport} object from the query's result through a {@link String String[]} argument
+     * @param args The {@link String String[]} argument which contains all the required data to initiate the object.
+     * <ul>
+     *  <li> {@link String <span style="color: blue">String</span>} nom </li>
+     *  <li> {@link String <span style="color: blue">String</span>} adresse </li>
+     *  <li> {@link com.brestats.model.data.Departement <span style="color: blue">Departement</span>} dep </li>
+     * </ul>
+     * @return The initialised {@link com.brestats.model.data.Aeroport Aeroport} object
+     * @throws IncorectConstructorArguments if args does not contains the right arguments
+     * @see com.brestats.model.data.Aeroport#Aeroport(String, String, Departement)
+     */
+    protected Aeroport constructor(String[] args) throws IncorectConstructorArguments {       
         Aeroport ret = null;
-        DBDepartement dbDep = (DBDepartement) db[0];
 
         if(args.length == 3) {
             try {
                 String name = args[0];
                 String address = args[1];
-                Departement dep = dbDep.getItem(args[2]);
+                Departement dep = this.dbDep.getItem(args[2]);
 
                 ret = new Aeroport(name, address, dep);
             } catch(NumberFormatException e) {
@@ -33,5 +52,14 @@ public class DBAeroport extends DBObject<Aeroport> {
         }
 
         return ret;
+    }
+
+    /**
+     * Return the query to select an item from its id in the table
+     * @return The select query
+     */
+    @Override
+    protected String getSelectItemQuery(String id) {
+        return "SELECT * FROM annee WHERE nom = " + id + ";";
     }
 }

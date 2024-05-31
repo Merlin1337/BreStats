@@ -3,12 +3,32 @@ package com.brestats.model.dao;
 import com.brestats.exceptions.IncorectConstructorArguments;
 import com.brestats.model.data.Departement;
 
-public class DBDepartement extends DBRawObject<Departement> {
-    
+/**
+ * Implement the connection to the database for the table "departement"
+ * @see com.brestats.model.dao.DBObject
+ * @see com.brestats.model.data.Departement
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ */
+public class DBDepartement extends DBObject<Departement> {
+    /**
+     * Initiate the connection to the database for the table "departement"
+     */
     public DBDepartement() {
         super();
     }
 
+    /**
+     * Return a constructed {@link com.brestats.model.data.Departement Departement} object from the query's result through a {@link String String[]} argument
+     * @param args The {@link String String[]} argument which contains all the required data to initiate the object.
+     * <ul>
+     *  <li> <span style="color: blue">int</span> id </li>
+     *  <li> {@link String <span style="color: blue">String</span>} nom </li>
+     *  <li> <span style="color: blue">double</span> inves </li>
+     * </ul>
+     * @return The initialised {@link com.brestats.model.data.Departement Departement} object
+     * @throws IncorectConstructorArguments if args does not contains the right arguments
+     * @see com.brestats.model.data.Departement#Departement(int, String, double)
+     */
     protected Departement constructor(String[] args) throws IncorectConstructorArguments {
         Departement ret = null;
         if(args.length == 3) {
@@ -27,5 +47,11 @@ public class DBDepartement extends DBRawObject<Departement> {
         return ret;
     }
 
-    
+    /**
+     * Return the query to select an item from its id in the table
+     * @return The select query
+     */
+    protected String getSelectItemQuery(String id) {
+        return "SELECT * FROM annee WHERE idDep = " + id + ";";
+    }
 }
