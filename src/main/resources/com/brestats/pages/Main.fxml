@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.MainControl">
+   <top>
+      <GridPane prefHeight="213.0" prefWidth="1525.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="118.0" minHeight="0.0" prefHeight="84.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="118.0" minHeight="0.0" prefHeight="34.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="header" stylesheets="@../files/style.css">
+               <left>
+                  <ImageView fitHeight="90.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@../files/img/logo.png" />
+                     </image>
+                     <BorderPane.margin>
+                        <Insets left="20.0" />
+                     </BorderPane.margin>
+                  </ImageView>
+               </left>
+               <center>
+                  <ImageView fitHeight="58.0" fitWidth="284.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@../files/img/logotext.png" />
+                     </image>
+                  </ImageView>
+               </center>
+               <right>
+                  <Pane prefHeight="115.0" prefWidth="148.0" BorderPane.alignment="CENTER" />
+               </right>
+            </BorderPane>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
+               <children>
+                  <TextField alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" />
+                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" fx:id="searchButton" onAction="#handleSearch">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets left="100.0" right="100.0" />
+               </GridPane.margin>
+            </HBox>
+         </children>
+      </GridPane>
+   </top>
+   <center>
+      <WebView fx:id="webView" prefHeight="847.0" prefWidth="1479.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

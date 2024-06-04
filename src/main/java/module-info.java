@@ -6,5 +6,6 @@ module com.brestats {
     requires java.sql;
 
     opens com.brestats to javafx.graphics;
+    opens com.brestats.control to javafx.fxml;
     exports com.brestats;
 }
