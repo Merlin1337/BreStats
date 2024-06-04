@@ -55,11 +55,27 @@ public class DBAeroport extends DBObject<Aeroport> {
     }
 
     /**
+     * Insert or update an element in the database from the obj param
+     * @param obj The object which will be converted and inserted in the database
+     */
+    public void insertQuery(Aeroport obj) {
+        String query;
+        
+        if(this.getItem(obj.getId()) == null) {
+            query = "INSERT INTO annee VALUES (" + obj.getNom() + "," + obj.getAdresse() + "," + obj.getDep().getIdDep() +";";
+        } else {
+            query = "UPDATE annee SET adresse = " + obj.getAdresse() + ", leDepartement = " + obj.getDep().getIdDep() + "WHERE nom = " + obj.getNom() + ";";
+        }
+
+        this.executeQuery(query);
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */
     @Override
-    protected String getSelectItemQuery(String id) {
-        return "SELECT * FROM annee WHERE nom = " + id + ";";
+    protected String getWhereClause(String id) {
+        return "WHERE nom = " + id;
     }
 }

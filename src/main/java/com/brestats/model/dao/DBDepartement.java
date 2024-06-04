@@ -48,10 +48,26 @@ public class DBDepartement extends DBObject<Departement> {
     }
 
     /**
+     * Insert or update an element in the database from the obj param
+     * @param obj The object which will be converted and inserted in the database
+     */
+    public void insertQuery(Departement obj) {
+        String query;
+        
+        if(this.getItem(obj.getId()) == null) {
+            query = "INSERT INTO annee VALUES (" + obj.getIdDep() + "," + obj.getNomDep() + "," + obj.getInvesCulturel2019() + ");";
+        } else {
+            query = "UPDATE annee SET nomDep = " + obj.getNomDep() + ", investissementCulturel2019 = " + obj.getInvesCulturel2019() + " WHERE idDep = " + obj.getIdDep() + ";";
+        }
+
+        this.executeQuery(query);
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */
-    protected String getSelectItemQuery(String id) {
-        return "SELECT * FROM annee WHERE idDep = " + id + ";";
+    protected String getWhereClause(String id) {
+        return "WHERE idDep = " + id;
     }
 }

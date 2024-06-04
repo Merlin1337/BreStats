@@ -1,5 +1,6 @@
 package com.brestats.model.dao;
 
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -62,9 +63,11 @@ public abstract class DBObject<T extends Model>  {
         if(!isInList) {
             String query = null;
             try {
-                query = this.getSelectItemQuery(id);
-                this.selectQuery(query);
-                item = this.list.get(this.list.size()-1);
+                query = "SELECT * FROM " + item.getClass().toString().toLowerCase() + " " + this.getWhereClause(id) + ";";
+                ArrayList<T> res = this.selectQuery(query);
+                if(res.size() > 0) {
+                    item = res.get(res.size()-1);
+                }
             } catch(SQLException e) {
                 System.out.println("Unexpected exception with query : " + query);
                 e.printStackTrace();
@@ -109,6 +112,41 @@ public abstract class DBObject<T extends Model>  {
     }
 
     /**
+     * Send the prepared query in the {@link #insertQuery(Model)} method
+     * @param query the insert, update, or delete query
+     */
+    protected void executeQuery(String query) {
+        try {
+            Statement statement = this.con.createStatement();
+            statement.executeUpdate(query);
+        } catch(SQLException e) {
+            System.out.println("Unexpected exception");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Send a delete query to the database from the {@code obj} argument's data.
+     * @param obj the obj used to send the query
+     */
+    public void deleteQuery(T obj) {
+        String query = "DELETE " + obj.getClass().toString() + " " + this.getWhereClause(obj.getId()) + ";";
+        try {
+            Statement statement = this.con.createStatement();
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            System.out.println("Unexpected exception with query : " + query);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Insert or update an element in the database from the obj param
+     * @param obj The object which will be converted and inserted in the database
+     */
+    public abstract void insertQuery(T obj);
+
+    /**
      * Return a constructed object from the query's result through a {@link String String[]} argument
      * @param args The {@link String String[]} argument which contains all the required data to initiate the object
      * @return The initialised object
@@ -121,9 +159,7 @@ public abstract class DBObject<T extends Model>  {
      * @param id the unique id of the wanted item
      * @return The select query
      */
-    protected String getSelectItemQuery(String id) {
-        throw new IllegalCallerException("This method must be overridden by subclass");
-    }
+    protected abstract String getWhereClause(String id);
 
     private Connection getConnection () throws SQLException {
     // Charger la classe du pilote

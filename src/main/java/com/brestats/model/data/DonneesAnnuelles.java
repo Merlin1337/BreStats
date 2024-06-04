@@ -131,7 +131,7 @@ public class DonneesAnnuelles implements Model {
      *
      * @return the average price
      */
-    public double getPrixMoyer() {
+    public double getPrixMoyen() {
         return this.prixMoyen;
     }
 
@@ -140,7 +140,7 @@ public class DonneesAnnuelles implements Model {
      *
      * @param prixMoyer the new average price
      */
-    public void setPrixMoyer(double prixMoyer) {
+    public void setPrixMoyen(double prixMoyer) {
         this.prixMoyen = prixMoyer;
     }
 

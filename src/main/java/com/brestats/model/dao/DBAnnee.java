@@ -48,10 +48,26 @@ public class DBAnnee extends DBObject<Annee> {
     }
 
     /**
+     * Insert or update an element in the database from the obj param
+     * @param obj The object which will be converted and inserted in the database
+     */
+    public void insertQuery(Annee obj) {
+        String query;
+        
+        if(this.getItem(obj.getId()) == null) {
+            query = "INSERT INTO annee(annee, tauxInflation) VALUES (" + obj.getAnnee() + "," + obj.getTauxInflation() + ");";
+        } else {
+            query = "UPDATE annee SET tauxInflation = " + obj.getTauxInflation() + " WHERE annee = " + obj.getAnnee() + ";";
+        }
+
+        this.executeQuery(query);
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */
-    protected String getSelectItemQuery(String id) {
-        return "SELECT * FROM annee WHERE annee = " + id + ";";
+    protected String getWhereClause(String id) {
+        return "WHERE annee = " + id;
     }
 }

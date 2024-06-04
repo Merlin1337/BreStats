@@ -58,12 +58,28 @@ public class DBGare extends DBObject<Gare> {
 
         return ret;
     }
+
+    /**
+     * Insert or update an element in the database from the obj param
+     * @param obj The object which will be converted and inserted in the database
+     */
+    public void insertQuery(Gare obj) {
+        String query;
+        
+        if(this.getItem(obj.getId()) == null) {
+            query = "INSERT INTO annee VALUES (" + obj.getCodeGare() + "," + obj.getNomGare() + "," + obj.getEstFret() + "," + obj.getEstVoyageur() + "," + obj.getCom().getIdCommune() +";";
+        } else {
+            query = "UPDATE annee SET nomgare = " + obj.getNomGare() + ", estFret = " + obj.getEstFret() + ", estVoyageur = " + obj.getEstVoyageur() + ", laCommune = " + obj.getCom().getIdCommune() + "WHERE code = " + obj.getCodeGare() + ";";
+        }
+
+        this.executeQuery(query);
+    }
  
     /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */
-    protected String getSelectItemQuery(String id) {
-        return "SELECT * FROM annee WHERE code = " + id + ";";
+    protected String getWhereClause(String id) {
+        return "WHERE code = " + id;
     }
 }

@@ -60,6 +60,32 @@ public class DBCommune extends DBObject<Commune> {
         return ret;
     }
 
+    /**
+     * Insert or update an element in the database from the obj param
+     * @param obj The object which will be converted and inserted in the database
+     */
+    public void insertQuery(Commune obj) {
+        String query;
+        
+        if(this.getItem(obj.getId()) == null) {
+            query = "INSERT INTO annee VALUES (" + obj.getIdCommune() + "," + obj.getNomCommune() + "," + obj.getDep().getIdDep() +";";
+        } else {
+            query = "UPDATE annee SET nomCommune = " + obj.getNomCommune() + ", leDepartement = " + obj.getDep().getIdDep() + "WHERE idCommune = " + obj.getIdCommune() + ";";
+        }
+
+        this.executeQuery(query);
+    }
+
+    /**
+     * Return the query to select an item from its id in the table
+     * @return The select query
+     */
+    protected String getWhereClause(String id) {
+        return "WHERE idCommune = " + id;
+    }
+
+
+
     private void fullfillNeighbours(Commune com) {
         try {
             ArrayList<Commune> neighbourList = this.selectQuery("SELECT c2.* FROM commune c1 JOIN voisinage ON idCommune = commune JOIN commune ON communeVoisine = idCommune WHERE c1.idCommune = " + com.getId());
@@ -71,13 +97,5 @@ public class DBCommune extends DBObject<Commune> {
             e.printStackTrace();
         }
         
-    }
- 
-    /**
-     * Return the query to select an item from its id in the table
-     * @return The select query
-     */
-    protected String getSelectItemQuery(String id) {
-        return "SELECT * FROM annee WHERE idCommune = " + id + ";";
-    }
+    }    
 }
