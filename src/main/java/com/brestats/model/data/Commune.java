@@ -19,9 +19,11 @@ public class Commune implements Model {
     private int idCommune;
     private String nomCommune;
     private Departement LeDep;
+    private double latitude;
+    private double longitude;
 
     /**
-     * Constructs a new {@code Commune} with the specified ID, name, department, and neighboring municipalities.
+     * Constructs a new {@code Commune} with the specified ID, name, department, neighboring municipalities, latitude and longitude.
      *
      * @param id the ID of the municipality
      * @param nom the name of the municipality
@@ -29,7 +31,7 @@ public class Commune implements Model {
      * @param voisins the list of neighboring municipalities
      * @throws NullPointerException if any of the {@code nom}, {@code dep}, or {@code voisins} parameters are null
      */
-    public Commune(int id, String nom, Departement dep, ArrayList<Commune> voisins) {
+    public Commune(int id, String nom, Departement dep, ArrayList<Commune> voisins, double lat, double lgn) {
         if(nom == null || dep == null || voisins == null) {
             throw new NullPointerException("null values");
         }
@@ -38,6 +40,23 @@ public class Commune implements Model {
         this.nomCommune = nom;
         this.LeDep = dep;
         this.voisins = new ArrayList<>(voisins);
+        this.latitude = lat;
+        this.longitude = lgn;
+    }
+
+    /**
+     * Constructs a new {@code Commune} with the specified ID, name, department, and neighboring municipalities. Sets the latitude and the longitude to 0
+     *
+     * @param id the ID of the municipality
+     * @param nom the name of the municipality
+     * @param dep the department associated with the municipality
+     * @param voisins the list of neighboring municipalities
+     * @param lat the latitude of the municipality
+     * @param lgn the longitude of the municipality
+     * @throws NullPointerException if any of the {@code nom}, {@code dep}, or {@code voisins} parameters are null
+     */
+    public Commune(int id, String nom, Departement dep, ArrayList<Commune> voisins) {
+        new Commune(id, nom, dep, voisins);
     }
 
     /**
@@ -115,6 +134,38 @@ public class Commune implements Model {
      */
     public ArrayList<Commune> getVoisins() {
         return new ArrayList<>(this.voisins);
+    }
+
+    /**
+     * Return the city's latitude
+     * @return latitude
+     */
+    public double getLatitude() {
+        return this.latitude;
+    }
+
+    /**
+     * Return the city's longitude
+     * @return latitude
+     */
+    public double getLongitude() {
+        return this.longitude;
+    }
+
+    /**
+     * Sets the city's latitude
+     * @param lat latitude
+     */
+    public void setLatitude(double lat) {
+        this.latitude = lat;
+    }
+
+    /**
+     * Sets the city's longitude
+     * @param lgn latitude
+     */
+    public void setLongitude(double lgn) {
+        this.longitude = lgn;
     }
 
     /**

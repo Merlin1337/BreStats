@@ -90,6 +90,14 @@ public class DBValeursCommuneAnnee extends DBObject<DonneesAnnuelles> {
     }
 
     /**
+     * Return the table name (= donneesannuelles)
+     * @return "donneesannuelles" 
+     */
+    public String getTable() {
+        return "donneesannuelles";
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */

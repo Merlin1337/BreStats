@@ -43,8 +43,7 @@ public abstract class DBObject<T extends Model>  {
     }
 
     /**
-     * Return an item from the list with its id in DB. If it already has been fetch from the database, the method look in the array, else query the database. <br>
-     * <strong>The class must have the same name as the table, and the table must be written in lower case</strong>, otherwise it will not work.
+     * Return an item from the list with its id in DB. If it already has been fetch from the database, the method look in the array, else query the database.
      * @param id the id in the DB
      * @return the ith element in the list
      */
@@ -63,7 +62,7 @@ public abstract class DBObject<T extends Model>  {
         if(!isInList) {
             String query = null;
             try {
-                query = "SELECT * FROM " + item.getClass().toString().toLowerCase() + " " + this.getWhereClause(id) + ";";
+                query = "SELECT * FROM " + this.getTable() + " " + this.getWhereClause(id) + ";";
                 ArrayList<T> res = this.selectQuery(query);
                 if(res.size() > 0) {
                     item = res.get(res.size()-1);
@@ -130,14 +129,14 @@ public abstract class DBObject<T extends Model>  {
      * @param obj the obj used to send the query
      */
     public void deleteQuery(T obj) {
-        String query = "DELETE " + obj.getClass().toString() + " " + this.getWhereClause(obj.getId()) + ";";
+        String query = "DELETE FROM " + this.getTable() + " " + this.getWhereClause(obj.getId()) + ";";
         try {
             Statement statement = this.con.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
             System.out.println("Unexpected exception with query : " + query);
             e.printStackTrace();
-        }
+        } 
     }
 
     /**
@@ -145,6 +144,12 @@ public abstract class DBObject<T extends Model>  {
      * @param obj The object which will be converted and inserted in the database
      */
     public abstract void insertQuery(T obj);
+
+    /**
+     * Return the name of the table
+     * @return the table as String
+     */
+    public abstract String getTable();
 
     /**
      * Return a constructed object from the query's result through a {@link String String[]} argument

@@ -64,6 +64,14 @@ public class DBDepartement extends DBObject<Departement> {
     }
 
     /**
+     * Return the table name (= departement)
+     * @return "departement" 
+     */
+    public String getTable() {
+        return "departement";
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */

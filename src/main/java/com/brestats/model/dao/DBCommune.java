@@ -1,6 +1,5 @@
 package com.brestats.model.dao;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.brestats.exceptions.IncorectConstructorArguments;
@@ -41,20 +40,28 @@ public class DBCommune extends DBObject<Commune> {
     protected Commune constructor(String[] args) throws IncorectConstructorArguments {
         
         Commune ret = null;
-        
-        if(args.length == 4) {
+
+        String argsString = "";
+        for (String arg : args) {
+            argsString += " " + arg + " ";
+        }
+
+        if(args.length == 5) {
             try {
                 int id = Integer.parseInt(args[0]);
                 String name = args[1];
                 Departement dep = dbDep.getItem(args[2]);
+                double lat = Double.parseDouble(args[3]);
+                double lgn = Double.parseDouble(args[4]);
                 
-                ret = new Commune(id, name, dep, new ArrayList<Commune>());
-                fullfillNeighbours(ret);
+                ret = new Commune(id, name, dep, new ArrayList<Commune>(), lat, lgn);
+                this.fullfillNeighbours(ret);
             } catch(NumberFormatException e) {
-                throw new IncorectConstructorArguments("Bad argument type");
+                
+                throw new IncorectConstructorArguments("Bad argument type : " + argsString);
             }
         } else {
-            throw new IncorectConstructorArguments("Bad amount of arguments");
+            throw new IncorectConstructorArguments("Bad amount of arguments : " + argsString);
         }
 
         return ret;
@@ -77,6 +84,14 @@ public class DBCommune extends DBObject<Commune> {
     }
 
     /**
+     * Return the table name (= commune)
+     * @return "commune" 
+     */
+    public String getTable() {
+        return "commune";
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */
@@ -87,15 +102,8 @@ public class DBCommune extends DBObject<Commune> {
 
 
     private void fullfillNeighbours(Commune com) {
-        try {
-            ArrayList<Commune> neighbourList = this.selectQuery("SELECT c2.* FROM commune c1 JOIN voisinage ON idCommune = commune JOIN commune ON communeVoisine = idCommune WHERE c1.idCommune = " + com.getId());
-
-            for (Commune voisin : neighbourList) {
-                com.ajouterVoisin(voisin);
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
+        for (Commune voisin : this.list) {
+            com.ajouterVoisin(voisin);
         }
-        
     }    
 }

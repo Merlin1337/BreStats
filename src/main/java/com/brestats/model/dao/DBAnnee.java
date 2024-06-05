@@ -64,6 +64,14 @@ public class DBAnnee extends DBObject<Annee> {
     }
 
     /**
+     * Return the table name (= annee)
+     * @return "annee" 
+     */
+    public String getTable() {
+        return "annee";
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */

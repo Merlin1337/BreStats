@@ -71,6 +71,14 @@ public class DBAeroport extends DBObject<Aeroport> {
     }
 
     /**
+     * Return the table name (= aeroport)
+     * @return "aeroport" 
+     */
+    public String getTable() {
+        return "aeroport";
+    }
+
+    /**
      * Return the query to select an item from its id in the table
      * @return The select query
      */

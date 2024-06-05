@@ -74,6 +74,14 @@ public class DBGare extends DBObject<Gare> {
 
         this.executeQuery(query);
     }
+
+    /**
+     * Return the table name (= gare)
+     * @return "gare" 
+     */
+    public String getTable() {
+        return "gare";
+    }
  
     /**
      * Return the query to select an item from its id in the table
