@@ -3,6 +3,8 @@ package com.brestats.control;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.brestats.model.dao.DAO;
 import com.brestats.model.dao.DBCommune;
@@ -16,6 +18,7 @@ import javafx.concurrent.Worker.State;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,12 +26,19 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.event.EventHandler;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.PopupWindow.AnchorLocation;
 import netscape.javascript.JSObject;
 
 public class MainControl {
@@ -39,16 +49,26 @@ public class MainControl {
     @FXML
     private WebView webView;
 
-    private DBCommune dbCom;
     private WebEngine engine; 
+    private Popup searchProps;
+    private GridPane gridProps;
+    private DBCommune dbCom;
     private Commune selectedCity = null;
+    private PopupMouseEventHandler popupMouseEventHandler;
 
-    public MainControl() {
-        this.dbCom = DAO.DB_COM;
-    }
 
     @FXML
     public void initialize() {
+        this.popupMouseEventHandler = new PopupMouseEventHandler();
+        this.dbCom = DAO.DB_COM;
+        this.searchProps = new Popup();
+        this.gridProps = new GridPane();
+        this.gridProps.getStyleClass().add("searchProps");
+        this.gridProps.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
+        searchProps.setAutoHide(true);
+        searchProps.setAnchorLocation(AnchorLocation.CONTENT_TOP_LEFT);
+        searchProps.getContent().add(gridProps);
+
         this.engine = this.webView.getEngine();
 
         MapCoordinates coords = new MapCoordinates();
@@ -107,31 +127,65 @@ public class MainControl {
     }
 
     @FXML
-    public void handleEnter(KeyEvent ev) {
+    public void handleKeyPressed(KeyEvent ev) {
+        List<KeyCode> ignoredKeysArray = Arrays.asList(KeyCode.ALT, KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.CAPS, KeyCode.ESCAPE, KeyCode.TAB, KeyCode.UNDEFINED);
         if(ev.getCode().equals(KeyCode.ENTER)) { //If enter is pressed, start the research up
             handleSearch(ev);
-        } else {
+        } else if(ev.getCode().equals(KeyCode.UP)) {
+            popupMouseEventHandler.colorPreviousLabel();
+        } else if(ev.getCode().equals(KeyCode.DOWN)) {
+            popupMouseEventHandler.colorNextLabel();
+        } else if(!ignoredKeysArray.contains(ev.getCode())); {
+            String oldSearchQuery = searchBar.getText();
             Platform.runLater(new Runnable() { //To get the new search, otherwise we get the previous one
                 public void run() {
-                    if(searchBar.getText().length() >= 3) {
-                        String searchQuery = searchBar.getText();
+                    String searchQuery = searchBar.getText();
+                    if(searchQuery.length() >= 3 && !searchQuery.equals(oldSearchQuery)) {
                         try {
                             ArrayList<Commune> res = dbCom.selectQuery("SELECT * FROM commune WHERE nomCommune LIKE '" + searchQuery + "%' OR idCommune LIKE '" + searchQuery + "%';");
                             ArrayList<Double> latitudes = new ArrayList<Double>();
                             ArrayList<Double> longitudes = new ArrayList<Double>();
-                            
+                            gridProps.getChildren().clear();
+
+                            popupMouseEventHandler.setCitiesArray(res);
+
                             for (Commune commune : res) {
                                 latitudes.add(commune.getLatitude());
                                 longitudes.add(commune.getLongitude());
+
+                                if(gridProps.getChildren().size() < 5) {
+                                    
+                                    Label cityNameLabel = new Label(commune.getNomCommune());
+                                    cityNameLabel.getStyleClass().add("cityNameLabel");
+                                    Pane cityNamePane = new Pane(cityNameLabel);
+                                    cityNamePane.getStyleClass().add("cityNamePane");
+                                    cityNamePane.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
+                                    cityNamePane.setOnMouseEntered(popupMouseEventHandler);
+                                    cityNamePane.setOnMouseExited(popupMouseEventHandler);
+
+                                    gridProps.add(cityNamePane, 0, gridProps.getChildren().size());
+                                }
                             }
                             engine.executeScript("setMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) + ")");
+
+                            //Set the first label background and marker color to blue
+                            gridProps.getChildren().get(0).setStyle("-fx-background-color: cornflowerblue;");
+                            engine.executeScript("setBlueMarker(" + res.get(0).getLatitude() + "," + res.get(0).getLongitude() + ")");
                             
-                            selectedCity = res.get(0);
+                            if(res.size() > 0) {
+                                Bounds searchBarBounds = searchBar.localToScreen(searchBar.getBoundsInLocal());
+
+                                selectedCity = res.get(0);
+                                searchProps.sizeToScene();
+                                searchProps.show(searchBar, searchBarBounds.getMinX(), searchBarBounds.getMaxY());
+                            }
                         } catch(SQLException ex) {
                             System.out.println("Unexpected exception with query : " + searchQuery);
                         }
                     } else {
                         engine.executeScript("setMarkers([], [])");
+                        selectedCity = null;
+                        searchProps.hide();
                     }
                 }
 
@@ -151,6 +205,69 @@ public class MainControl {
                     return sb.toString();
                 }
             });
+        }
+    }
+
+
+    private class PopupMouseEventHandler implements EventHandler<MouseEvent> {
+        private ArrayList<Commune> cities;
+        private int coloredLabelInd = 0;
+
+        public PopupMouseEventHandler() {
+            this.cities = null;
+        }
+
+        public void setCitiesArray(ArrayList<Commune> cities) {
+            this.cities = cities;
+        }
+
+        public void handle(MouseEvent ev) {
+            if(ev.getEventType().getName().equals("MOUSE_ENTERED")) {
+                //Color the selected label
+                Pane pane = (Pane) ev.getSource();
+                Commune com = this.cities.get(pane.getParent().getChildrenUnmodifiable().indexOf(pane));
+
+                gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: transparent;");
+                engine.executeScript("setGreyMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+
+                pane.setStyle("-fx-background-color: cornflowerblue;");
+                engine.executeScript("setBlueMarker(" + com.getLatitude() + "," + com.getLongitude() + ")");
+
+                this.coloredLabelInd = gridProps.getChildren().indexOf(ev.getSource());
+            }
+        }
+
+        public void colorNextLabel() {
+            System.out.println("next");
+            if(this.cities != null) {
+                gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: transparent;");
+                engine.executeScript("setGreyMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+
+                if(this.coloredLabelInd < 4) {
+                    this.coloredLabelInd++;
+                } else {
+                    this.coloredLabelInd = 0;
+                }
+
+                gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: cornflowerblue;");
+                engine.executeScript("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+            }
+        }
+
+        public void colorPreviousLabel() {
+            if(this.cities != null) {
+                gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: transparent;");
+                engine.executeScript("setGreyMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+
+                if(this.coloredLabelInd > 0) {
+                    this.coloredLabelInd--;
+                } else {
+                    this.coloredLabelInd = 4;
+                }
+
+                gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: cornflowerblue;");
+                engine.executeScript("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+            }
         }
     }
 }

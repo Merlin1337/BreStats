@@ -4,6 +4,16 @@ var lat = 48.2;
 var lon = -3.0; 
 var map = null;
 
+var greyMarker = new L.icon({
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png"
+})
+
+var blueMarker = new L.icon({
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png"
+})
+
 function setMarkers(latitudes, longitudes) {
     markers.forEach(element => {
         map.removeLayer(element)
@@ -14,11 +24,35 @@ function setMarkers(latitudes, longitudes) {
     
     if(latitudes.length == longitudes.length) { 
         for(var i = 0 ; i < latitudes.length ; i++) {
-            var marker = new L.marker(L.latLng(latitudes[i], longitudes[i]))
+            var marker = new L.marker(L.latLng(latitudes[i], longitudes[i]), {icon: greyMarker})
 
             markers.push(marker)
             marker.addTo(map)
         }
+    }
+}
+
+function setGreyMarker(lat, lgn) {
+    var i = 0;
+    var trouve = false;
+    while(i < markers.length || !trouve) {
+        if(markers[i].getLatLng().lat == lat && markers[i].getLatLng().lng == lgn) {
+            trouve = true;
+            markers[i].setIcon(greyMarker);
+        }
+        i++;
+    }
+}
+
+function setBlueMarker(lat, lgn) {
+    var i = 0;
+    var trouve = false;
+    while(i < markers.length || !trouve) {
+        if(markers[i].getLatLng().lat == lat && markers[i].getLatLng().lng == lgn) {
+            trouve = true;
+            markers[i].setIcon(blueMarker);
+        }
+        i++;
     }
 }
 

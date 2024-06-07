@@ -20,9 +20,6 @@ public class App extends Application  {
         primaryStage.setScene(scene);
         primaryStage.setMaximized(false);
         primaryStage.show();
-
-        //temp
-        // mapAndSearchBar.getSearchButton().setOnAction(control);
     }
 
     public static void main(String[] args) {
