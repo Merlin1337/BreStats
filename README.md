@@ -1,0 +1,1 @@
+Bonjour à toutes et à tous ici un projet de grande importance pour nous car il sera forcément mieux que celui de Gabin et Polig (mais bon). Ce projet mérite la plus haute des notes, merci de votre compréhension et à bientôt. 
