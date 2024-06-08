@@ -42,6 +42,7 @@
     -fx-min-width: 400px;
     -fx-max-width: 400px;
     -fx-pref-width: 400px;
+    -fx-cursor: hand;
 }
 
 

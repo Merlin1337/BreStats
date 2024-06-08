@@ -23,17 +23,6 @@ public class App extends Application  {
     }
 
     public static void main(String[] args) {
-        int test = 1;
-        if(test == 0) {
-            System.out.println("0");
-        } else if(test < 2) {
-            System.out.println("<2");
-        } else if(test < 3) {
-            System.out.println("<3");
-        } else {
-            System.out.println("test");
-        }
-
         launch(args);
     }
 }

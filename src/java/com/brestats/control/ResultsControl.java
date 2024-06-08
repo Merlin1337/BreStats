@@ -10,6 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+/**
+ * Controller of Results.fxml view
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ */
 public class ResultsControl {
     @FXML
     public void handleBack(MouseEvent ev) {

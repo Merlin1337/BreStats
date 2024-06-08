@@ -9,5 +9,5 @@ public interface Model {
      * Return the unique id of an item as {@link String String}, that can be used to find the item in an Array
      * @return A unique id
      */
-    public String getId();
+    public abstract String getId();
 }

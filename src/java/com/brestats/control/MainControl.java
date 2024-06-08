@@ -41,6 +41,10 @@ import javafx.stage.Stage;
 import javafx.stage.PopupWindow.AnchorLocation;
 import netscape.javascript.JSObject;
 
+/**
+ * Controller of Main.fxml view
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ */
 public class MainControl {
     @FXML
     private Button searchButton;
@@ -56,19 +60,22 @@ public class MainControl {
     private Commune selectedCity = null;
     private PopupMouseEventHandler popupMouseEventHandler;
 
-
+    /**
+     * Initialize all needed attributes and listeners. Called when the view is loaded.
+     */
     @FXML
     public void initialize() {
-        this.popupMouseEventHandler = new PopupMouseEventHandler();
-        this.dbCom = DAO.DB_COM;
-        this.searchProps = new Popup();
-        this.gridProps = new GridPane();
+        this.popupMouseEventHandler = new PopupMouseEventHandler(); //private class handling popup-related events
+        this.dbCom = DAO.DB_COM; //connection to the database
+        this.searchProps = new Popup(); //Search proposals from user's query
+        this.gridProps = new GridPane(); //Grid pane used in seachProps
         this.gridProps.getStyleClass().add("searchProps");
         this.gridProps.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
-        searchProps.setAutoHide(true);
-        searchProps.setAnchorLocation(AnchorLocation.CONTENT_TOP_LEFT);
+        searchProps.setAnchorLocation(AnchorLocation.CONTENT_TOP_LEFT); //to place the popup in the scene
+        searchProps.setAutoHide(true); //Auto hide popup when clicked elsewhere
         searchProps.getContent().add(gridProps);
 
+        //Loading the map
         this.engine = this.webView.getEngine();
 
         MapCoordinates coords = new MapCoordinates();
@@ -83,6 +90,7 @@ public class MainControl {
             }
         });
 
+        //Marker change event = when latitude or longitude change
         ChangeListener<Number> listener = new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> obs, Number oldValue, Number newValue) {
                 Commune nearestCity = findNearestCity(coords.getLatitude(), coords.getLongitude());
@@ -108,6 +116,10 @@ public class MainControl {
 
     }
 
+    /**
+     * Handle the switch of view when search button is clicked. Called from Main.fxml and from {@link #handleKeyPressed(KeyEvent)}, hence ev is {@link Event} typed
+     * @param ev click event 
+     */
     @FXML
     public void handleSearch(Event ev) {
         if(this.selectedCity != null) {
@@ -120,35 +132,38 @@ public class MainControl {
                 System.out.println("Cannot change scene");
                 ex.printStackTrace();
             }
-        } else {
+        } else { //if no city is selected, meaning search bar is empty, show an alert window
             Alert errorAlert = new Alert(AlertType.ERROR, "Please enter the name of a city.", ButtonType.OK);
             errorAlert.show();
         }
     }
 
+    /**
+     * Handle the display of markers and search proposal events when a key is pressed. Called from Main.fxml
+     * @param ev a key event
+     */
     @FXML
     public void handleKeyPressed(KeyEvent ev) {
-        System.out.println("handle");
+        // List of ignored keys to send query to database
         List<KeyCode> ignoredKeysArray = Arrays.asList(KeyCode.ALT, KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.CAPS, KeyCode.ESCAPE, KeyCode.TAB, KeyCode.UNDEFINED, KeyCode.LEFT, KeyCode.RIGHT);
-        if(ev.getCode().equals(KeyCode.ENTER)) { //If enter is pressed, start the research up
+        if(ev.getCode().equals(KeyCode.ENTER)) { //If enter is pressed, start the research
             handleSearch(ev);
-        } else if(ev.getCode().equals(KeyCode.UP)) {
+        } else if(ev.getCode().equals(KeyCode.UP)) { //Select previous city among proposals
             popupMouseEventHandler.colorPreviousLabel();
-        } else if(ev.getCode().equals(KeyCode.DOWN)) {
-            System.out.println("test1");
+            this.searchBar.setText(selectedCity.getNomCommune());
+        } else if(ev.getCode().equals(KeyCode.DOWN)) {//Select next city among proposals
             popupMouseEventHandler.colorNextLabel();
-        } else if(!ignoredKeysArray.contains(ev.getCode())); {
-            System.out.println("test2");
-            String oldSearchQuery = searchBar.getText();
+            this.searchBar.setText(selectedCity.getNomCommune());
+        } else if(!ignoredKeysArray.contains(ev.getCode()) && !ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown()) { //else search with new query
             Platform.runLater(new Runnable() { //To get the new search, otherwise we get the previous one
                 public void run() {
                     String searchQuery = searchBar.getText();
-                    if(searchQuery.length() >= 3 && !searchQuery.equals(oldSearchQuery)) {
+                    if(searchQuery.length() >= 3) { //From 3 characters, to avoid too big query results
                         try {
                             ArrayList<Commune> res = dbCom.selectQuery("SELECT * FROM commune WHERE nomCommune LIKE '" + searchQuery + "%' OR idCommune LIKE '" + searchQuery + "%';");
                             ArrayList<Double> latitudes = new ArrayList<Double>();
                             ArrayList<Double> longitudes = new ArrayList<Double>();
-                            gridProps.getChildren().clear();
+                            gridProps.getChildren().clear(); //reset search proposals
 
                             popupMouseEventHandler.setCitiesArray(res);
 
@@ -157,7 +172,7 @@ public class MainControl {
                                 longitudes.add(commune.getLongitude());
 
                                 if(gridProps.getChildren().size() < 5) {
-                                    
+                                    //Add a proposal in popup
                                     Label cityNameLabel = new Label(commune.getNomCommune());
                                     cityNameLabel.getStyleClass().add("cityNameLabel");
                                     Pane cityNamePane = new Pane(cityNameLabel);
@@ -169,20 +184,25 @@ public class MainControl {
                                     gridProps.add(cityNamePane, 0, gridProps.getChildren().size());
                                 }
                             }
+                            //Place markers on the map (see src/resources/com/brestats/files/script.js)
                             engine.executeScript("setMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) + ")");
                             
                             if(res.size() > 0) {
-                                // System.out.println("show");
-                                Bounds searchBarBounds = searchBar.localToScreen(searchBar.getBoundsInLocal());
-
+                                //set the 1st marker color to blue
                                 selectedCity = res.get(0);
+                                gridProps.getChildren().get(0).setStyle("-fx-background-color: cornflowerblue;");
+                                engine.executeScript("setBlueMarker(" + selectedCity.getLatitude() + "," + selectedCity.getLongitude() + ")");
+                                
+                                //display the popup under the search bar if there is at least a city in results
+                                Bounds searchBarBounds = searchBar.localToScreen(searchBar.getBoundsInLocal());
                                 searchProps.sizeToScene();
                                 searchProps.show(searchBar, searchBarBounds.getMinX(), searchBarBounds.getMaxY());
                             }
                         } catch(SQLException ex) {
                             System.out.println("Unexpected exception with query : " + searchQuery);
                         }
-                    } else {
+                    } else { //if there are less than 3 characters typed in the search bar
+                        //remove markers and hide popup
                         engine.executeScript("setMarkers([], [])");
                         popupMouseEventHandler.setCitiesArray(null);
                         selectedCity = null;
@@ -227,22 +247,19 @@ public class MainControl {
                 //Color the selected label
                 Pane pane = (Pane) ev.getSource();
                 Commune com = this.cities.get(pane.getParent().getChildrenUnmodifiable().indexOf(pane));
-
+                
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: transparent;");
                 engine.executeScript("setGreyMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
-
+                
                 pane.setStyle("-fx-background-color: cornflowerblue;");
                 engine.executeScript("setBlueMarker(" + com.getLatitude() + "," + com.getLongitude() + ")");
-
+                
                 this.coloredLabelInd = gridProps.getChildren().indexOf(ev.getSource());
             }
         }
 
         public void colorNextLabel() {
             if(this.cities != null) {
-                System.out.println(this.coloredLabelInd);
-                System.out.println(this.cities.get(this.coloredLabelInd).getLatitude() + " " + this.cities.get(this.coloredLabelInd).getLongitude());
-
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: transparent;");
                 engine.executeScript("setGreyMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
 
@@ -252,10 +269,9 @@ public class MainControl {
                     this.coloredLabelInd = 0;
                 }
 
-                System.out.println(this.coloredLabelInd);
-                System.out.println("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: cornflowerblue;");
                 engine.executeScript("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+                selectedCity = this.cities.get(coloredLabelInd);
             }
         }
 
@@ -272,6 +288,7 @@ public class MainControl {
 
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: cornflowerblue;");
                 engine.executeScript("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
+                selectedCity = this.cities.get(coloredLabelInd);
             }
         }
     }

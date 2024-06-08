@@ -21,12 +21,12 @@ setlocal enabledelayedexpansion
 
 REM Compile tous les fichiers trouvés
 if not "!FILE_LIST!"=="" (
-    echo Compilation des fichiers suivants:
+    echo Compiling java files:
     echo %FILE_LIST%
     javac -d class --module-path "lib;lib/win/lib" --add-modules javafx.controls,javafx.graphics,javafx.web,javafx.fxml %FILE_LIST%
 ) else (
-    echo Aucun fichier .java trouvé.
+    echo No .java file found
 )
 
-echo Compilation terminée.
+echo Project compiled
 pause
