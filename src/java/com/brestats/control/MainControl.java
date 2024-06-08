@@ -127,6 +127,7 @@ public class MainControl {
                 Parent results = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Results.fxml"));
                 Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
                 stage.setScene(new Scene(results));
+                System.out.println(selectedCity);
                 System.out.println("change");
             } catch(IOException ex) {
                 System.out.println("Cannot change scene");
@@ -167,6 +168,7 @@ public class MainControl {
 
                             popupMouseEventHandler.setCitiesArray(res);
 
+                            
                             for (Commune commune : res) {
                                 latitudes.add(commune.getLatitude());
                                 longitudes.add(commune.getLongitude());
@@ -180,6 +182,7 @@ public class MainControl {
                                     cityNamePane.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
                                     cityNamePane.setOnMouseEntered(popupMouseEventHandler);
                                     cityNamePane.setOnMouseExited(popupMouseEventHandler);
+                                    cityNamePane.setOnMouseClicked(popupMouseEventHandler);
 
                                     gridProps.add(cityNamePane, 0, gridProps.getChildren().size());
                                 }
@@ -243,6 +246,7 @@ public class MainControl {
         }
 
         public void handle(MouseEvent ev) {
+            System.out.println(ev.getEventType().getName());
             if(ev.getEventType().getName().equals("MOUSE_ENTERED")) {
                 //Color the selected label
                 Pane pane = (Pane) ev.getSource();
@@ -255,6 +259,10 @@ public class MainControl {
                 engine.executeScript("setBlueMarker(" + com.getLatitude() + "," + com.getLongitude() + ")");
                 
                 this.coloredLabelInd = gridProps.getChildren().indexOf(ev.getSource());
+            } else if(ev.getEventType().getName().equals("MOUSE_CLICKED")) {
+                Pane clickedPane = (Pane) ev.getSource();
+                int paneInd = ((GridPane) clickedPane.getParent()).getChildren().indexOf(clickedPane);
+                selectedCity = this.cities.get(paneInd);
             }
         }
 
