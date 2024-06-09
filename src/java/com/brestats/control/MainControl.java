@@ -1,6 +1,5 @@
 package com.brestats.control;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,9 +23,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -38,6 +39,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.PopupWindow.AnchorLocation;
 import netscape.javascript.JSObject;
 
@@ -55,6 +57,7 @@ public class MainControl {
 
     private WebEngine engine; 
     private Popup searchProps;
+    private ScrollPane scrollPane;
     private GridPane gridProps;
     private DBCommune dbCom;
     private Commune selectedCity = null;
@@ -68,12 +71,23 @@ public class MainControl {
         this.popupMouseEventHandler = new PopupMouseEventHandler(); //private class handling popup-related events
         this.dbCom = DAO.DB_COM; //connection to the database
         this.searchProps = new Popup(); //Search proposals from user's query
+
+        //config popup scroll pane
+        this.scrollPane = new ScrollPane();
+        this.scrollPane.setMaxHeight(134); //approximatly 5 proposals
+        this.scrollPane.setMinViewportWidth(400);
+        this.scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        this.scrollPane.setStyle("-fx-border-radius: 8px;");
+
         this.gridProps = new GridPane(); //Grid pane used in seachProps
         this.gridProps.getStyleClass().add("searchProps");
         this.gridProps.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
+        this.scrollPane.setContent(gridProps);
+
         searchProps.setAnchorLocation(AnchorLocation.CONTENT_TOP_LEFT); //to place the popup in the scene
         searchProps.setAutoHide(true); //Auto hide popup when clicked elsewhere
-        searchProps.getContent().add(gridProps);
+        searchProps.getContent().add(scrollPane);
+
 
         //Loading the map
         this.engine = this.webView.getEngine();
@@ -123,16 +137,22 @@ public class MainControl {
     @FXML
     public void handleSearch(Event ev) {
         if(this.selectedCity != null) {
-            try {
-                Parent results = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Results.fxml"));
-                Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
-                stage.setScene(new Scene(results));
-                System.out.println(selectedCity);
-                System.out.println("change");
-            } catch(IOException ex) {
-                System.out.println("Cannot change scene");
-                ex.printStackTrace();
+            //get window of event's source
+            Window window = ((Node) ev.getSource ()).getScene ().getWindow ();
+            Stage stage;
+            //if the window is popup, get the owner node's window
+            if(window.getClass().getName().equals("javafx.stage.Popup")) {
+                stage = (Stage) ((Popup) window).getOwnerNode().getScene().getWindow();
+            } else { //else keep the window as stage (see window heritage tree)
+                stage = (Stage) window;
             }
+
+            FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
+            Parent results = resultsFXML.getRoot();
+            stage.setScene(new Scene(results));
+            
+            ((ResultsControl) resultsFXML.getController()).setSelectedCity(this.selectedCity);
+            System.out.println("change");
         } else { //if no city is selected, meaning search bar is empty, show an alert window
             Alert errorAlert = new Alert(AlertType.ERROR, "Please enter the name of a city.", ButtonType.OK);
             errorAlert.show();
@@ -173,7 +193,7 @@ public class MainControl {
                                 latitudes.add(commune.getLatitude());
                                 longitudes.add(commune.getLongitude());
 
-                                if(gridProps.getChildren().size() < 5) {
+                                // if(gridProps.getChildren().size() < 5) {
                                     //Add a proposal in popup
                                     Label cityNameLabel = new Label(commune.getNomCommune());
                                     cityNameLabel.getStyleClass().add("cityNameLabel");
@@ -185,7 +205,7 @@ public class MainControl {
                                     cityNamePane.setOnMouseClicked(popupMouseEventHandler);
 
                                     gridProps.add(cityNamePane, 0, gridProps.getChildren().size());
-                                }
+                                // }
                             }
                             //Place markers on the map (see src/resources/com/brestats/files/script.js)
                             engine.executeScript("setMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) + ")");
@@ -200,6 +220,7 @@ public class MainControl {
                                 Bounds searchBarBounds = searchBar.localToScreen(searchBar.getBoundsInLocal());
                                 searchProps.sizeToScene();
                                 searchProps.show(searchBar, searchBarBounds.getMinX(), searchBarBounds.getMaxY());
+                                scrollPane.setVvalue(0);
                             }
                         } catch(SQLException ex) {
                             System.out.println("Unexpected exception with query : " + searchQuery);
@@ -246,7 +267,6 @@ public class MainControl {
         }
 
         public void handle(MouseEvent ev) {
-            System.out.println(ev.getEventType().getName());
             if(ev.getEventType().getName().equals("MOUSE_ENTERED")) {
                 //Color the selected label
                 Pane pane = (Pane) ev.getSource();
@@ -263,6 +283,7 @@ public class MainControl {
                 Pane clickedPane = (Pane) ev.getSource();
                 int paneInd = ((GridPane) clickedPane.getParent()).getChildren().indexOf(clickedPane);
                 selectedCity = this.cities.get(paneInd);
+                handleSearch(ev);
             }
         }
 
@@ -271,7 +292,7 @@ public class MainControl {
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: transparent;");
                 engine.executeScript("setGreyMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
 
-                if(this.coloredLabelInd < 4) {
+                if(this.coloredLabelInd < this.cities.size()-1) {
                     this.coloredLabelInd++;
                 } else {
                     this.coloredLabelInd = 0;
@@ -280,6 +301,13 @@ public class MainControl {
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: cornflowerblue;");
                 engine.executeScript("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
                 selectedCity = this.cities.get(coloredLabelInd);
+
+                //Set the scroll position when using down arrow key
+                if(scrollPane.getVvalue()*(this.cities.size()-5) <= this.coloredLabelInd-4) {
+                    scrollPane.setVvalue((double) (this.coloredLabelInd-4)/(this.cities.size()-5));
+                } else if(this.coloredLabelInd == 0) {
+                    scrollPane.setVvalue(0);
+                }
             }
         }
 
@@ -291,12 +319,19 @@ public class MainControl {
                 if(this.coloredLabelInd > 0) {
                     this.coloredLabelInd--;
                 } else {
-                    this.coloredLabelInd = 4;
+                    this.coloredLabelInd = this.cities.size()-1;
                 }
 
                 gridProps.getChildren().get(this.coloredLabelInd).setStyle("-fx-background-color: cornflowerblue;");
                 engine.executeScript("setBlueMarker(" + this.cities.get(this.coloredLabelInd).getLatitude() + "," + this.cities.get(this.coloredLabelInd).getLongitude() + ")");
                 selectedCity = this.cities.get(coloredLabelInd);
+
+                //Set the scroll position when using the up arrow key
+                if(scrollPane.getVvalue()*(this.cities.size()-5) >= this.coloredLabelInd) {
+                    scrollPane.setVvalue((double) (this.coloredLabelInd)/(this.cities.size()-5));
+                } else if(this.coloredLabelInd == this.cities.size()-1) {
+                    scrollPane.setVvalue(1);
+                }
             }
         }
     }

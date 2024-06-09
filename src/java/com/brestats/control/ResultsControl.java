@@ -2,6 +2,8 @@ package com.brestats.control;
 
 import java.io.IOException;
 
+import com.brestats.model.data.Commune;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -15,6 +17,8 @@ import javafx.stage.Stage;
  * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
  */
 public class ResultsControl {
+    private Commune selectedCity = null;
+
     @FXML
     public void handleBack(MouseEvent ev) {
         try {
@@ -26,5 +30,9 @@ public class ResultsControl {
             System.out.println("Cannot change scene");
             ex.printStackTrace();
         }
+    }
+
+    public void setSelectedCity(Commune city) {
+        this.selectedCity = city;
     }
 }

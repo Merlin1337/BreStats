@@ -28,6 +28,14 @@ function setMarkers(latitudes, longitudes) {
 
             markers.push(marker)
             marker.addTo(map)
+            marker.on("mouseover", function(ev) {
+                console.log(ev)
+                markers.forEach(element => {
+                    setGreyMarker(element.getLatLng().lat, element.getLatLng().lng)
+                });
+                setBlueMarker(this.getLatLng().lat, this.getLatLng().lng)
+                invoke.receiveCoordinates(this.getLatLng().lat, this.getLatLng().lng)
+            })
         }
     }
 }
