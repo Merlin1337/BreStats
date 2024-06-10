@@ -61,27 +61,33 @@ public class MainControl {
     private ScrollPane scrollPane;
     private GridPane gridProps;
     private DBCommune dbCom;
-    private Commune selectedCity = null;
+    private Commune selectedCity;
     private PopupMouseEventHandler popupMouseEventHandler;
+
+    /**
+     * Construct the controller by initialising attributes
+     */
+    public MainControl() {
+        this.popupMouseEventHandler = new PopupMouseEventHandler(); //private class handling popup-related events
+        this.dbCom = DAO.DB_COM; //connection to the database
+        this.searchProps = new Popup(); //Search proposals from user's query
+        this.selectedCity = null;
+        this.scrollPane = new ScrollPane();
+        this.gridProps = new GridPane(); //Grid pane used in seachProps
+    }
 
     /**
      * Initialize all needed attributes and listeners. Called when the view is loaded.
      */
     @FXML
     public void initialize() {
-        this.popupMouseEventHandler = new PopupMouseEventHandler(); //private class handling popup-related events
-        this.dbCom = DAO.DB_COM; //connection to the database
-        this.searchProps = new Popup(); //Search proposals from user's query
-
         //config popup scroll pane
-        this.scrollPane = new ScrollPane();
         this.scrollPane.setMaxHeight(134); //approximatly 5 proposals
         this.scrollPane.setMinViewportWidth(400);
         this.scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.scrollPane.setStyle("-fx-border-radius: 8px;");
 
-        this.gridProps = new GridPane(); //Grid pane used in seachProps
-        this.gridProps.getStyleClass().add("searchProps");
+        this.gridProps.getStyleClass().add("searchProps"); //Grid pane used in seachProps
         this.gridProps.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
         this.scrollPane.setContent(gridProps);
 
@@ -131,7 +137,8 @@ public class MainControl {
     }
 
     /**
-     * Handle the switch of view when search button is clicked. Called from Main.fxml and from {@link #handleKeyPressed(KeyEvent)}, hence ev is {@link Event} typed
+     * Handle the switch of view when search button is clicked. Called from Main.fxml, from {@link #handleKeyPressed(KeyEvent)} 
+     * and from {@link #handleMapDoubleClick(MouseEvent)}, hence ev is {@link Event} typed
      * @param ev click event 
      */
     @FXML
@@ -151,7 +158,6 @@ public class MainControl {
                 Parent results = resultsFXML.load();
                 stage.setScene(new Scene(results));
                 ((ResultsControl) resultsFXML.getController()).addSelectedCity(this.selectedCity);
-                System.out.println("change");
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
@@ -195,19 +201,17 @@ public class MainControl {
                                 latitudes.add(commune.getLatitude());
                                 longitudes.add(commune.getLongitude());
 
-                                // if(gridProps.getChildren().size() < 5) {
-                                    //Add a proposal in popup
-                                    Label cityNameLabel = new Label(commune.getNomCommune());
-                                    cityNameLabel.getStyleClass().add("cityNameLabel");
-                                    Pane cityNamePane = new Pane(cityNameLabel);
-                                    cityNamePane.getStyleClass().add("cityNamePane");
-                                    cityNamePane.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
-                                    cityNamePane.setOnMouseEntered(popupMouseEventHandler);
-                                    cityNamePane.setOnMouseExited(popupMouseEventHandler);
-                                    cityNamePane.setOnMouseClicked(popupMouseEventHandler);
+                                //Add a proposal in popup
+                                Label cityNameLabel = new Label(commune.getNomCommune());
+                                cityNameLabel.getStyleClass().add("cityNameLabel");
+                                Pane cityNamePane = new Pane(cityNameLabel);
+                                cityNamePane.getStyleClass().add("cityNamePane");
+                                cityNamePane.getStylesheets().add(getClass().getResource("/com/brestats/files/style.css").toExternalForm());
+                                cityNamePane.setOnMouseEntered(popupMouseEventHandler);
+                                cityNamePane.setOnMouseExited(popupMouseEventHandler);
+                                cityNamePane.setOnMouseClicked(popupMouseEventHandler);
 
-                                    gridProps.add(cityNamePane, 0, gridProps.getChildren().size());
-                                // }
+                                gridProps.add(cityNamePane, 0, gridProps.getChildren().size());
                             }
                             //Place markers on the map (see src/resources/com/brestats/files/script.js)
                             engine.executeScript("setMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) + ")");
@@ -256,16 +260,20 @@ public class MainControl {
 
     }
 
+    /**
+     * Handle a double click on the map. Called from Main.fxml
+     * @param ev A mouse event
+     */
     @FXML
     public void handleMapDoubleClick(MouseEvent ev) {
         if(ev.getButton().equals(MouseButton.PRIMARY)) {
             if(ev.getClickCount() == 2) { //if doubled clicked on map
-                handleSearch(ev);
+                handleSearch(ev); //start the research
             }
         }
     } 
 
-
+    /* A class represeting all the popup features, like selecting city label with cursor or arrow keys */
     private class PopupMouseEventHandler implements EventHandler<MouseEvent> {
         private ArrayList<Commune> cities;
         private int coloredLabelInd = 0;
