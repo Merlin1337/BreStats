@@ -1,4 +1,4 @@
-package com.brestats.model.data;
+package com.brestats.control;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

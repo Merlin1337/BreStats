@@ -113,7 +113,7 @@
                                        </HBox.margin>
                                     </Label>
                                     <HBox alignment="CENTER" styleClass="ville">
-                                       <Label text="Rennes" />
+                                       <Label text="&lt;Aucune commune sélectionnée&gt;" fx:id="city1"/>
                                     </HBox>
                                  </children>
                               </HBox>
@@ -125,7 +125,7 @@
                                        </HBox.margin>
                                     </Label>
                                     <HBox alignment="CENTER" styleClass="ville">
-                                       <Label text="Vannes" />
+                                       <Label text="&lt;Aucune commune sélectionnée&gt;" fx:id="city2" />
                                     </HBox>
                                  </children>
                               </HBox>
@@ -138,7 +138,7 @@
 
                                     </Label>
                                     <HBox alignment="CENTER" styleClass="ville">
-                                       <Label text="Jugon-les-Lacs-Commune-Nouvelle" />
+                                       <Label text="&lt;Aucune commune sélectionnée&gt;" fx:id="city3" />
                                     </HBox>
                                  </children>
                               </HBox>
@@ -150,7 +150,7 @@
                                        </HBox.margin>
                                     </Label>
                                     <HBox alignment="CENTER" styleClass="ville">
-                                       <Label text="Tresboeuf" />
+                                       <Label text="&lt;Aucune commune sélectionnée&gt;" fx:id="city4" />
                                     </HBox>
                                  </children>
                               </HBox>

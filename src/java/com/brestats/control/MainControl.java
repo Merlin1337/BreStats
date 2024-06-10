@@ -9,7 +9,6 @@ import java.util.List;
 import com.brestats.model.dao.DAO;
 import com.brestats.model.dao.DBCommune;
 import com.brestats.model.data.Commune;
-import com.brestats.model.data.MapCoordinates;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -32,6 +31,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.GridPane;
@@ -128,7 +128,6 @@ public class MainControl {
 
         coords.getLatitudeProperty().addListener(listener);
         coords.getLongitudeProperty().addListener(listener);
-
     }
 
     /**
@@ -151,13 +150,13 @@ public class MainControl {
                 FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
                 Parent results = resultsFXML.load();
                 stage.setScene(new Scene(results));
-                ((ResultsControl) resultsFXML.getController()).setSelectedCity(this.selectedCity);
+                ((ResultsControl) resultsFXML.getController()).addSelectedCity(this.selectedCity);
                 System.out.println("change");
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
         } else { //if no city is selected, meaning search bar is empty, show an alert window
-            Alert errorAlert = new Alert(AlertType.ERROR, "Please enter the name of a city.", ButtonType.OK);
+            Alert errorAlert = new Alert(AlertType.ERROR, "Please enter at least 3 characters for the name of a city.", ButtonType.OK);
             errorAlert.show();
         }
     }
@@ -254,7 +253,17 @@ public class MainControl {
                 }
             });
         }
+
     }
+
+    @FXML
+    public void handleMapDoubleClick(MouseEvent ev) {
+        if(ev.getButton().equals(MouseButton.PRIMARY)) {
+            if(ev.getClickCount() == 2) { //if doubled clicked on map
+                handleSearch(ev);
+            }
+        }
+    } 
 
 
     private class PopupMouseEventHandler implements EventHandler<MouseEvent> {

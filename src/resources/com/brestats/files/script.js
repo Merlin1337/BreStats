@@ -3,6 +3,8 @@ var markers = new Array();
 var lat = 48.2; 
 var lon = -3.0; 
 var map = null;
+var blueColoredMarker = null;
+var canPlaceMarker = true;
 
 var greyMarker = new L.icon({
     iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png",
@@ -29,12 +31,15 @@ function setMarkers(latitudes, longitudes) {
             markers.push(marker)
             marker.addTo(map)
             marker.on("mouseover", function(ev) {
-                console.log(ev)
-                markers.forEach(element => {
-                    setGreyMarker(element.getLatLng().lat, element.getLatLng().lng)
-                });
+                canPlaceMarker = false
+
+                setGreyMarker(blueColoredMarker.getLatLng().lat, blueColoredMarker.getLatLng().lng)
                 setBlueMarker(this.getLatLng().lat, this.getLatLng().lng)
                 invoke.receiveCoordinates(this.getLatLng().lat, this.getLatLng().lng)
+            })
+
+            marker.on("mouseout", function(ev) {
+                canPlaceMarker = true;
             })
         }
     }
@@ -43,7 +48,7 @@ function setMarkers(latitudes, longitudes) {
 function setGreyMarker(lat, lng) {
     var i = 0;
     var trouve = false;
-    while(i < markers.length || !trouve) {
+    while(i < markers.length && !trouve) {
         if(markers[i].getLatLng().lat == lat && markers[i].getLatLng().lng == lng) {
             trouve = true;
             markers[i].setIcon(greyMarker);
@@ -55,10 +60,11 @@ function setGreyMarker(lat, lng) {
 function setBlueMarker(lat, lng) {
     var i = 0;
     var trouve = false;
-    while(i < markers.length || !trouve) {
+    while(i < markers.length && !trouve) {
         if(markers[i].getLatLng().lat == lat && markers[i].getLatLng().lng == lng) {
             trouve = true;
             markers[i].setIcon(blueMarker);
+            blueColoredMarker = markers[i]
         }
         i++;
     }
@@ -71,14 +77,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }).addTo(map);
 
     map.addEventListener("click", function(ev) {
-        console.log(ev.latlng.lat, ev.latlng.lng)
-        markers.forEach(element => {
-            map.removeLayer(element)
-        });
-        markers = new Array()
-        
-        markers.push(new L.marker(ev.latlng))
-        markers[0].addTo(map)
-        invoke.receiveCoordinates(ev.latlng.lat, ev.latlng.lng)
+        if(canPlaceMarker) {
+            console.log(ev.latlng.lat, ev.latlng.lng)
+            markers.forEach(element => {
+                map.removeLayer(element)
+            });
+            markers = new Array()
+            
+            markers.push(new L.marker(ev.latlng))
+            markers[0].addTo(map)
+            invoke.receiveCoordinates(ev.latlng.lat, ev.latlng.lng)
+        }
     })
 })
