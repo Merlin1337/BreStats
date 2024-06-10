@@ -1,5 +1,6 @@
 package com.brestats.control;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,13 +147,15 @@ public class MainControl {
             } else { //else keep the window as stage (see window heritage tree)
                 stage = (Stage) window;
             }
-
-            FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
-            Parent results = resultsFXML.getRoot();
-            stage.setScene(new Scene(results));
-            
-            ((ResultsControl) resultsFXML.getController()).setSelectedCity(this.selectedCity);
-            System.out.println("change");
+            try {
+                FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
+                Parent results = resultsFXML.load();
+                stage.setScene(new Scene(results));
+                ((ResultsControl) resultsFXML.getController()).setSelectedCity(this.selectedCity);
+                System.out.println("change");
+            } catch(IOException ex) {
+                ex.printStackTrace();
+            }
         } else { //if no city is selected, meaning search bar is empty, show an alert window
             Alert errorAlert = new Alert(AlertType.ERROR, "Please enter the name of a city.", ButtonType.OK);
             errorAlert.show();
