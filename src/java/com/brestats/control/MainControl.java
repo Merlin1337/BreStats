@@ -63,6 +63,7 @@ public class MainControl {
     private DBCommune dbCom;
     private Commune selectedCity;
     private PopupMouseEventHandler popupMouseEventHandler;
+    private ArrayList<Commune> previousSelectedCities;
 
     /**
      * Construct the controller by initialising attributes
@@ -74,7 +75,18 @@ public class MainControl {
         this.selectedCity = null;
         this.scrollPane = new ScrollPane();
         this.gridProps = new GridPane(); //Grid pane used in seachProps
+        this.previousSelectedCities = new ArrayList<Commune>();
     }
+
+    /**
+     * Setter for the previousSelectedCities attributes, representing cities sent by ResultsControl
+     * @param cities The selected cities' array list
+     */
+    public void setPreviousSelectedCities(ArrayList<Commune> cities) {
+        if(cities != null) {
+            this.previousSelectedCities = cities;
+        }
+    } 
 
     /**
      * Initialize all needed attributes and listeners. Called when the view is loaded.
@@ -107,6 +119,18 @@ public class MainControl {
                 if(newV.equals(State.SUCCEEDED)) {
                     JSObject window = (JSObject) engine.executeScript("window");
                     window.setMember("invoke", coords);
+
+                    engine.executeScript("addMapClickListener()"); //to activate the placement of markers by clicking on the map
+
+                    //Sets red markers at the position of received cities from ResultsControl
+                    ArrayList<Double> latitudes = new ArrayList<Double>();
+                    ArrayList<Double> longitudes = new ArrayList<Double>();
+                    for(Commune city : previousSelectedCities) {
+                        latitudes.add(city.getLatitude());
+                        longitudes.add(city.getLongitude());
+                    }
+
+                    engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) +")");
                 }
             }
         });
@@ -157,7 +181,13 @@ public class MainControl {
                 FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
                 Parent results = resultsFXML.load();
                 stage.setScene(new Scene(results));
-                ((ResultsControl) resultsFXML.getController()).addSelectedCity(this.selectedCity);
+                ResultsControl control = (ResultsControl) resultsFXML.getController();
+
+                for(Commune commune : this.previousSelectedCities) {
+                    control.addSelectedCity(commune);
+                }
+
+                control.addSelectedCity(selectedCity);
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
@@ -186,10 +216,21 @@ public class MainControl {
         } else if(!ignoredKeysArray.contains(ev.getCode()) && !ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown()) { //else search with new query
             Platform.runLater(new Runnable() { //To get the new search, otherwise we get the previous one
                 public void run() {
-                    String searchQuery = searchBar.getText();
-                    if(searchQuery.length() >= 3) { //From 3 characters, to avoid too big query results
+                    if(searchBar.getText().length() >= 3) { //From 3 characters, to avoid too big query results
+                        String previousSelectedCitiesString = "(";
+                        for (int i = 0 ; i < previousSelectedCities.size()-1 ; i++) {
+                            previousSelectedCitiesString += previousSelectedCities.get(i).getId() + ",";
+                        }
+                        if(previousSelectedCities.size() > 0) {
+                            previousSelectedCitiesString += previousSelectedCities.get(previousSelectedCities.size()-1).getId() + ")";
+                        } else {
+                            previousSelectedCitiesString += "0)"; //No city have an id of 0, so all will be returned
+                        }
+
+                        String searchQuery = "SELECT * FROM commune WHERE (nomCommune LIKE '" + searchBar.getText() + "%' OR idCommune LIKE '" + searchBar.getText() + "%') AND idCommune NOT IN " + previousSelectedCitiesString + ";";
+
                         try {
-                            ArrayList<Commune> res = dbCom.selectQuery("SELECT * FROM commune WHERE nomCommune LIKE '" + searchQuery + "%' OR idCommune LIKE '" + searchQuery + "%';");
+                            ArrayList<Commune> res = dbCom.selectQuery(searchQuery);
                             ArrayList<Double> latitudes = new ArrayList<Double>();
                             ArrayList<Double> longitudes = new ArrayList<Double>();
                             gridProps.getChildren().clear(); //reset search proposals
@@ -239,22 +280,6 @@ public class MainControl {
                         searchProps.hide();
                     }
                 }
-
-                private String transformToJavascriptArray(ArrayList<Double> arr) {
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("[");
-
-                    for (Double db : arr) {
-                        sb.append(db.toString()).append(", ");
-                    }
-
-                    if (sb.length() > 1)
-                        sb.replace(sb.length() - 2, sb.length(), "");
-
-                    sb.append("]");
-
-                    return sb.toString();
-                }
             });
         }
 
@@ -272,6 +297,22 @@ public class MainControl {
             }
         }
     } 
+
+    private String transformToJavascriptArray(ArrayList<Double> arr) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+
+        for (Double db : arr) {
+            sb.append(db.toString()).append(", ");
+        }
+
+        if (sb.length() > 1)
+            sb.replace(sb.length() - 2, sb.length(), "");
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
     /* A class represeting all the popup features, like selecting city label with cursor or arrow keys */
     private class PopupMouseEventHandler implements EventHandler<MouseEvent> {

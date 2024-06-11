@@ -1,4 +1,5 @@
 var markers = new Array();
+var redMarkers = new Array();
 
 var lat = 48.2; 
 var lon = -3.0; 
@@ -13,6 +14,11 @@ var greyMarker = new L.icon({
 
 var blueMarker = new L.icon({
     iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png"
+})
+
+var redMarker = new L.icon({
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
     shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png"
 })
 
@@ -45,6 +51,15 @@ function setMarkers(latitudes, longitudes) {
     }
 }
 
+function setRedMarkers(latitudes, longitudes) {
+    for(var i = 0 ; i < latitudes.length ; i++) {
+        var marker = new L.marker(L.latLng(latitudes[i], longitudes[i]), {icon: redMarker})
+
+        redMarkers.push(marker)
+        marker.addTo(map)
+    }
+}
+
 function setGreyMarker(lat, lng) {
     var i = 0;
     var trouve = false;
@@ -70,12 +85,7 @@ function setBlueMarker(lat, lng) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    map = L.map('mapDiv').setView([lat, lon], 8);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    }).addTo(map);
-
+function addMapClickListener() {
     map.addEventListener("click", function(ev) {
         if(canPlaceMarker) {
             console.log(ev.latlng.lat, ev.latlng.lng)
@@ -89,4 +99,13 @@ document.addEventListener("DOMContentLoaded", function() {
             invoke.receiveCoordinates(ev.latlng.lat, ev.latlng.lng)
         }
     })
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    map = L.map('mapDiv').setView([lat, lon], 8);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    
 })

@@ -2,17 +2,26 @@ package com.brestats.control;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.brestats.model.data.Commune;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 /**
@@ -21,42 +30,55 @@ import javafx.stage.Stage;
  */
 public class ResultsControl {
     @FXML
-    private Label city1;
+    private GridPane cityLabelsGrid;
     @FXML
-    private Label city2;
+    private WebView webView;
     @FXML
-    private Label city3;
-    @FXML
-    private Label city4;
+    private Button addNewCity;
 
+    private WebEngine engine;
     private ArrayList<Commune> selectedCities;
     private ArrayList<Label> cityLabels;
 
     public ResultsControl() {
-        this.selectedCities = new ArrayList<Commune>(Arrays.asList(null, null, null, null));
+        this.selectedCities = new ArrayList<Commune>();
     }
 
     @FXML
     public void initialize() {
-        this.cityLabels = new ArrayList<Label>(Arrays.asList(city1, city2, city3, city4));
+        this.cityLabels = new ArrayList<Label>();
 
-        for (int i = 0 ; i < 4 ; i++) {
-            Commune city = this.selectedCities.get(i);
-            if(city != null) {
-                this.cityLabels.get(i).setText(city.getNomCommune());
-            } else {
-                this.cityLabels.get(i).setText("<Aucune commune sélectionnée>");
+        this.engine = this.webView.getEngine();
+
+        this.engine.load(getClass().getResource("/com/brestats/files/map.html").toString());
+        this.engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+            @Override
+            public void changed(ObservableValue<? extends State> obs, State oldV, State newV) {
+                if(newV.equals(State.SUCCEEDED)) {
+                    engine.executeScript("map.setZoom(7.5)");
+
+                    ArrayList<Double> latitudes = new ArrayList<Double>();
+                    ArrayList<Double> longitudes = new ArrayList<Double>();
+                    for(Commune city : selectedCities) {
+                        latitudes.add(city.getLatitude());
+                        longitudes.add(city.getLongitude());
+                    }
+
+                    engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) +")");
+                }
             }
-        }
+        });
     }
 
     @FXML
-    public void handleBack(MouseEvent ev) {
+    public void handleAddNewCity(ActionEvent ev) {
         try {
-            Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Main.fxml"));
+            FXMLLoader mainView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Main.fxml"));
+            Parent main = mainView.load();
             Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
             stage.setScene(new Scene(main));
-            System.out.println("change");
+            
+            ((MainControl) mainView.getController()).setPreviousSelectedCities(selectedCities);
         } catch(IOException ex) {
             System.out.println("Cannot change scene");
             ex.printStackTrace();
@@ -66,10 +88,36 @@ public class ResultsControl {
     public void addSelectedCity(Commune city) {
         this.selectedCities.add(city);
 
-        int i = 0;
-        while(i < this.selectedCities.size() && this.selectedCities.get(i) != null) {
-            i++;
+        BorderPane borderPane = new BorderPane();
+        Label numLabel = new Label(Integer.toString(this.cityLabels.size()+1));
+        Label cityName = new Label(city.getNomCommune());
+        HBox labelBox = new HBox(numLabel, cityName);
+
+        numLabel.getStyleClass().add("numero");
+        cityName.getStyleClass().add("ville");
+        labelBox.setSpacing(15);
+        borderPane.setCenter(labelBox);
+
+        cityName.setAlignment(Pos.CENTER);
+        labelBox.setAlignment(Pos.CENTER);
+
+        this.cityLabelsGrid.add(borderPane, 0, this.cityLabels.size());
+        this.cityLabels.add(cityName);
+    }
+
+    private String transformToJavascriptArray(ArrayList<Double> arr) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+
+        for (Double db : arr) {
+            sb.append(db.toString()).append(", ");
         }
-        this.cityLabels.get(i).setText(city.getNomCommune());
+
+        if (sb.length() > 1)
+            sb.replace(sb.length() - 2, sb.length(), "");
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }
