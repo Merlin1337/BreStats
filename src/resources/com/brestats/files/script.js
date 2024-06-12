@@ -19,7 +19,8 @@ var blueMarker = new L.icon({
 
 var redMarker = new L.icon({
     iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png"
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconAnchor: L.point(12, 41)
 })
 
 function setMarkers(latitudes, longitudes) {
@@ -52,6 +53,12 @@ function setMarkers(latitudes, longitudes) {
 }
 
 function setRedMarkers(latitudes, longitudes) {
+    redMarkers.forEach(element => {
+        map.removeLayer(element)
+        console.log("removed")
+    });
+    redMarkers = new Array()
+
     for(var i = 0 ; i < latitudes.length ; i++) {
         var marker = new L.marker(L.latLng(latitudes[i], longitudes[i]), {icon: redMarker})
 

@@ -1,5 +1,8 @@
 package com.brestats.model.dao;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import com.brestats.exceptions.IncorectConstructorArguments;
 import com.brestats.model.data.Annee;
 import com.brestats.model.data.Commune;
@@ -50,16 +53,16 @@ public class DBValeursCommuneAnnee extends DBObject<DonneesAnnuelles> {
 
         if(args.length == 10) {
             try {
-                Commune com = this.dbCom.getItem(args[0]);
-                Annee annee = this.dbAnnee.getItem(args[1]);
+                Annee annee = this.dbAnnee.getItem(args[0]);
+                Commune com = this.dbCom.getItem(args[1]);
                 int nbMaison = Integer.parseInt(args[2]);
-                int nbAppart = Integer.parseInt(args[2]);
-                double prixMoyen = Double.parseDouble(args[2]);
-                double prixM2Moyen = Double.parseDouble(args[2]);
-                double surfaceMoy = Double.parseDouble(args[2]);
-                double depCulturellesTotales = Double.parseDouble(args[2]);
-                double budgetTotal = Double.parseDouble(args[2]);
-                double pop = Double.parseDouble(args[2]);
+                int nbAppart = Integer.parseInt(args[3]);
+                double prixMoyen = Double.parseDouble(args[4]);
+                double prixM2Moyen = Double.parseDouble(args[5]);
+                double surfaceMoy = Double.parseDouble(args[6]);
+                double depCulturellesTotales = Double.parseDouble(args[7]);
+                double budgetTotal = Double.parseDouble(args[8]);
+                double pop = Double.parseDouble(args[9]);
 
                 ret = new DonneesAnnuelles(com, annee, nbMaison, nbAppart, prixMoyen, prixM2Moyen, surfaceMoy, depCulturellesTotales, budgetTotal, pop);
                 
@@ -95,6 +98,52 @@ public class DBValeursCommuneAnnee extends DBObject<DonneesAnnuelles> {
      */
     public String getTable() {
         return "donneesannuelles";
+    }
+
+    /**
+     * Caculate and return a {@code DonneesAnnuelles} object with average of all available years for given city. This object has an {@link Annee} object with 0 in its both fields.
+     * @param city the wanted city to get its data
+     * @return A {@code DonneesAnnuelles} object with average of data
+     */
+    public DonneesAnnuelles getAverageItemByCity(Commune city) {
+        DonneesAnnuelles data = new DonneesAnnuelles(city, new Annee(0,0));
+        try {
+            ArrayList<DonneesAnnuelles> res = this.selectQuery("SELECT * FROM donneesannuelles WHERE laCommune = " + city.getId() + ";");
+
+            int nbMaison = 0;
+            int nbAppart = 0;
+            double prixMoyen = 0;
+            double prixM2Moyen = 0;
+            double surfaceMoyenne = 0;
+            double depCulturelTotales = 0;
+            double budgetTotal = 0;
+            double population = 0;
+
+            for(DonneesAnnuelles item : res) {
+                nbMaison += item.getNbMaison();
+                nbAppart += item.getNbAppart();
+                prixMoyen += item.getPrixMoyen();
+                prixM2Moyen += item.getPrixM2Moyen();
+                surfaceMoyenne += item.getSurfaceMoyenne();
+                depCulturelTotales += item.getDepCulturelTotales();
+                budgetTotal += item.getBudgetTotal();
+                population += item.getPopulation();
+            }
+
+            data.setNbMaison(nbMaison/res.size());
+            data.setNbAppart(nbAppart/res.size());
+            data.setPrixMoyen(prixMoyen/res.size());
+            data.setPrixM2Moyen(prixM2Moyen/res.size());
+            data.setSurfaceMoyenne(surfaceMoyenne/res.size());
+            data.setDepCulturelTotales(depCulturelTotales/res.size());
+            data.setBudgetTotal(budgetTotal/res.size());
+            data.setPopulation(population/res.size());
+        } catch(SQLException e) {
+            System.out.println("Unexpected exception with query : SELECT * FROM donneesannuelles WHERE laCommune = " + city.getId() + "; \nReturn null.");
+            e.printStackTrace();
+        }
+
+        return data;
     }
 
     /**

@@ -94,6 +94,7 @@ public abstract class DBObject<T extends Model>  {
             String[] args = new String[result.getMetaData().getColumnCount()];
             for(int i = 1 ; i <= args.length ; i++) {
                 args[i-1] = result.getString(i);
+                // System.out.println(args[i-1]);
             }
 
             try {

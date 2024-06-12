@@ -69,12 +69,12 @@
                      <content>
                         <AnchorPane prefHeight="338.0" prefWidth="582.0">
                            <children>
-                              <TableView prefHeight="200.0" prefWidth="475.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TableView fx:id="tableView" prefHeight="200.0" prefWidth="475.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columns>
-                                    <TableColumn prefWidth="114.0" text="Nom" />
-                                    <TableColumn prefWidth="151.0" text="Nombre d'habitants" />
-                                    <TableColumn prefWidth="229.0" text="Indice de facilité de transport" />
-                                    <TableColumn prefWidth="87.0" text="Prix au m2" />
+                                    <TableColumn fx:id="cityNameCol" prefWidth="114.0" text="Nom" />
+                                    <TableColumn fx:id="popCol" prefWidth="151.0" text="Nombre d'habitants moyen" />
+                                    <TableColumn fx:id="transportCol" prefWidth="229.0" text="Indice de facilité de transport" />
+                                    <TableColumn fx:id="m2CostCol" prefWidth="87.0" text="Prix au m2" />
                                  </columns>
                               </TableView>
                            </children>

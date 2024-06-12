@@ -33,20 +33,7 @@ public class DonneesAnnuelles implements Model {
      * @throws NullPointerException if any of the {@code annee} or {@code com} parameters are null
      */
     public DonneesAnnuelles(Commune com, Annee annee) {
-        if(annee == null || com == null) {
-            throw new NullPointerException("null values");
-        }
-
-        this.lAnnee = annee;
-        this.laCom = com;
-        this.nbMaison = 0;
-        this.nbAppart = 0;
-        this.prixMoyen = 0;
-        this.prixM2Moyen = 0;
-        this.surfaceMoyenne = 0;
-        this.depCulturelTotales = 0;
-        this.budgetTotal = 0;
-        this.population = 0;
+        this(com, annee, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     /**
@@ -66,7 +53,7 @@ public class DonneesAnnuelles implements Model {
      */
     public DonneesAnnuelles(Commune com, Annee annee, int nbMaisons, int nbAppart, double prixMoyen, double prixM2Moyen, double surfaceMoy, double depCulturellesTotales, double budgetTotal, double pop) {
         if(com == null || annee == null) {
-            throw new NullPointerException("null values");
+            throw new NullPointerException("null values : " + com + ";" + annee + ";" + nbMaisons + ";" + nbAppart + ";" + prixMoyen + ";" + prixM2Moyen + ";" + surfaceMoy + ";" +depCulturellesTotales + ";" + budgetTotal + ";" + pop);
         }
 
         this.laCom = com;
@@ -280,11 +267,11 @@ public class DonneesAnnuelles implements Model {
     }
 
     /**
-     * Calculates the average surface area per habitation.
+     * Calculates the average surface area per inhabitant.
      *
      * @return the average surface area per habitation
      */
-    public double calculerSurfaceMoyenneParHabitation() {
+    public double calculerSurfaceMoyenneParHabitant() {
         return this.surfaceMoyenne / this.population;
     }
 
