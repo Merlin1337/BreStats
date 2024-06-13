@@ -21,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -67,40 +68,11 @@ public class ResultsControl {
     private ArrayList<DonneesAnnuelles> averageCityData;
     private ArrayList<Label> cityLabels;
     private ArrayList<TableData> tableRows;
-    private ObservableList<Series<String, Double>> seriesList;
-    private Series<String, Double> populationSeries;
-    private Series<String, Double> housesSeries;
-    private Series<String, Double> apartementSeries;
-    private Series<String, Double> costSeries;
-    private Series<String, Double> m2CostSeries;
-    private Series<String, Double> surfaceSeries;
-    private Series<String, Double> spendingSeries;
-    private Series<String, Double> budgetSeries;
 
     public ResultsControl() {
         this.selectedCities = new ArrayList<Commune>();
         this.averageCityData = new ArrayList<DonneesAnnuelles>();
         this.tableRows = new ArrayList<TableData>();
-
-        this.populationSeries = new Series<String, Double>();
-        this.housesSeries = new Series<String, Double>();
-        this.apartementSeries = new Series<String, Double>();
-        this.costSeries = new Series<String, Double>();
-        this.m2CostSeries = new Series<String, Double>();
-        this.surfaceSeries = new Series<String, Double>();
-        this.spendingSeries = new Series<String, Double>();
-        this.budgetSeries = new Series<String, Double>();
-
-        this.populationSeries.setName("Population");
-        this.housesSeries.setName("Nombre de maisons");
-        this.apartementSeries.setName("Nombre d'appartements");
-        this.costSeries.setName("Prix moyen");
-        this.m2CostSeries.setName("Prix moyen du m²");
-        this.surfaceSeries.setName("Surface moyenne");
-        this.spendingSeries.setName("Dépenses culturelles");
-        this.budgetSeries.setName("Budget moyen");
-
-        this.seriesList = FXCollections.observableList(List.of(populationSeries, housesSeries, apartementSeries, costSeries, m2CostSeries, surfaceSeries, spendingSeries, budgetSeries));
     }
 
     @FXML
@@ -128,6 +100,7 @@ public class ResultsControl {
             }
         });
 
+        this.averageChart.setLegendSide(Side.LEFT);
         this.averageChart.setAnimated(true);
         // this.evolutionChart.setAnimated(true);
     }
@@ -245,45 +218,35 @@ public class ResultsControl {
         // averageChart.setData(FXCollections.observableList(List.of(new Series<String, Double>("category", FXCollections.observableList(List.of(column))))));
 
         //Average chart (re)loading
-        ArrayList<Data<String, Double>> popDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> housesDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> apartsDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> costDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> m2CostDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> surfaceDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> spendingsDataList = new ArrayList<Data<String, Double>>();
-        ArrayList<Data<String, Double>> budgetDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Series<String, Double>> citySeriesList = new ArrayList<>();
+
+        String population = "population";
+        String houses = "Nombre de maisons";
+        String aparts = "Nombre d'appartements";
+        String cost = "Coût moyen";
+        String m2Cost = "Coût du m² moyen";
+        String surface = "Surface moyenne";
+        String spendings = "Dépenses culturelles";
+        String budget = "Budget moyen";
 
         for (TableData data : this.tableRows) {
-            Data<String, Double> popBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getPopulation()));
-            Data<String, Double> housesBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getHouses()));
-            Data<String, Double> apartsBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getApartments()));
-            Data<String, Double> costBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getCost()));
-            Data<String, Double> m2CostBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getM2Cost()));
-            Data<String, Double> surfaceBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getSurface()));
-            Data<String, Double> spendingsBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getSpendings()));
-            Data<String, Double> budgetBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getBudget()));
+            Series<String, Double> city = new Series<>();
+            city.setName(data.getName());
 
-            popDataList.add(popBarData);
-            housesDataList.add(housesBarData);
-            apartsDataList.add(apartsBarData);
-            costDataList.add(costBarData);
-            m2CostDataList.add(m2CostBarData);
-            surfaceDataList.add(surfaceBarData);
-            spendingsDataList.add(spendingsBarData);
-            budgetDataList.add(budgetBarData);
+            Data<String, Double> popBarData = new Data<String, Double>(population, Double.parseDouble(data.getPopulation()));
+            Data<String, Double> housesBarData = new Data<String, Double>(houses, Double.parseDouble(data.getHouses()));
+            Data<String, Double> apartsBarData = new Data<String, Double>(aparts, Double.parseDouble(data.getApartments()));
+            Data<String, Double> costBarData = new Data<String, Double>(cost, Double.parseDouble(data.getCost()));
+            Data<String, Double> m2CostBarData = new Data<String, Double>(m2Cost, Double.parseDouble(data.getM2Cost()));
+            Data<String, Double> surfaceBarData = new Data<String, Double>(surface, Double.parseDouble(data.getSurface()));
+            Data<String, Double> spendingsBarData = new Data<String, Double>(spendings, Double.parseDouble(data.getSpendings()));
+            Data<String, Double> budgetBarData = new Data<String, Double>(budget, Double.parseDouble(data.getBudget()));
+
+            city.setData(FXCollections.observableList(List.of(popBarData, housesBarData, apartsBarData, costBarData, m2CostBarData, surfaceBarData, spendingsBarData, budgetBarData)));
+            citySeriesList.add(city);
         }
 
-        this.populationSeries.setData(FXCollections.observableList(popDataList));
-        this.housesSeries.setData(FXCollections.observableList(housesDataList));
-        this.apartementSeries.setData(FXCollections.observableList(apartsDataList));
-        this.costSeries.setData(FXCollections.observableList(costDataList));
-        this.m2CostSeries.setData(FXCollections.observableList(m2CostDataList));
-        this.surfaceSeries.setData(FXCollections.observableList(surfaceDataList));
-        this.spendingSeries.setData(FXCollections.observableList(spendingsDataList));
-        this.budgetSeries.setData(FXCollections.observableList(budgetDataList));
-
-        this.averageChart.setData(seriesList);
+        this.averageChart.setData(FXCollections.observableList(citySeriesList));
     }
 
     private String transformToJavascriptArray(ArrayList<Double> arr) {
