@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -18,7 +22,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
+<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
    <top>
       <GridPane prefHeight="116.0" prefWidth="1171.0" BorderPane.alignment="CENTER">
          <columnConstraints>
@@ -54,83 +58,102 @@
       </GridPane>
    </top>
    <center>
-      <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <ScrollPane hbarPolicy="NEVER" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER">
+      <GridPane alignment="CENTER" BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1080.800048828125" minWidth="10.0" prefWidth="575.8" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="703.7999572753906" minWidth="10.0" prefWidth="595.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="570.0000244140625" minHeight="10.0" prefHeight="344.400048828125" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="339.599951171875" minHeight="10.0" prefHeight="339.599951171875" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+               <tabs>
+                  <Tab closable="false" text="Moyenne">
                      <content>
-                        <AnchorPane prefHeight="338.0" prefWidth="582.0">
-                           <children>
-                              <TableView fx:id="tableView" prefHeight="200.0" prefWidth="475.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <columns>
-                                    <TableColumn fx:id="cityNameCol" prefWidth="114.0" text="Nom" />
-                                    <TableColumn fx:id="popCol" prefWidth="151.0" text="Nombre d'habitants moyen" />
-                                    <TableColumn fx:id="transportCol" prefWidth="229.0" text="Indice de facilité de transport" />
-                                    <TableColumn fx:id="m2CostCol" prefWidth="87.0" text="Prix au m2" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
+                        <BarChart fx:id="averageChart" legendSide="RIGHT" titleSide="BOTTOM">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </BarChart>
                      </content>
-                  </ScrollPane>
-                  <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
-               </children>
-            </GridPane>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <PieChart GridPane.rowIndex="1" />
-                  <ScrollPane hbarPolicy="NEVER" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER">
+                  </Tab>
+                  <Tab closable="false" text="Evolution">
                      <content>
-                        <AnchorPane>
-                           <children>
-                              <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="339.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <center>
-                                    <GridPane fx:id="cityLabelsGrid" alignment="CENTER" prefWidth="579.0" vgap="20.0" BorderPane.alignment="CENTER">
-                                       <columnConstraints>
-                                          <ColumnConstraints />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints />
-                                       </rowConstraints>
-                                    </GridPane>
-                                 </center>
-                                 <top>
-                                    <Label styleClass="rankTitle" text="Classement des villes comparées" BorderPane.alignment="CENTER">
-                                       <BorderPane.margin>
-                                          <Insets bottom="20.0" top="20.0" />
-                                       </BorderPane.margin>
-                                    </Label>
-                                 </top>
-                                 <bottom>
-                                    <Button fx:id="addNewCityButton" mnemonicParsing="false" onAction="#handleAddNewCity" text="Ajouter une autre ville" BorderPane.alignment="CENTER">
-                                       <BorderPane.margin>
-                                          <Insets bottom="20.0" top="20.0" />
-                                       </BorderPane.margin>
-                                    </Button>
-                                 </bottom>
-                              </BorderPane>
-                           </children>
-                        </AnchorPane>
+                        <LineChart fx:id="EvolutionChart" legendSide="RIGHT" titleSide="BOTTOM">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+            <AnchorPane GridPane.columnIndex="1">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <center>
+                              <GridPane fx:id="cityLabelsGrid" alignment="CENTER" hgap="20.0" vgap="20.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints />
+                                 </rowConstraints>
+                              </GridPane>
+                           </center>
+                           <top>
+                              <Label styleClass="rankTitle" text="Villes comparées" BorderPane.alignment="CENTER">
+                                 <BorderPane.margin>
+                                    <Insets bottom="20.0" top="20.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </top>
+                           <bottom>
+                              <Button fx:id="addNewCity" mnemonicParsing="false" onAction="#handleAddNewCity" text="Ajouter une ville" BorderPane.alignment="CENTER">
+                                 <BorderPane.margin>
+                                    <Insets bottom="20.0" top="20.0" />
+                                 </BorderPane.margin>
+                              </Button>
+                           </bottom>
+                        </BorderPane>
                      </content>
                   </ScrollPane>
                </children>
-            </GridPane>
-         </items>
-      </SplitPane>
+            </AnchorPane>
+            <AnchorPane GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="0.800000011920929" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <TableView fx:id="tableView" prefHeight="326.0" prefWidth="962.0">
+                           <columns>
+                              <TableColumn fx:id="cityNameCol" prefWidth="114.0" text="Nom" />
+                              <TableColumn fx:id="transportCol" prefWidth="90.4000244140625" text="Départment" />
+                              <TableColumn fx:id="popCol" prefWidth="132.79998779296875" text="Nombre d'habitants" />
+                              <TableColumn fx:id="m2CostCol" prefWidth="110.39990234375" text="Maisons vendues " />
+                              <TableColumn prefWidth="101.60006713867188" text="Appartements vendus" />
+                              <TableColumn prefWidth="95.199951171875" text="Prix Moyen" />
+                              <TableColumn prefWidth="75.0" text="Prix au m² moyen" />
+                              <TableColumn prefWidth="75.0" text="Surface moyenne" />
+                              <TableColumn prefWidth="75.0" text="Dépenses culturelles" />
+                              <TableColumn prefWidth="75.0" text="Budget" />
+                           </columns>
+                        </TableView>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+            <WebView fx:id="webView" prefHeight="200.0" prefWidth="205.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+         </children>
+      </GridPane>
    </center>
 </BorderPane>

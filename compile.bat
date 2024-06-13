@@ -13,7 +13,7 @@ setlocal enabledelayedexpansion
 REM Trouve tous les fichiers .java et les ajoute à FILE_LIST
 for /r "%BASE_DIR%" %%f in (*.java) do (
     echo %%f
-    set "FILE_LIST=!FILE_LIST! %%f"
+    set "FILE_LIST=!FILE_LIST! "%%f""
 )
 
 REM Active l'expansion des variables différée

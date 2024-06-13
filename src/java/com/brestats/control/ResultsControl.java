@@ -2,6 +2,7 @@ package com.brestats.control;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.brestats.model.dao.DAO;
 import com.brestats.model.dao.DBValeursCommuneAnnee;
@@ -23,6 +24,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -51,24 +56,51 @@ public class ResultsControl {
     private Button addNewCity;
     @FXML
     private TableView<TableData> tableView;
-    @FXML
-    private TableColumn<TableData, String> cityNameCol;
-    @FXML
-    private TableColumn<TableData, String> popCol;
-    @FXML
-    private TableColumn<TableData, String> transportCol;
-    @FXML
-    private TableColumn<TableData, String> m2CostCol;
+    @FXML 
+    private BarChart<String, Double> averageChart;
+    // @FXML
+    // private LineChart evolutionChart;
 
     private DBValeursCommuneAnnee dbValeursCommuneAnnee = DAO.DB_VAL;
     private WebEngine engine;
     private ArrayList<Commune> selectedCities;
     private ArrayList<DonneesAnnuelles> averageCityData;
     private ArrayList<Label> cityLabels;
+    private ArrayList<TableData> tableRows;
+    private ObservableList<Series<String, Double>> seriesList;
+    private Series<String, Double> populationSeries;
+    private Series<String, Double> housesSeries;
+    private Series<String, Double> apartementSeries;
+    private Series<String, Double> costSeries;
+    private Series<String, Double> m2CostSeries;
+    private Series<String, Double> surfaceSeries;
+    private Series<String, Double> spendingSeries;
+    private Series<String, Double> budgetSeries;
 
     public ResultsControl() {
         this.selectedCities = new ArrayList<Commune>();
         this.averageCityData = new ArrayList<DonneesAnnuelles>();
+        this.tableRows = new ArrayList<TableData>();
+
+        this.populationSeries = new Series<String, Double>();
+        this.housesSeries = new Series<String, Double>();
+        this.apartementSeries = new Series<String, Double>();
+        this.costSeries = new Series<String, Double>();
+        this.m2CostSeries = new Series<String, Double>();
+        this.surfaceSeries = new Series<String, Double>();
+        this.spendingSeries = new Series<String, Double>();
+        this.budgetSeries = new Series<String, Double>();
+
+        this.populationSeries.setName("Population");
+        this.housesSeries.setName("Nombre de maisons");
+        this.apartementSeries.setName("Nombre d'appartements");
+        this.costSeries.setName("Prix moyen");
+        this.m2CostSeries.setName("Prix moyen du m²");
+        this.surfaceSeries.setName("Surface moyenne");
+        this.spendingSeries.setName("Dépenses culturelles");
+        this.budgetSeries.setName("Budget moyen");
+
+        this.seriesList = FXCollections.observableList(List.of(populationSeries, housesSeries, apartementSeries, costSeries, m2CostSeries, surfaceSeries, spendingSeries, budgetSeries));
     }
 
     @FXML
@@ -95,6 +127,9 @@ public class ResultsControl {
                 }
             }
         });
+
+        this.averageChart.setAnimated(true);
+        // this.evolutionChart.setAnimated(true);
     }
 
     @FXML
@@ -103,7 +138,7 @@ public class ResultsControl {
             FXMLLoader mainView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Main.fxml"));
             Parent main = mainView.load();
             Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
-            stage.setScene(new Scene(main));
+            stage.setScene(new Scene(main, ((Node) ev.getSource()).getScene().getWidth(), ((Node) ev.getSource()).getScene().getHeight()));
             
             ((MainControl) mainView.getController()).setPreviousSelectedCities(selectedCities);
         } catch(IOException ex) {
@@ -113,15 +148,21 @@ public class ResultsControl {
     }
     
     public void addSelectedCity(Commune city) {
+        DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
+        TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(), data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(), data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
+
         this.createCityLabel(city);
 
         this.selectedCities.add(city);
-        this.averageCityData.add(this.dbValeursCommuneAnnee.getAverageItemByCity(city));
+        this.averageCityData.add(data);
+
+        this.tableRows.add(row);
 
         refreshTable();
+        refreshCharts();
     } 
 
-    private void createCityLabel(Commune city) {
+    public void createCityLabel(Commune city) {
         BorderPane borderPane = new BorderPane();
         Label numLabel = new Label(Integer.toString(this.cityLabels.size()+1));
         Label cityName = new Label(city.getNomCommune());
@@ -150,7 +191,7 @@ public class ResultsControl {
         this.cityLabels.add(cityName);
     }
 
-    private void reloadView() {
+    public void reloadView() {
         this.cityLabelsGrid.getChildren().clear();
         this.averageCityData.clear();
         this.cityLabels.clear();
@@ -173,45 +214,76 @@ public class ResultsControl {
         engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) +")");
     }
 
-    private void refreshTable() {
+    public void refreshTable() {
         ObservableList<TableData> dataList = FXCollections.observableArrayList();
 
         this.tableView.getItems().clear();
 
-        for (DonneesAnnuelles data : this.averageCityData) {
-            // double easinessTransport = 
-
-            TableData row = new TableData(data.getLaCom().getNomCommune(), data.getPopulation(), 0, 0);
+        for (TableData row : this.tableRows) {
             dataList.add(row);
+            
+            ArrayList<TableColumn<TableData, String>> columns = new ArrayList<TableColumn<TableData, String>>();
+            for (TableColumn<TableData, ?> column : this.tableView.getColumns()) {
+                columns.add((TableColumn<TableData, String>) column);
+            }
 
-            // this.cityNameCol.setCellValueFactory(new PropertyValueFactory<TableData, String>(row.getNameProperty().getName()));
-            // this.popCol.setCellValueFactory(new PropertyValueFactory<TableData, String>(row.getPopulationProperty().getName()));
-            // this.transportCol.setCellValueFactory(new PropertyValueFactory<TableData, String>(row.getEasinessTransportProperty().getName()));
-            // this.m2CostCol.setCellValueFactory(new PropertyValueFactory<TableData, String>(row.getM2CostProperty().getName()));
-
-            this.cityNameCol.setCellValueFactory(new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(CellDataFeatures<TableData,String> d) {
-                    return d.getValue().getNameProperty();
-                }
-            });
-            this.popCol.setCellValueFactory(new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(CellDataFeatures<TableData,String> d) {
-                    return d.getValue().getPopulationProperty();
-                }
-            });
-            this.transportCol.setCellValueFactory(new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(CellDataFeatures<TableData,String> d) {
-                    return d.getValue().getEasinessTransportProperty();
-                }
-            });
-            this.m2CostCol.setCellValueFactory(new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(CellDataFeatures<TableData,String> d) {
-                    return d.getValue().getM2CostProperty();
-                }
-            });
+            for(int i = 0 ; i < columns.size() ; i++) {
+                int ind = i; //Cannot use i in anonymous class, because it must be at least effectively final
+                columns.get(i).setCellValueFactory(new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(CellDataFeatures<TableData, String> p) {
+                        return p.getValue().getProperties().get(ind);
+                    }
+                });
+            }
         }
         this.tableView.setItems(dataList);
 
+    }
+
+    public void refreshCharts() {
+        // Data<String, Double> column = new Data<String, Double>("test", Double.valueOf(20));
+        // averageChart.setData(FXCollections.observableList(List.of(new Series<String, Double>("category", FXCollections.observableList(List.of(column))))));
+
+        //Average chart (re)loading
+        ArrayList<Data<String, Double>> popDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> housesDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> apartsDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> costDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> m2CostDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> surfaceDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> spendingsDataList = new ArrayList<Data<String, Double>>();
+        ArrayList<Data<String, Double>> budgetDataList = new ArrayList<Data<String, Double>>();
+
+        for (TableData data : this.tableRows) {
+            Data<String, Double> popBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getPopulation()));
+            Data<String, Double> housesBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getHouses()));
+            Data<String, Double> apartsBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getApartments()));
+            Data<String, Double> costBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getCost()));
+            Data<String, Double> m2CostBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getM2Cost()));
+            Data<String, Double> surfaceBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getSurface()));
+            Data<String, Double> spendingsBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getSpendings()));
+            Data<String, Double> budgetBarData = new Data<String, Double>(data.getName(), Double.parseDouble(data.getBudget()));
+
+            popDataList.add(popBarData);
+            housesDataList.add(housesBarData);
+            apartsDataList.add(apartsBarData);
+            costDataList.add(costBarData);
+            m2CostDataList.add(m2CostBarData);
+            surfaceDataList.add(surfaceBarData);
+            spendingsDataList.add(spendingsBarData);
+            budgetDataList.add(budgetBarData);
+        }
+
+        this.populationSeries.setData(FXCollections.observableList(popDataList));
+        this.housesSeries.setData(FXCollections.observableList(housesDataList));
+        this.apartementSeries.setData(FXCollections.observableList(apartsDataList));
+        this.costSeries.setData(FXCollections.observableList(costDataList));
+        this.m2CostSeries.setData(FXCollections.observableList(m2CostDataList));
+        this.surfaceSeries.setData(FXCollections.observableList(surfaceDataList));
+        this.spendingSeries.setData(FXCollections.observableList(spendingsDataList));
+        this.budgetSeries.setData(FXCollections.observableList(budgetDataList));
+
+        this.averageChart.setData(seriesList);
     }
 
     private String transformToJavascriptArray(ArrayList<Double> arr) {
@@ -232,52 +304,75 @@ public class ResultsControl {
 
 
     private class TableData {
+        private List<StringProperty> properties;
         private StringProperty name;
+        private StringProperty dep;
         private StringProperty population;
-        private StringProperty easinessTransport;
+        private StringProperty houses;
+        private StringProperty apartments;
+        private StringProperty cost;
         private StringProperty m2Cost;
+        private StringProperty surface;
+        private StringProperty spendings;
+        private StringProperty budget;
 
-        public TableData(String name, double pop, double transport, double m2Cost) {
-            this(name, Double.toString(pop), Double.toString(transport), Double.toString(m2Cost));
+        public TableData(String name, String dep, double pop, double houses, double apartments, double cost, double m2Cost, double surface, double spendings, double budget) {
+            this(name, dep, Double.toString(pop), Double.toString(houses), Double.toString(apartments), Double.toString(cost), Double.toString(m2Cost), Double.toString(surface), Double.toString(spendings), Double.toString(budget));
         }
 
-        public TableData(String name, String pop, String transport, String m2Cost) {
+        public TableData(String name, String dep, String pop, String houses, String apartments, String cost, String m2Cost, String surface, String spendings, String budget) {
             this.name = new SimpleStringProperty(name);
+            this.dep = new SimpleStringProperty(dep);
             this.population = new SimpleStringProperty(pop);
-            this.easinessTransport = new SimpleStringProperty(transport);
+            this.houses = new SimpleStringProperty(houses);
+            this.apartments = new SimpleStringProperty(apartments);
+            this.cost = new SimpleStringProperty(cost);
             this.m2Cost = new SimpleStringProperty(m2Cost);
+            this.surface = new SimpleStringProperty(surface);
+            this.spendings = new SimpleStringProperty(spendings);
+            this.budget = new SimpleStringProperty(budget);
+
+            this.properties = List.of(this.name, this.dep, this.population, this.houses, this.apartments, this.cost, this.m2Cost, this.surface, this.spendings, this.budget);
         }
 
-        public StringProperty getNameProperty() {
-            return this.name;
+        public List<StringProperty> getProperties() {
+            return this.properties;
         }
 
-        public StringProperty getPopulationProperty() {
-            return this.population;
+        public String getName() {
+            return this.name.get();
         }
 
-        public StringProperty getEasinessTransportProperty() {
-            return this.easinessTransport;
+        public String getPopulation() {
+            return this.population.get();
         }
 
-        public StringProperty getM2CostProperty() {
-            return this.m2Cost;
-        } 
+        public String getHouses() {
+            return this.houses.get();
+        }
 
-        // public String getName() {
-        //     return this.name.get();
-        // }
+        public String getApartments() {
+            return this.apartments.get();
+        }
 
-        // public String getPopulation() {
-        //     return this.population.get();
-        // }
+        public String getCost() {
+            return this.cost.get();
+        }
 
-        // public String getEasinessTransport() {
-        //     return this.easinessTransport.get();
-        // }
+        public String getM2Cost() {
+            return this.m2Cost.get();
+        }
 
-        // public String getM2Cost() {
-        //     return this.m2Cost.get();
-        // }
+        public String getSurface() {
+            return this.surface.get();
+        }
+
+        public String getSpendings() {
+            return this.spendings.get();
+        }
+
+        public String getBudget() {
+            return this.budget.get();
+        }
     }
 }

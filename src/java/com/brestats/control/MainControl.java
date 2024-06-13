@@ -180,7 +180,7 @@ public class MainControl {
             try {
                 FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
                 Parent results = resultsFXML.load();
-                stage.setScene(new Scene(results));
+                stage.setScene(new Scene(results, ((Node) ev.getSource()).getScene().getWidth(), ((Node) ev.getSource()).getScene().getHeight()));
                 ResultsControl control = (ResultsControl) resultsFXML.getController();
 
                 for(Commune commune : this.previousSelectedCities) {
