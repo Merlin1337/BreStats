@@ -18,7 +18,7 @@ public class App extends Application  {
         primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
 
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(false);
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
