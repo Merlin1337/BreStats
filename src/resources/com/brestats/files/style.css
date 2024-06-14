@@ -109,6 +109,40 @@
 
 }
 
+
+.tab-pane .tab {
+    -fx-background-radius: 10; /* Rounded corners */
+    -fx-background-color: #dddddd; /* Light background color for the tab */
+    -fx-padding: 5; /* Padding inside the tab */
+    -fx-border-color: transparent; /* Remove default border */
+}
+
+.tab-pane .tab-label {
+    -fx-font-size: 10pt; /* Bigger text */
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333; /* Text color */
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: #bbbbbb; /* Background color when hovered */
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #858585; /* Background color when selected */
+    -fx-border-color: transparent; /* Remove default border */
+    -fx-border-width: 0; /* Ensure no border width */
+    -fx-background-insets: 0; /* Remove any background insets */
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #ffffff; /* Text color when selected */
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-width: 0; /* Remove default focus indicator */
+}
+
+
 #userField, #passField {
     -fx-background-color: white; 
     -fx-border-color: white white black white;
@@ -136,5 +170,4 @@
     /* -fx-border: 10px; */
     -fx-border-radius: 2px;
     -fx-background-color: white;
-    
 }
