@@ -24,8 +24,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
-
-<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
+<!-- prefHeight="799.0" prefWidth="1171.0" -->
+<BorderPane  stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
    <top>
       <GridPane prefHeight="116.0" prefWidth="1171.0" BorderPane.alignment="CENTER">
          <columnConstraints>

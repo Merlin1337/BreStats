@@ -7,8 +7,8 @@
 <?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
-<BorderPane prefHeight="799.0" prefWidth="1171.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.MainControl">
+<!-- prefHeight="799.0" prefWidth="1171.0" -->
+<BorderPane  stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.MainControl">
    <top>
       <GridPane prefHeight="213.0" prefWidth="1525.0" BorderPane.alignment="CENTER">
         <columnConstraints>
