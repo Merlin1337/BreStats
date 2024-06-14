@@ -46,6 +46,7 @@ public abstract class DBObject<T extends Model>  {
      * Return an item from the list with its id in DB. If it already has been fetch from the database, the method look in the array, else query the database.
      * @param id the id in the DB
      * @return the ith element in the list
+     * @see Model#getId()
      */
     public T getItem(String id) {
         T item = null;
@@ -66,6 +67,8 @@ public abstract class DBObject<T extends Model>  {
                 ArrayList<T> res = this.selectQuery(query);
                 if(res.size() > 0) {
                     item = res.get(res.size()-1);
+                } else {
+                    throw new NullPointerException("No results with query : " + query);
                 }
             } catch(SQLException e) {
                 System.out.println("Unexpected exception with query : " + query);

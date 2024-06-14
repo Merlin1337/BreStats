@@ -87,6 +87,6 @@ public class Annee implements Model {
      */
     
     public String toString() {
-        return this.annee + " - " + (this.tauxInflation * 100) + "%";
+        return this.annee + " - " + this.tauxInflation + "%";
     }
 }

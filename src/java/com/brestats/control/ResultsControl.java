@@ -1,11 +1,15 @@
 package com.brestats.control;
 
+import java.sql.SQLException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import com.brestats.model.dao.DAO;
+import com.brestats.model.dao.DBAnnee;
 import com.brestats.model.dao.DBValeursCommuneAnnee;
+import com.brestats.model.data.Annee;
 import com.brestats.model.data.Commune;
 import com.brestats.model.data.DonneesAnnuelles;
 
@@ -59,10 +63,11 @@ public class ResultsControl {
     private TableView<TableData> tableView;
     @FXML 
     private BarChart<String, Double> averageChart;
-    // @FXML
-    // private LineChart evolutionChart;
+    @FXML
+    private LineChart<Double, Double> evolutionChart;
 
     private DBValeursCommuneAnnee dbValeursCommuneAnnee = DAO.DB_VAL;
+    private DBAnnee dbAnnee = DAO.DB_ANNEE;
     private WebEngine engine;
     private ArrayList<Commune> selectedCities;
     private ArrayList<DonneesAnnuelles> averageCityData;
@@ -81,7 +86,7 @@ public class ResultsControl {
 
         this.engine = this.webView.getEngine();
 
-        this.engine.load(getClass().getResource("/com/brestats/files/map.html").toString());
+        this.engine.load(getClass().getResource("/com/brestats/files/map.html").toExternalForm());
         this.engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
             @Override
             public void changed(ObservableValue<? extends State> obs, State oldV, State newV) {
@@ -101,8 +106,9 @@ public class ResultsControl {
         });
 
         this.averageChart.setLegendSide(Side.LEFT);
-        this.averageChart.setAnimated(true);
-        // this.evolutionChart.setAnimated(true);
+        this.averageChart.setAnimated(false);
+        this.evolutionChart.setLegendSide(Side.LEFT);
+        this.evolutionChart.setAnimated(false);
     }
 
     @FXML
@@ -176,6 +182,7 @@ public class ResultsControl {
         }
 
         refreshTable();
+        refreshCharts();
 
         ArrayList<Double> latitudes = new ArrayList<Double>();
         ArrayList<Double> longitudes = new ArrayList<Double>();
@@ -214,13 +221,10 @@ public class ResultsControl {
     }
 
     public void refreshCharts() {
-        // Data<String, Double> column = new Data<String, Double>("test", Double.valueOf(20));
-        // averageChart.setData(FXCollections.observableList(List.of(new Series<String, Double>("category", FXCollections.observableList(List.of(column))))));
-
         //Average chart (re)loading
         ArrayList<Series<String, Double>> citySeriesList = new ArrayList<>();
 
-        String population = "population";
+        String population = "Population";
         String houses = "Nombre de maisons";
         String aparts = "Nombre d'appartements";
         String cost = "Coût moyen";
@@ -247,6 +251,63 @@ public class ResultsControl {
         }
 
         this.averageChart.setData(FXCollections.observableList(citySeriesList));
+
+        
+        //Evolution chart (re)loading
+        HashMap<Annee, HashMap<Commune, ArrayList<Double>>> dataPerCityPerYear = new HashMap<>();
+        try {
+            ArrayList<Annee> years = dbAnnee.selectQuery("SELECT * FROM annee;");
+
+            for (Annee year : years) {
+                dataPerCityPerYear.put(year, new HashMap<>());
+
+                for (Commune city : this.selectedCities) {
+                    try {
+                        DonneesAnnuelles row = dbValeursCommuneAnnee.getItem(city.getId() + "-" + year.getId());
+                        ArrayList<Double> rowData = new ArrayList<>();
+
+                        rowData.add(row.getPopulation());
+                        rowData.add(Double.valueOf(row.getNbMaison()));
+                        rowData.add(Double.valueOf(row.getNbAppart()));
+                        rowData.add(row.getPrixMoyen());
+                        rowData.add(row.getPrixM2Moyen());
+                        rowData.add(row.getSurfaceMoyenne());
+                        rowData.add(row.getDepCulturelTotales());
+                        rowData.add(row.getBudgetTotal());
+
+                        dataPerCityPerYear.get(year).put(city, rowData);
+                    } catch (NullPointerException e) {
+                        //No result for this year and this city
+                    }
+                    
+                }
+            }
+        } catch(SQLException ex) {
+            System.out.println("Unexpected exception with query : SELECT * FROM annee;");
+            ex.printStackTrace();
+        }
+
+        Object[] yearTab = dataPerCityPerYear.keySet().toArray();
+        Annee year = null;
+        for (int i = 0 ; i < yearTab.length ; i++) {
+            if(((Annee) yearTab[i]).getAnnee() == 2023) {
+                year = (Annee) yearTab[i];
+            }
+        }
+
+        System.out.println(year);
+        Commune city = (Commune) dataPerCityPerYear.get(year).keySet().toArray()[0];
+        ArrayList<Double> dataRow =  dataPerCityPerYear.get(year).get(city);
+        ArrayList<Data<Double, Double>> data = new ArrayList<>();
+
+        for (Double point : dataRow) {
+            data.add(new Data<Double, Double>((double) year.getAnnee(), point));
+        }
+
+        ObservableList<Data<Double, Double>> dataList = FXCollections.observableList(data);
+        Series<Double, Double> serie = new Series<>(dataList);
+
+        this.evolutionChart.setData(FXCollections.observableList(List.of(serie)));
     }
 
     private String transformToJavascriptArray(ArrayList<Double> arr) {

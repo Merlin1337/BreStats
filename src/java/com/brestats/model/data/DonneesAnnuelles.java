@@ -69,7 +69,7 @@ public class DonneesAnnuelles implements Model {
     }
 
     /**
-     * Returns the identifier of the annual data, composed of the municipality ID and the year ID.
+     * Returns the identifier of the annual data, composed of the municipality ID and the year ID like "city-year".
      *
      * @return the identifier of the annual data
      */
