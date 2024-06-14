@@ -34,6 +34,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -62,6 +63,8 @@ public class ResultsControl {
     @FXML
     private Button addNewCity;
     @FXML
+    private GridPane selectShownCitiesGrid;
+    @FXML
     private TableView<TableData> tableView;
     @FXML
     private BarChart<String, Double> averageChart;
@@ -76,12 +79,14 @@ public class ResultsControl {
     private DBAnnee dbAnnee = DAO.DB_ANNEE;
     private WebEngine engine;
     private ArrayList<Commune> selectedCities;
+    private ArrayList<Commune> shownCities;
     private ArrayList<DonneesAnnuelles> averageCityData;
     private ArrayList<Label> cityLabels;
     private ArrayList<TableData> tableRows;
 
     public ResultsControl() {
         this.selectedCities = new ArrayList<Commune>();
+        this.shownCities = new ArrayList<Commune>();
         this.averageCityData = new ArrayList<DonneesAnnuelles>();
         this.tableRows = new ArrayList<TableData>();
     }
@@ -134,6 +139,11 @@ public class ResultsControl {
         }
     }
 
+    @FXML
+    public void handleSelectCheckBox(ActionEvent ev) {
+        
+    }
+
     public void addSelectedCity(Commune city) {
         DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
         TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
@@ -143,10 +153,12 @@ public class ResultsControl {
         this.createCityLabel(city);
 
         this.selectedCities.add(city);
+        this.shownCities.add(city);
         this.averageCityData.add(data);
 
         this.tableRows.add(row);
 
+        refreshSelectShownCitiesGrid();
         refreshTable();
         refreshCharts();
     }
@@ -170,6 +182,7 @@ public class ResultsControl {
         removeIcon.setOnMouseClicked(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent ev) {
                 selectedCities.remove(city);
+                shownCities.remove(city);
                 reloadView();
             }
         });
@@ -191,12 +204,16 @@ public class ResultsControl {
             this.createCityLabel(city);
             DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
             this.averageCityData.add(data);
-            TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
-                data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
-                data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
-            this.tableRows.add(row);
+            
+            if(this.shownCities.contains(city)) {
+                TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
+                    data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
+                    data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
+                this.tableRows.add(row);
+            }
         }
 
+        refreshSelectShownCitiesGrid();
         refreshTable();
         refreshCharts();
 
@@ -209,6 +226,34 @@ public class ResultsControl {
 
         engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + ","
                 + transformToJavascriptArray(longitudes) + ")");
+    }
+
+    public void refreshSelectShownCitiesGrid() {
+        this.selectShownCitiesGrid.getChildren().clear();
+
+        for (Commune city : this.selectedCities) {
+            CheckBox checkBox = new CheckBox(city.getNomCommune());
+            int checkBoxAmount = this.selectShownCitiesGrid.getChildren().size();
+
+            if(this.shownCities.contains(city)) {
+                checkBox.setSelected(true);
+            } else {
+                checkBox.setSelected(false);
+            }
+
+            checkBox.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent ev) {
+                    if(checkBox.isSelected()) {
+                        shownCities.add(city);
+                    } else {
+                        shownCities.remove(city);
+                    }
+                    reloadView();
+                }
+            });
+
+            this.selectShownCitiesGrid.add(checkBox, checkBoxAmount%2, checkBoxAmount/2);
+        }
     }
 
     public void refreshTable() {
@@ -245,12 +290,12 @@ public class ResultsControl {
         ArrayList<Series<String, Double>> citySeriesList = new ArrayList<>();
 
         String population = "Population";
-        String houses = "Nombre de maisons";
-        String aparts = "Nombre d'appartements";
+        String houses = "Nombre\nde maisons";
+        String aparts = "Nombre\nd'appartements";
         String cost = "Coût moyen";
-        String m2Cost = "Coût du m² moyen";
-        String surface = "Surface moyenne";
-        String spendings = "Dépenses culturelles";
+        String m2Cost = "Coût du\nm² moyen";
+        String surface = "Surface\nmoyenne";
+        String spendings = "Dépenses\nculturelles";
         String budget = "Budget moyen";
 
         for (TableData data : this.tableRows) {
@@ -283,7 +328,7 @@ public class ResultsControl {
             this.evolutionXAxis.setLowerBound((double) years.get(0).getAnnee() - 1);
             this.evolutionXAxis.setTickUnit(1);
 
-            for (Commune city : this.selectedCities) {
+            for (Commune city : this.shownCities) {
                 ArrayList<Data<Double, Double>> popArray = new ArrayList<>();
                 ArrayList<Data<Double, Double>> housesArray = new ArrayList<>();
                 ArrayList<Data<Double, Double>> apartsArray = new ArrayList<>();

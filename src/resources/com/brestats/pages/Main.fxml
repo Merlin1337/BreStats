@@ -43,7 +43,7 @@
             </BorderPane>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
-                  <TextField fx:id="searchBar" alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" onKeyPressed="#handleKeyPressed"/>
+                  <TextField fx:id="searchBar" id="searchBar" alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" onKeyPressed="#handleKeyPressed"/>
                   <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" fx:id="searchButton" onAction="#handleSearch">
                      <HBox.margin>
                         <Insets left="5.0" />

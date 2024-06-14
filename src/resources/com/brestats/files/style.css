@@ -1,5 +1,5 @@
 /* Search Bar */
-.text-field {
+#searchBar {
     -fx-background-color: white; 
     -fx-background-radius: 10px;
     -fx-border-color: #e5e7eb;
@@ -19,7 +19,7 @@
 
 }
 
-.text-field:focused {
+#searchBar:focused {
     -fx-border-color: #1f2937; 
     -fx-border-width: 1px;
     -fx-outline: none;
@@ -107,4 +107,34 @@
     -fx-padding: 5 13;
     -fx-background-radius: 20 20 20 20;
 
+}
+
+#userField, #passField {
+    -fx-background-color: white; 
+    -fx-border-color: white white black white;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 12px 12px 40px;
+    -fx-text-fill: #1f2937; 
+    -fx-font-size: 14px; 
+    -fx-prompt-text-fill: #9ca3af;
+    -fx-background-size: 20px 20px; /* Width and height */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 15px center; /* Adjust if needed */
+
+}
+
+#userField {
+    -fx-background-image: url("img/user-icon.png");
+}
+
+#passField {
+    -fx-background-image: url("img/lock-icon.png");
+}
+
+.check-box > .box {
+    -fx-border-color: black;
+    /* -fx-border: 10px; */
+    -fx-border-radius: 2px;
+    -fx-background-color: white;
+    
 }
