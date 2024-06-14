@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 import com.brestats.model.dao.DAO;
 import com.brestats.model.dao.DBAnnee;
@@ -31,6 +30,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
@@ -50,7 +50,9 @@ import javafx.util.Callback;
 
 /**
  * Controller of Results.fxml view
- * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ * 
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin
+ *         CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
  */
 public class ResultsControl {
     @FXML
@@ -61,10 +63,14 @@ public class ResultsControl {
     private Button addNewCity;
     @FXML
     private TableView<TableData> tableView;
-    @FXML 
+    @FXML
     private BarChart<String, Double> averageChart;
     @FXML
     private LineChart<Double, Double> evolutionChart;
+    @FXML
+    private NumberAxis evolutionXAxis;
+    @FXML
+    private NumberAxis evolutionYAxis;
 
     private DBValeursCommuneAnnee dbValeursCommuneAnnee = DAO.DB_VAL;
     private DBAnnee dbAnnee = DAO.DB_ANNEE;
@@ -90,17 +96,18 @@ public class ResultsControl {
         this.engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
             @Override
             public void changed(ObservableValue<? extends State> obs, State oldV, State newV) {
-                if(newV.equals(State.SUCCEEDED)) {
+                if (newV.equals(State.SUCCEEDED)) {
                     engine.executeScript("map.setZoom(7)");
 
                     ArrayList<Double> latitudes = new ArrayList<Double>();
                     ArrayList<Double> longitudes = new ArrayList<Double>();
-                    for(Commune city : selectedCities) {
+                    for (Commune city : selectedCities) {
                         latitudes.add(city.getLatitude());
                         longitudes.add(city.getLongitude());
                     }
 
-                    engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) +")");
+                    engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + ","
+                            + transformToJavascriptArray(longitudes) + ")");
                 }
             }
         });
@@ -116,19 +123,22 @@ public class ResultsControl {
         try {
             FXMLLoader mainView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Main.fxml"));
             Parent main = mainView.load();
-            Stage stage= (Stage) ((Node) ev.getSource ()).getScene ().getWindow ();
-            stage.setScene(new Scene(main, ((Node) ev.getSource()).getScene().getWidth(), ((Node) ev.getSource()).getScene().getHeight()));
-            
+            Stage stage = (Stage) ((Node) ev.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(main, ((Node) ev.getSource()).getScene().getWidth(),
+                    ((Node) ev.getSource()).getScene().getHeight()));
+
             ((MainControl) mainView.getController()).setPreviousSelectedCities(selectedCities);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             System.out.println("Cannot change scene");
             ex.printStackTrace();
         }
     }
-    
+
     public void addSelectedCity(Commune city) {
         DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
-        TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(), data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(), data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
+        TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
+                data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
+                data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
 
         this.createCityLabel(city);
 
@@ -139,13 +149,14 @@ public class ResultsControl {
 
         refreshTable();
         refreshCharts();
-    } 
+    }
 
     public void createCityLabel(Commune city) {
         BorderPane borderPane = new BorderPane();
-        Label numLabel = new Label(Integer.toString(this.cityLabels.size()+1));
+        Label numLabel = new Label(Integer.toString(this.cityLabels.size() + 1));
         Label cityName = new Label(city.getNomCommune());
-        ImageView removeIcon = new ImageView(getClass().getResource("/com/brestats/files/img/remove-icon.png").toExternalForm());
+        ImageView removeIcon = new ImageView(
+                getClass().getResource("/com/brestats/files/img/remove-icon.png").toExternalForm());
         HBox labelBox = new HBox(numLabel, cityName, removeIcon);
 
         numLabel.getStyleClass().add("numero");
@@ -174,11 +185,16 @@ public class ResultsControl {
         this.cityLabelsGrid.getChildren().clear();
         this.averageCityData.clear();
         this.cityLabels.clear();
+        this.tableRows.clear();
 
-
-        for(Commune city : this.selectedCities) {
+        for (Commune city : this.selectedCities) {
             this.createCityLabel(city);
-            this.averageCityData.add(this.dbValeursCommuneAnnee.getAverageItemByCity(city));
+            DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
+            this.averageCityData.add(data);
+            TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
+                data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
+                data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
+            this.tableRows.add(row);
         }
 
         refreshTable();
@@ -186,12 +202,13 @@ public class ResultsControl {
 
         ArrayList<Double> latitudes = new ArrayList<Double>();
         ArrayList<Double> longitudes = new ArrayList<Double>();
-        for(Commune city : selectedCities) {
+        for (Commune city : selectedCities) {
             latitudes.add(city.getLatitude());
             longitudes.add(city.getLongitude());
         }
 
-        engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + "," + transformToJavascriptArray(longitudes) +")");
+        engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + ","
+                + transformToJavascriptArray(longitudes) + ")");
     }
 
     public void refreshTable() {
@@ -201,19 +218,22 @@ public class ResultsControl {
 
         for (TableData row : this.tableRows) {
             dataList.add(row);
-            
+
             ArrayList<TableColumn<TableData, String>> columns = new ArrayList<TableColumn<TableData, String>>();
             for (TableColumn<TableData, ?> column : this.tableView.getColumns()) {
                 columns.add((TableColumn<TableData, String>) column);
             }
 
-            for(int i = 0 ; i < columns.size() ; i++) {
-                int ind = i; //Cannot use i in anonymous class, because it must be at least effectively final
-                columns.get(i).setCellValueFactory(new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(CellDataFeatures<TableData, String> p) {
-                        return p.getValue().getProperties().get(ind);
-                    }
-                });
+            for (int i = 0; i < columns.size(); i++) {
+                int ind = i; // Cannot use i in anonymous class, because it must be at least effectively
+                             // final
+                // Setting up data in columns by passing TableData's StringPropery attributes
+                columns.get(i).setCellValueFactory(
+                        new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
+                            public ObservableValue<String> call(CellDataFeatures<TableData, String> p) {
+                                return p.getValue().getProperties().get(ind);
+                            }
+                        });
             }
         }
         this.tableView.setItems(dataList);
@@ -221,7 +241,7 @@ public class ResultsControl {
     }
 
     public void refreshCharts() {
-        //Average chart (re)loading
+        // Average chart (re)loading
         ArrayList<Series<String, Double>> citySeriesList = new ArrayList<>();
 
         String population = "Population";
@@ -246,68 +266,72 @@ public class ResultsControl {
             Data<String, Double> spendingsBarData = new Data<String, Double>(spendings, Double.parseDouble(data.getSpendings()));
             Data<String, Double> budgetBarData = new Data<String, Double>(budget, Double.parseDouble(data.getBudget()));
 
-            city.setData(FXCollections.observableList(List.of(popBarData, housesBarData, apartsBarData, costBarData, m2CostBarData, surfaceBarData, spendingsBarData, budgetBarData)));
+            city.setData(FXCollections.observableList(List.of(popBarData, housesBarData, apartsBarData, costBarData,
+                    m2CostBarData, surfaceBarData, spendingsBarData, budgetBarData)));
             citySeriesList.add(city);
         }
 
         this.averageChart.setData(FXCollections.observableList(citySeriesList));
 
-        
-        //Evolution chart (re)loading
-        HashMap<Annee, HashMap<Commune, ArrayList<Double>>> dataPerCityPerYear = new HashMap<>();
+        // Evolution chart (re)loading
+        ArrayList<Series<Double, Double>> series = new ArrayList<>();
         try {
-            ArrayList<Annee> years = dbAnnee.selectQuery("SELECT * FROM annee;");
+            ArrayList<Annee> years = dbAnnee.selectQuery("SELECT DISTINCT annee.* FROM annee JOIN donneesannuelles ON lAnnee = annee ORDER BY annee;");
 
-            for (Annee year : years) {
-                dataPerCityPerYear.put(year, new HashMap<>());
+            this.evolutionXAxis.setAutoRanging(false);
+            this.evolutionXAxis.setUpperBound((double) years.get(years.size() - 1).getAnnee() + 1);
+            this.evolutionXAxis.setLowerBound((double) years.get(0).getAnnee() - 1);
+            this.evolutionXAxis.setTickUnit(1);
 
-                for (Commune city : this.selectedCities) {
-                    try {
-                        DonneesAnnuelles row = dbValeursCommuneAnnee.getItem(city.getId() + "-" + year.getId());
-                        ArrayList<Double> rowData = new ArrayList<>();
+            for (Commune city : this.selectedCities) {
+                ArrayList<Data<Double, Double>> popArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> housesArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> apartsArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> costArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> m2CostArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> surfaceArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> spendingsArray = new ArrayList<>();
+                ArrayList<Data<Double, Double>> budgetArray = new ArrayList<>();
 
-                        rowData.add(row.getPopulation());
-                        rowData.add(Double.valueOf(row.getNbMaison()));
-                        rowData.add(Double.valueOf(row.getNbAppart()));
-                        rowData.add(row.getPrixMoyen());
-                        rowData.add(row.getPrixM2Moyen());
-                        rowData.add(row.getSurfaceMoyenne());
-                        rowData.add(row.getDepCulturelTotales());
-                        rowData.add(row.getBudgetTotal());
+                for (Annee year : years) {
+                    DonneesAnnuelles row = this.dbValeursCommuneAnnee.getItem(city.getId() + "-" + year.getId());
 
-                        dataPerCityPerYear.get(year).put(city, rowData);
-                    } catch (NullPointerException e) {
-                        //No result for this year and this city
-                    }
-                    
+                    popArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPopulation()));
+                    housesArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbMaison()));
+                    apartsArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbAppart()));
+                    costArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixMoyen()));
+                    m2CostArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixM2Moyen()));
+                    surfaceArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getSurfaceMoyenne()));
+                    spendingsArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getDepCulturelTotales()));
+                    budgetArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getBudgetTotal()));
                 }
+
+                Series<Double, Double> popSeries = new Series<>(FXCollections.observableList(popArray));
+                Series<Double, Double> housesSeries = new Series<>(FXCollections.observableList(housesArray));
+                Series<Double, Double> apartSeries = new Series<>(FXCollections.observableList(apartsArray));
+                Series<Double, Double> costSeries = new Series<>(FXCollections.observableList(costArray));
+                Series<Double, Double> m2CostSeries = new Series<>(FXCollections.observableList(m2CostArray));
+                Series<Double, Double> surfaceSeries = new Series<>(FXCollections.observableList(surfaceArray));
+                Series<Double, Double> spendingsSeries = new Series<>(FXCollections.observableList(spendingsArray));
+                Series<Double, Double> budgetSeries = new Series<>(FXCollections.observableList(budgetArray));
+
+                popSeries.setName(city.getNomCommune() + " : Population");
+                housesSeries.setName(city.getNomCommune() + " : Nombre de maisons");
+                apartSeries.setName(city.getNomCommune() + " : Nombre d'appartements");
+                costSeries.setName(city.getNomCommune() + " : Prix moyen");
+                m2CostSeries.setName(city.getNomCommune() + " : Prix moyen du m²");
+                surfaceSeries.setName(city.getNomCommune() + " : Surface moyenne");
+                spendingsSeries.setName(city.getNomCommune() + " : Dépences culturelles");
+                budgetSeries.setName(city.getNomCommune() + " : Budget");
+
+                series.addAll(List.of(popSeries, housesSeries, apartSeries, costSeries, m2CostSeries, surfaceSeries, spendingsSeries, budgetSeries));
             }
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             System.out.println("Unexpected exception with query : SELECT * FROM annee;");
             ex.printStackTrace();
         }
 
-        Object[] yearTab = dataPerCityPerYear.keySet().toArray();
-        Annee year = null;
-        for (int i = 0 ; i < yearTab.length ; i++) {
-            if(((Annee) yearTab[i]).getAnnee() == 2023) {
-                year = (Annee) yearTab[i];
-            }
-        }
-
-        System.out.println(year);
-        Commune city = (Commune) dataPerCityPerYear.get(year).keySet().toArray()[0];
-        ArrayList<Double> dataRow =  dataPerCityPerYear.get(year).get(city);
-        ArrayList<Data<Double, Double>> data = new ArrayList<>();
-
-        for (Double point : dataRow) {
-            data.add(new Data<Double, Double>((double) year.getAnnee(), point));
-        }
-
-        ObservableList<Data<Double, Double>> dataList = FXCollections.observableList(data);
-        Series<Double, Double> serie = new Series<>(dataList);
-
-        this.evolutionChart.setData(FXCollections.observableList(List.of(serie)));
+        this.evolutionChart.setData(FXCollections.observableList(series));
     }
 
     private String transformToJavascriptArray(ArrayList<Double> arr) {
@@ -326,7 +350,6 @@ public class ResultsControl {
         return sb.toString();
     }
 
-
     private class TableData {
         private List<StringProperty> properties;
         private StringProperty name;
@@ -340,11 +363,15 @@ public class ResultsControl {
         private StringProperty spendings;
         private StringProperty budget;
 
-        public TableData(String name, String dep, double pop, double houses, double apartments, double cost, double m2Cost, double surface, double spendings, double budget) {
-            this(name, dep, Double.toString(pop), Double.toString(houses), Double.toString(apartments), Double.toString(cost), Double.toString(m2Cost), Double.toString(surface), Double.toString(spendings), Double.toString(budget));
+        public TableData(String name, String dep, double pop, double houses, double apartments, double cost,
+                double m2Cost, double surface, double spendings, double budget) {
+            this(name, dep, Double.toString(pop), Double.toString(houses), Double.toString(apartments),
+                    Double.toString(cost), Double.toString(m2Cost), Double.toString(surface),
+                    Double.toString(spendings), Double.toString(budget));
         }
 
-        public TableData(String name, String dep, String pop, String houses, String apartments, String cost, String m2Cost, String surface, String spendings, String budget) {
+        public TableData(String name, String dep, String pop, String houses, String apartments, String cost,
+                String m2Cost, String surface, String spendings, String budget) {
             this.name = new SimpleStringProperty(name);
             this.dep = new SimpleStringProperty(dep);
             this.population = new SimpleStringProperty(pop);
@@ -356,7 +383,8 @@ public class ResultsControl {
             this.spendings = new SimpleStringProperty(spendings);
             this.budget = new SimpleStringProperty(budget);
 
-            this.properties = List.of(this.name, this.dep, this.population, this.houses, this.apartments, this.cost, this.m2Cost, this.surface, this.spendings, this.budget);
+            this.properties = List.of(this.name, this.dep, this.population, this.houses, this.apartments, this.cost,
+                    this.m2Cost, this.surface, this.spendings, this.budget);
         }
 
         public List<StringProperty> getProperties() {

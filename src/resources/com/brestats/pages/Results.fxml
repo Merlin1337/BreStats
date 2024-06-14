@@ -68,7 +68,7 @@
             <RowConstraints maxHeight="339.599951171875" minHeight="10.0" prefHeight="339.599951171875" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+            <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                <tabs>
                   <Tab closable="false" text="Moyenne">
                      <content>
@@ -86,10 +86,10 @@
                      <content>
                         <LineChart fx:id="evolutionChart" legendSide="RIGHT" titleSide="BOTTOM">
                           <xAxis>
-                            <CategoryAxis side="BOTTOM" />
+                            <NumberAxis fx:id="evolutionXAxis" side="BOTTOM" />
                           </xAxis>
                           <yAxis>
-                            <NumberAxis side="LEFT" />
+                            <NumberAxis fx:id="evolutionYAxis" side="LEFT" />
                           </yAxis>
                         </LineChart>
                      </content>
@@ -152,7 +152,7 @@
                   </ScrollPane>
                </children>
             </AnchorPane>
-            <WebView fx:id="webView" prefHeight="200.0" prefWidth="205.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+            <WebView fx:id="webView" prefHeight="200.0" prefWidth="205.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
          </children>
       </GridPane>
    </center>
