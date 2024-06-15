@@ -217,6 +217,9 @@
                                  </BorderPane.margin>
                               </Button>
                            </bottom>
+                           <!-- <right>
+                              <Button mnemonicParsing="false" onAction="#testSnapshot" text="Button" BorderPane.alignment="CENTER" />
+                           </right> -->
                         </BorderPane>
                      </content>
                   </ScrollPane>
