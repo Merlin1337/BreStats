@@ -24,8 +24,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
+
 <!-- prefHeight="799.0" prefWidth="1171.0" -->
-<BorderPane  stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
+
+<BorderPane stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.ResultsControl">
    <top>
       <GridPane prefHeight="116.0" prefWidth="1171.0" BorderPane.alignment="CENTER">
          <columnConstraints>
@@ -87,6 +89,11 @@
                                           <Label styleClass="rankTitle" text="Villes affichées" />
                                        </children>
                                     </HBox>
+                                    <CheckBox fx:id="selectAllCities" mnemonicParsing="false" onAction="#handleSelectAllCities" selected="true" text="Tout sélectionner">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                     <AnchorPane>
                                        <children>
                                           <ScrollPane fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -119,20 +126,25 @@
                                           <Label styleClass="rankTitle" text="Données" />
                                        </children>
                                     </HBox>
+                                    <CheckBox fx:id="selectAllData" mnemonicParsing="false" onAction="#handleSelectAllData" selected="true" text="Tout sélectionner">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                     <AnchorPane>
                                        <children>
                                           <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="0.800000011920929" layoutY="0.7999954223632812" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <content>
-                                                <VBox spacing="20.0">
+                                                <VBox fx:id="dataCheckBoxes" spacing="20.0">
                                                    <children>
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Population" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Nombre de maisons" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Nombre d'appartements" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Prix moyen" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Prix moyen du m²" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Surface moyenne" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Dépenses culturelles" />
-                                                      <CheckBox mnemonicParsing="false" onAction="#handleSelectCheckBox" selected="true" text="Budget" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Population" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Nombre de maisons" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Nombre d'appartements" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Prix moyen" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Prix moyen du m²" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Surface moyenne" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Dépenses culturelles" />
+                                                      <CheckBox mnemonicParsing="false" selected="true" text="Budget moyen" />
                                                    </children>
                                                 </VBox>
                                              </content>

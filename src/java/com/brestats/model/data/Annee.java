@@ -3,23 +3,30 @@ package com.brestats.model.data;
 import com.brestats.model.Model;
 
 /**
- * The {@code Annee} class represents a year with specific attributes such as the year itself and the inflation rate.
- * It implements the {@code Model} interface and provides methods to access and manipulate its data.
+ * The {@code Annee} class represents a year with specific attributes such as
+ * the year itself and the inflation rate.
+ * It implements the {@code Model} interface and provides methods to access and
+ * manipulate its data.
  * 
- * <p>This class includes methods to get and set the year and inflation rate, determine if the year is a leap year, and return a string representation of the year.</p>
+ * <p>
+ * This class includes methods to get and set the year and inflation rate,
+ * determine if the year is a leap year, and return a string representation of
+ * the year.
+ * </p>
  * 
  * @see Model
  */
 public class Annee implements Model {
-
+    /** Year as int */
     private int annee;
+    /** Inflation rate associated with this year */
     private double tauxInflation;
 
     /**
      * Constructs a new {@code Annee} with the specified year and inflation rate.
      *
      * @param annee the year
-     * @param taux the inflation rate for the year
+     * @param taux  the inflation rate for the year
      */
     public Annee(int annee, double taux) {
         this.annee = annee;
@@ -85,7 +92,7 @@ public class Annee implements Model {
      *
      * @return a string representation of the year and the inflation rate
      */
-    
+
     public String toString() {
         return this.annee + " - " + this.tauxInflation + "%";
     }

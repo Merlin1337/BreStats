@@ -6,35 +6,49 @@ import java.util.Iterator;
 import com.brestats.model.Model;
 
 /**
- * The {@code Commune} class represents a city with specific attributes such as its ID, name, associated department, and neighboring cities.
- * It implements the {@code Model} interface and provides methods to access and manipulate its data.
+ * The {@code Commune} class represents a city with specific attributes such as
+ * its ID, name, associated department, and neighboring cities.
+ * It implements the {@code Model} interface and provides methods to access and
+ * manipulate its data.
  * 
- * <p>This class includes methods to get and set the city's ID, name, and department, manage its neighboring cities, and determine if it borders another department.</p>
+ * <p>
+ * This class includes methods to get and set the city's ID, name, and
+ * department, manage its neighboring cities, and determine if it borders
+ * another department.
+ * </p>
  * 
  * @see Model
  */
 public class Commune implements Model {
 
+    /** List of neighbours */
     private ArrayList<Commune> voisins;
+    /** The INSEE id of the city */
     private int idCommune;
+    /** the name of the city */
     private String nomCommune;
+    /** the Département in which is located the city */
     private Departement LeDep;
+    /** Latitude of the city */
     private double latitude;
+    /** Longitude of the city */
     private double longitude;
 
     /**
-     * Constructs a new {@code Commune} with the specified ID, name, department, neighboring cities, latitude and longitude.
+     * Constructs a new {@code Commune} with the specified ID, name, department,
+     * neighboring cities, latitude and longitude.
      *
-     * @param id the ID of the city
-     * @param nom the name of the city
-     * @param dep the department associated with the city
+     * @param id      the ID of the city
+     * @param nom     the name of the city
+     * @param dep     the department associated with the city
      * @param voisins the list of neighboring cities
-     * @param lat city's latitude
-     * @param lgn city's longitude
-     * @throws NullPointerException if any of the {@code nom}, {@code dep}, or {@code voisins} parameters are null
+     * @param lat     city's latitude
+     * @param lgn     city's longitude
+     * @throws NullPointerException if any of the {@code nom}, {@code dep}, or
+     *                              {@code voisins} parameters are null
      */
     public Commune(int id, String nom, Departement dep, ArrayList<Commune> voisins, double lat, double lgn) {
-        if(nom == null || dep == null || voisins == null) {
+        if (nom == null || dep == null || voisins == null) {
             throw new NullPointerException("null values");
         }
 
@@ -47,13 +61,15 @@ public class Commune implements Model {
     }
 
     /**
-     * Constructs a new {@code Commune} with the specified ID, name, department, and neighboring cities. Sets the latitude and the longitude to 0
+     * Constructs a new {@code Commune} with the specified ID, name, department, and
+     * neighboring cities. Sets the latitude and the longitude to 0
      *
-     * @param id the ID of the city
-     * @param nom the name of the city
-     * @param dep the department associated with the city
+     * @param id      the ID of the city
+     * @param nom     the name of the city
+     * @param dep     the department associated with the city
      * @param voisins the list of neighboring cities
-     * @throws NullPointerException if any of the {@code nom}, {@code dep}, or {@code voisins} parameters are null
+     * @throws NullPointerException if any of the {@code nom}, {@code dep}, or
+     *                              {@code voisins} parameters are null
      */
     public Commune(int id, String nom, Departement dep, ArrayList<Commune> voisins) {
         new Commune(id, nom, dep, voisins);
@@ -120,7 +136,7 @@ public class Commune implements Model {
      * @throws NullPointerException if the {@code dep} parameter is null
      */
     public void setDep(Departement dep) {
-        if(dep == null) {
+        if (dep == null) {
             throw new NullPointerException("dep is null");
         }
 
@@ -138,6 +154,7 @@ public class Commune implements Model {
 
     /**
      * Return the city's latitude
+     * 
      * @return latitude
      */
     public double getLatitude() {
@@ -146,6 +163,7 @@ public class Commune implements Model {
 
     /**
      * Return the city's longitude
+     * 
      * @return latitude
      */
     public double getLongitude() {
@@ -154,6 +172,7 @@ public class Commune implements Model {
 
     /**
      * Sets the city's latitude
+     * 
      * @param lat latitude
      */
     public void setLatitude(double lat) {
@@ -162,6 +181,7 @@ public class Commune implements Model {
 
     /**
      * Sets the city's longitude
+     * 
      * @param lgn latitude
      */
     public void setLongitude(double lgn) {
@@ -175,11 +195,11 @@ public class Commune implements Model {
      * @throws NullPointerException if the {@code c} parameter is null
      */
     public void ajouterVoisin(Commune c) {
-        if(c == null) {
+        if (c == null) {
             throw new NullPointerException("commune is null");
         }
 
-        if(!this.voisins.contains(c)) {
+        if (!this.voisins.contains(c)) {
             this.voisins.add(c);
             c.ajouterVoisin(this);
         }
@@ -188,15 +208,16 @@ public class Commune implements Model {
     /**
      * Determines if the city borders another department.
      *
-     * @return {@code true} if the city borders another department, {@code false} otherwise
+     * @return {@code true} if the city borders another department, {@code false}
+     *         otherwise
      */
     public boolean estBordureDep() {
         Iterator<Commune> it = this.voisins.iterator();
         boolean found = false;
 
-        while(it.hasNext() && !found) {
+        while (it.hasNext() && !found) {
             Commune com = it.next();
-            if(com.getDep().getIdDep() != this.getDep().getIdDep()) {
+            if (com.getDep().getIdDep() != this.getDep().getIdDep()) {
                 found = true;
             }
         }
@@ -208,11 +229,12 @@ public class Commune implements Model {
      * Determines if the city is a neighbor with another specified city.
      *
      * @param autreCom the other city to check
-     * @return {@code true} if the city is a neighbor with the specified city, {@code false} otherwise
+     * @return {@code true} if the city is a neighbor with the specified city,
+     *         {@code false} otherwise
      * @throws NullPointerException if the {@code autreCom} parameter is null
      */
     public boolean estVoisineAvec(Commune autreCom) {
-        if(autreCom == null) {
+        if (autreCom == null) {
             throw new NullPointerException("autreCom is null");
         }
 
@@ -220,7 +242,8 @@ public class Commune implements Model {
     }
 
     /**
-     * Returns a string representation of the city, including its ID, name, and associated department ID.
+     * Returns a string representation of the city, including its ID, name, and
+     * associated department ID.
      *
      * @return a string representation of the city
      */

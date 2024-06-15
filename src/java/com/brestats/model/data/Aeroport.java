@@ -3,29 +3,39 @@ package com.brestats.model.data;
 import com.brestats.model.Model;
 
 /**
- * The {@code Aeroport} class represents an airport with specific attributes such as its name, address, and associated department.
- * It implements the {@code Model} interface and provides methods to access and manipulate its data.
+ * The {@code Aeroport} class represents an airport with specific attributes
+ * such as its name, address, and associated department.
+ * It implements the {@code Model} interface and provides methods to access and
+ * manipulate its data.
  * 
- * <p>This class includes methods to get and set the airport's name, address, and department, as well as to return a string representation of the airport.</p>
+ * <p>
+ * This class includes methods to get and set the airport's name, address, and
+ * department, as well as to return a string representation of the airport.
+ * </p>
  * 
  * @see Model
  */
 public class Aeroport implements Model {
 
+    /** Département in which is located the airport */
     private Departement LeDep;
+    /** The name of the airport */
     private String nom;
+    /** The address of the airport */
     private String adresse;
 
     /**
-     * Constructs a new {@code Aeroport} with the specified name, address, and department.
+     * Constructs a new {@code Aeroport} with the specified name, address, and
+     * department.
      *
-     * @param nom the name of the airport
+     * @param nom     the name of the airport
      * @param adresse the address of the airport
-     * @param dep the department associated with the airport
-     * @throws NullPointerException if any of the {@code nom}, {@code adresse}, or {@code dep} parameters are null
+     * @param dep     the department associated with the airport
+     * @throws NullPointerException if any of the {@code nom}, {@code adresse}, or
+     *                              {@code dep} parameters are null
      */
     public Aeroport(String nom, String adresse, Departement dep) {
-        if(nom == null || adresse == null || dep == null) {
+        if (nom == null || adresse == null || dep == null) {
             throw new NullPointerException("A value is null");
         }
 
@@ -95,7 +105,7 @@ public class Aeroport implements Model {
      * @throws NullPointerException if the {@code dep} parameter is null
      */
     public void setDep(Departement dep) {
-        if(dep == null) {
+        if (dep == null) {
             throw new NullPointerException("dep is null");
         }
 
@@ -103,7 +113,8 @@ public class Aeroport implements Model {
     }
 
     /**
-     * Returns a string representation of the airport, including its name, address, and associated department ID.
+     * Returns a string representation of the airport, including its name, address,
+     * and associated department ID.
      *
      * @return a string representation of the airport
      */

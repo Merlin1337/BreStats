@@ -3,29 +3,38 @@ package com.brestats.model.data;
 import com.brestats.model.Model;
 
 /**
- * The {@code Departement} class represents a department with specific attributes such as its ID, name, and cultural investment for the year 2019.
- * It implements the {@code Model} interface and provides methods to access and manipulate its data.
+ * The {@code Departement} class represents a department with specific
+ * attributes such as its ID, name, and cultural investment for the year 2019.
+ * It implements the {@code Model} interface and provides methods to access and
+ * manipulate its data.
  * 
- * <p>This class includes methods to get and set the department's ID, name, and cultural investment, as well as to return a string representation of the department.</p>
+ * <p>
+ * This class includes methods to get and set the department's ID, name, and
+ * cultural investment, as well as to return a string representation of the
+ * department.
+ * </p>
  * 
  * @see Model
  */
 public class Departement implements Model {
-
+    /** The id (=number) of the Département */
     private int idDep;
+    /** The name of the Département */
     private String nomDep;
+    /** The sum of the cultural investments by the Département in 2019F */
     private double invesCulturel2019;
 
     /**
-     * Constructs a new {@code Departement} with the specified ID, name, and cultural investment.
+     * Constructs a new {@code Departement} with the specified ID, name, and
+     * cultural investment.
      *
-     * @param id the ID of the department
-     * @param nom the name of the department
+     * @param id    the ID of the department
+     * @param nom   the name of the department
      * @param inves the cultural investment of the department for the year 2019
      * @throws NullPointerException if the {@code nom} parameter is null
      */
     public Departement(int id, String nom, double inves) {
-        if(nom == null) {
+        if (nom == null) {
             throw new NullPointerException("null value");
         }
 
@@ -91,7 +100,8 @@ public class Departement implements Model {
     /**
      * Sets the cultural investment of the department for the year 2019.
      *
-     * @param invesCulturel2019 the new cultural investment of the department for the year 2019
+     * @param invesCulturel2019 the new cultural investment of the department for
+     *                          the year 2019
      */
     public void setInvesCulturel2019(double invesCulturel2019) {
         this.invesCulturel2019 = invesCulturel2019;

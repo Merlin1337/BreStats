@@ -12,19 +12,28 @@ import java.util.ArrayList;
 import com.brestats.exceptions.IncorectConstructorArguments;
 import com.brestats.model.Model;
 
-
 /**
- * This class uses the MySQL connector package to communicate with the database. <br>
- * It is the root of all subclasses, which handle each a table of the database (for example {@link com.brestats.model.dao.DBDepartement DBDepartement} can query the departement table). <br>
+ * This class uses the MySQL connector package to communicate with the database.
+ * <br>
+ * It is the root of all subclasses which handle each a table of the database
+ * (for example {@link com.brestats.model.dao.DBDepartement DBDepartement} can
+ * query the departement table). <br>
  * 
- * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ * @param <T> A class handling a table of the database
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin
+ *         CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
  */
-public abstract class DBObject<T extends Model>  {
+public abstract class DBObject<T extends Model> {
+    /** Constant for driver class name */
     private final String driverClassName = "com.mysql.cj.jdbc.Driver";
+    /** Constant for the database URL */
     private final String url = "jdbc:mysql://45.147.98.227:3306/brestats_db";
+    /** Constant for the database username */
     private final String username = "brestats_db";
+    /** Constant for the database password */
     private final String password = "Xb390cc!2";
-    
+
+    /** The connection to the database, using previous constants */
     private Connection con;
     /** Contains the constructed objects from table's data */
     protected ArrayList<T> list;
@@ -32,18 +41,20 @@ public abstract class DBObject<T extends Model>  {
     /**
      * Initiate the connection with the database
      */
-    public DBObject(){
+    public DBObject() {
         try {
             this.con = this.getConnection();
         } catch (SQLException ex) {
-            ex.printStackTrace ();
+            ex.printStackTrace();
         }
 
         this.list = new ArrayList<T>();
     }
 
     /**
-     * Return an item from the list with its id in DB. If it already has been fetch from the database, the method look in the array, else query the database.
+     * Return an item from the list with its id in DB. If it already has been fetch
+     * from the database, the method look in the array, else query the database.
+     * 
      * @param id the id in the DB
      * @return the ith element in the list
      * @see Model#getId()
@@ -52,28 +63,28 @@ public abstract class DBObject<T extends Model>  {
         T item = null;
         boolean isInList = false;
         int i = 0;
-        while(i < this.list.size() && !isInList) {
-            if(this.list.get(i).getId().equals(id)) {
+        while (i < this.list.size() && !isInList) {
+            if (this.list.get(i).getId().equals(id)) {
                 isInList = true;
                 item = this.list.get(i);
             }
             i++;
         }
 
-        if(!isInList) {
+        if (!isInList) {
             String query = null;
             try {
                 query = "SELECT * FROM " + this.getTable() + " " + this.getWhereClause(id) + ";";
                 ArrayList<T> res = this.selectQuery(query);
-                if(res.size() > 0) {
-                    item = res.get(res.size()-1);
+                if (res.size() > 0) {
+                    item = res.get(res.size() - 1);
                 } else {
                     throw new NullPointerException("No results with query : " + query);
                 }
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 System.out.println("Unexpected exception with query : " + query);
                 e.printStackTrace();
-            } catch(IllegalCallerException e) {
+            } catch (IllegalCallerException e) {
                 System.out.println("Unexpected exception with the method getSelectItemQuery(String)");
                 e.printStackTrace();
             }
@@ -83,7 +94,11 @@ public abstract class DBObject<T extends Model>  {
     }
 
     /**
-     * Send a select query to the database and return an arrayList of objects representing results. Query must return all necessary data to contruct the corresponding object. See the implementation of the {@link #constructor(String[])} in each subclass.
+     * Send a select query to the database and return an arrayList of objects
+     * representing results. Query must return all necessary data to contruct the
+     * corresponding object. See the implementation of the
+     * {@link #constructor(String[])} in each subclass.
+     * 
      * @param query The sql query
      * @return An array of constructed objects
      * @throws SQLException If a problem occur in the sql query
@@ -93,20 +108,20 @@ public abstract class DBObject<T extends Model>  {
         ResultSet result = statement.executeQuery();
         ArrayList<T> resultList = new ArrayList<T>();
 
-        while(result.next()) {
+        while (result.next()) {
             String[] args = new String[result.getMetaData().getColumnCount()];
-            for(int i = 1 ; i <= args.length ; i++) {
-                args[i-1] = result.getString(i);
+            for (int i = 1; i <= args.length; i++) {
+                args[i - 1] = result.getString(i);
                 // System.out.println(args[i-1]);
             }
 
             try {
                 T object = this.constructor(args);
                 resultList.add(object);
-                if(!this.list.contains(object)) {
+                if (!this.list.contains(object)) {
                     this.list.add(object);
                 }
-            } catch(IncorectConstructorArguments e) {
+            } catch (IncorectConstructorArguments e) {
                 e.printStackTrace();
             }
         }
@@ -116,13 +131,14 @@ public abstract class DBObject<T extends Model>  {
 
     /**
      * Send the prepared query in the {@link #insertQuery(Model)} method
+     * 
      * @param query the insert, update, or delete query
      */
     protected void executeQuery(String query) {
         try {
             Statement statement = this.con.createStatement();
             statement.executeUpdate(query);
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Unexpected exception");
             e.printStackTrace();
         }
@@ -130,6 +146,7 @@ public abstract class DBObject<T extends Model>  {
 
     /**
      * Send a delete query to the database from the {@code obj} argument's data.
+     * 
      * @param obj the obj used to send the query
      */
     public void deleteQuery(T obj) {
@@ -140,46 +157,53 @@ public abstract class DBObject<T extends Model>  {
         } catch (SQLException e) {
             System.out.println("Unexpected exception with query : " + query);
             e.printStackTrace();
-        } 
+        }
     }
 
     /**
      * Insert or update an element in the database from the obj param
+     * 
      * @param obj The object which will be converted and inserted in the database
      */
     public abstract void insertQuery(T obj);
 
     /**
      * Return the name of the table
+     * 
      * @return the table as String
      */
     public abstract String getTable();
 
     /**
-     * Return a constructed object from the query's result through a {@link String String[]} argument
-     * @param args The {@link String String[]} argument which contains all the required data to initiate the object
+     * Return a constructed object from the query's result through a {@link String
+     * String[]} argument
+     * 
+     * @param args The {@link String String[]} argument which contains all the
+     *             required data to initiate the object
      * @return The initialised object
-     * @throws IncorectConstructorArguments if args does not contains the right arguments
+     * @throws IncorectConstructorArguments if args does not contains the right
+     *                                      arguments
      */
     protected abstract T constructor(String[] args) throws IncorectConstructorArguments;
 
     /**
      * Return the query to select an item from its id in the table
+     * 
      * @param id the unique id of the wanted item
      * @return The select query
      */
     protected abstract String getWhereClause(String id);
 
-    private Connection getConnection () throws SQLException {
-    // Charger la classe du pilote
+    private Connection getConnection() throws SQLException {
+        // Charger la classe du pilote
         try {
             Class.forName(this.driverClassName);
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace ();
+            ex.printStackTrace();
             return null;
         }
-    // Obtenir la connection
-        return DriverManager.getConnection(this.url , this.username , this.password);
+        // Obtenir la connection
+        return DriverManager.getConnection(this.url, this.username, this.password);
     }
-    
+
 }

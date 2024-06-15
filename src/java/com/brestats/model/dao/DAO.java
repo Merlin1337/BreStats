@@ -2,7 +2,9 @@ package com.brestats.model.dao;
 
 /**
  * Static class containing an instance of all {@link DBObject} classes
- * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ * 
+ * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin
+ *         CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
  */
 public class DAO {
     /** Instance of connection to departement table */

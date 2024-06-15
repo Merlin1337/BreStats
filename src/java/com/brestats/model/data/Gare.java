@@ -3,33 +3,46 @@ package com.brestats.model.data;
 import com.brestats.model.Model;
 
 /**
- * The {@code Gare} class represents a train station with specific attributes such as its code, name, type (freight or passenger), and associated municipality.
- * It implements the {@code Model} interface and provides methods to access and manipulate its data.
+ * The {@code Gare} class represents a train station with specific attributes
+ * such as its code, name, type (freight or passenger), and associated
+ * municipality.
+ * It implements the {@code Model} interface and provides methods to access and
+ * manipulate its data.
  * 
- * <p>This class includes methods to get and set the station's code, name, type (freight or passenger), and associated municipality, as well as to return a string representation of the station.</p>
+ * <p>
+ * This class includes methods to get and set the station's code, name, type
+ * (freight or passenger), and associated municipality, as well as to return a
+ * string representation of the station.
+ * </p>
  * 
  * @see Model
  */
 public class Gare implements Model {
-
+    /** The id of the train station */
     private int codeGare;
+    /** The name of the train station */
     private String nomGare;
+    /** Is the station for merchandise */
     private boolean estFret;
+    /** Is the station for travellers */
     private boolean estVoyageur;
+    /** The city in which is located the station */
     private Commune laCom;
 
     /**
-     * Constructs a new {@code Gare} with the specified code, name, associated municipality, and types (freight and passenger).
+     * Constructs a new {@code Gare} with the specified code, name, associated
+     * municipality, and types (freight and passenger).
      *
-     * @param code the code of the station
-     * @param nom the name of the station
-     * @param com the municipality associated with the station
-     * @param estFret indicates if the station is for freight
+     * @param code        the code of the station
+     * @param nom         the name of the station
+     * @param com         the municipality associated with the station
+     * @param estFret     indicates if the station is for freight
      * @param estVoyageur indicates if the station is for passengers
-     * @throws NullPointerException if any of the {@code nom} or {@code com} parameters are null
+     * @throws NullPointerException if any of the {@code nom} or {@code com}
+     *                              parameters are null
      */
     public Gare(int code, String nom, Commune com, boolean estFret, boolean estVoyageur) {
-        if(nom == null || com == null) {
+        if (nom == null || com == null) {
             throw new NullPointerException("null value");
         }
 
@@ -97,7 +110,8 @@ public class Gare implements Model {
     /**
      * Sets whether the station is for freight.
      *
-     * @param estFret {@code true} if the station is for freight, {@code false} otherwise
+     * @param estFret {@code true} if the station is for freight, {@code false}
+     *                otherwise
      */
     public void setEstFret(boolean estFret) {
         this.estFret = estFret;
@@ -106,7 +120,8 @@ public class Gare implements Model {
     /**
      * Returns whether the station is for passengers.
      *
-     * @return {@code true} if the station is for passengers, {@code false} otherwise
+     * @return {@code true} if the station is for passengers, {@code false}
+     *         otherwise
      */
     public boolean getEstVoyageur() {
         return this.estVoyageur;
@@ -115,7 +130,8 @@ public class Gare implements Model {
     /**
      * Sets whether the station is for passengers.
      *
-     * @param estVoyageur {@code true} if the station is for passengers, {@code false} otherwise
+     * @param estVoyageur {@code true} if the station is for passengers,
+     *                    {@code false} otherwise
      */
     public void setEstVoyageur(boolean estVoyageur) {
         this.estVoyageur = estVoyageur;
@@ -137,7 +153,7 @@ public class Gare implements Model {
      * @throws NullPointerException if the {@code com} parameter is null
      */
     public void setCom(Commune com) {
-        if(com == null) {
+        if (com == null) {
             throw new NullPointerException("com is null");
         }
 

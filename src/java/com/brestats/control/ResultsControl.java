@@ -44,6 +44,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -56,54 +57,84 @@ import javafx.util.Callback;
  *         CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
  */
 public class ResultsControl {
+    /** The grid containing all the city's names */
     @FXML
     private GridPane cityLabelsGrid;
+    /** The web view containing the map */
     @FXML
     private WebView webView;
+    /** The button allowing to go back to the main view to selected an other city */
     @FXML
     private Button addNewCity;
+    /** The grid pane containing all checkboxes of cities to show in table and charts */
     @FXML
     private GridPane selectShownCitiesGrid;
+    /** The VBox pane which contains the data checkboxes */
+    @FXML
+    private VBox dataCheckBoxes;
+    /** The checkbox which controls all city's checkboxes */
+    @FXML
+    private CheckBox selectAllCities;
+    /** The checkbox which controls all data's checkboxes */
+    @FXML
+    private CheckBox selectAllData;
+    /** The table containing average data on selected cities. More precisely, it is {@link TableData}-typed, which each instance contains a selected city's data  */
     @FXML
     private TableView<TableData> tableView;
+    /** The average bar chart, representing the same data as the table */
     @FXML
     private BarChart<String, Double> averageChart;
+    /** The evolution line chart which shows data over the years */
     @FXML
     private LineChart<Double, Double> evolutionChart;
+    /** The x axis of the evolution line chart */
     @FXML
     private NumberAxis evolutionXAxis;
-    @FXML
-    private NumberAxis evolutionYAxis;
 
+    /** DAO for cities' data */
     private DBValeursCommuneAnnee dbValeursCommuneAnnee = DAO.DB_VAL;
+    /** DAO for years */
     private DBAnnee dbAnnee = DAO.DB_ANNEE;
+    /** web view's engine (for the map) */
     private WebEngine engine;
+    /** Array of the selected cities in main view */
     private ArrayList<Commune> selectedCities;
+    /** The cities to show among selected ones. A city is shown if its checkbox is selected */
     private ArrayList<Commune> shownCities;
-    private ArrayList<DonneesAnnuelles> averageCityData;
+    /** Array of city's name label. They are shown in {@link #cityLabelsGrid} */
     private ArrayList<Label> cityLabels;
+    /** Array of {@link TableData} objects, one for each table row or bar chart bar */
     private ArrayList<TableData> tableRows;
+    /** Array of city's name checkboxes */
+    private ArrayList<String> dataCheckBoxNames;
 
+    /**
+     * Initialize empty Array Lists
+     */
     public ResultsControl() {
-        this.selectedCities = new ArrayList<Commune>();
-        this.shownCities = new ArrayList<Commune>();
-        this.averageCityData = new ArrayList<DonneesAnnuelles>();
-        this.tableRows = new ArrayList<TableData>();
+        this.selectedCities = new ArrayList<>();
+        this.shownCities = new ArrayList<>();
+        this.tableRows = new ArrayList<>();
+        this.dataCheckBoxNames = new ArrayList<>();
+        this.cityLabels = new ArrayList<>();
     }
 
+    /**
+     * Initialize page elements, like the map, the charts and the checkboxes
+     */
     @FXML
     public void initialize() {
-        this.cityLabels = new ArrayList<Label>();
-
         this.engine = this.webView.getEngine();
-
+    
+        //Loading map
         this.engine.load(getClass().getResource("/com/brestats/files/map.html").toExternalForm());
         this.engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
             @Override
-            public void changed(ObservableValue<? extends State> obs, State oldV, State newV) {
+            public void changed(ObservableValue<? extends State> obs, State oldV, State newV) { //when map is fully loaded
                 if (newV.equals(State.SUCCEEDED)) {
                     engine.executeScript("map.setZoom(7)");
 
+                    //add a red marker by selected city
                     ArrayList<Double> latitudes = new ArrayList<Double>();
                     ArrayList<Double> longitudes = new ArrayList<Double>();
                     for (Commune city : selectedCities) {
@@ -117,21 +148,43 @@ public class ResultsControl {
             }
         });
 
+        //charts' settings
         this.averageChart.setLegendSide(Side.LEFT);
         this.averageChart.setAnimated(false);
         this.evolutionChart.setLegendSide(Side.LEFT);
         this.evolutionChart.setAnimated(false);
+
+        for (Node checkBox : this.dataCheckBoxes.getChildren()) {
+            //Get all selected data checkboxes, for the table and the bar chart
+            if(((CheckBox) checkBox).isSelected()) {
+                this.dataCheckBoxNames.add(((CheckBox) checkBox).getText());
+            }
+
+            //handle the modification of the value of the selected property, by user or by the "select all" checkbox
+            ((CheckBox) checkBox).selectedProperty().addListener(new ChangeListener<Boolean>() {
+                public void changed(ObservableValue<? extends Boolean> obs, Boolean oldV, Boolean newV) {
+                    handleSelectDataCheckBox((CheckBox) checkBox);
+                }
+            });
+        }
+
     }
 
+    /**
+     * Action event listener for the "Ajouter une ville" button. It loads the main page and pass the actual selected cities (displayed in red on the main page)
+     * @param ev action event from the button
+     */
     @FXML
     public void handleAddNewCity(ActionEvent ev) {
         try {
             FXMLLoader mainView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Main.fxml"));
             Parent main = mainView.load();
             Stage stage = (Stage) ((Node) ev.getSource()).getScene().getWindow();
+            System.out.println(((Node) ev.getSource()).getScene().getWidth() + " " + ((Node) ev.getSource()).getScene().getHeight());
             stage.setScene(new Scene(main, ((Node) ev.getSource()).getScene().getWidth(),
                     ((Node) ev.getSource()).getScene().getHeight()));
 
+            //Pass the actual selected cities
             ((MainControl) mainView.getController()).setPreviousSelectedCities(selectedCities);
         } catch (IOException ex) {
             System.out.println("Cannot change scene");
@@ -139,13 +192,55 @@ public class ResultsControl {
         }
     }
 
+    /**
+     * Action event listener for the Select all cities checkbox. Set all city's checkboxes' selected property at the same state as this one
+     * @param ev Action event
+     */
     @FXML
-    public void handleSelectCheckBox(ActionEvent ev) {
-        
+    public void handleSelectAllCities(ActionEvent ev) {
+        //For all city's checkboxes, set the same selected value as the "select all" one
+        for (Node checkBox : this.selectShownCitiesGrid.getChildren()) {
+            ((CheckBox) checkBox).setSelected(this.selectAllCities.isSelected());
+        }
+        refreshCharts();
+        refreshTable();
     }
 
+    /**
+     * Action event listener for the Select all data checkbox. Set all data's checkbox's selected properties at the same state as this one
+     * @param ev Action event
+     */
+    @FXML
+    public void handleSelectAllData(ActionEvent ev) {
+        //For all data's checkboxes, set the same selected value as the "select all" one
+        for (Node checkBox : this.dataCheckBoxes.getChildren()) {
+            ((CheckBox) checkBox).setSelected(this.selectAllData.isSelected());
+        }
+        refreshCharts();
+    }
+
+    /**
+     * Called when a data checkbox's selected property is changed, directly by user of by the select all data checkbox
+     * @param checkBox a data checkbox on the page
+     */
+    public void handleSelectDataCheckBox(CheckBox checkBox) {
+        //get of remove the data, depending on the selected property value
+        if(checkBox.isSelected()) {
+            this.dataCheckBoxNames.add(checkBox.getText());
+        } else {
+            this.dataCheckBoxNames.remove(checkBox.getText());
+        }
+
+        refreshCharts();
+    }
+
+    /**
+     * Called from {@link MainControl} when search button is clicked. Add the selected city in the page (map, cities' list, checkbox, table and charts)
+     * @param city The selected city in Main page
+     */
     public void addSelectedCity(Commune city) {
-        DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
+        DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city); //Average of city data for all years
+        //A TableData object containing all city's data, used for the table and the bar chart
         TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
                 data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
                 data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
@@ -154,7 +249,6 @@ public class ResultsControl {
 
         this.selectedCities.add(city);
         this.shownCities.add(city);
-        this.averageCityData.add(data);
 
         this.tableRows.add(row);
 
@@ -163,6 +257,10 @@ public class ResultsControl {
         refreshCharts();
     }
 
+    /**
+     * Create the city name display in the page
+     * @param city The city of which label is created
+     */
     public void createCityLabel(Commune city) {
         BorderPane borderPane = new BorderPane();
         Label numLabel = new Label(Integer.toString(this.cityLabels.size() + 1));
@@ -179,6 +277,7 @@ public class ResultsControl {
         removeIcon.setFitWidth(30);
         removeIcon.setStyle("-fx-cursor: hand");
 
+        //event fired when remove icon is clicked
         removeIcon.setOnMouseClicked(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent ev) {
                 selectedCities.remove(city);
@@ -194,18 +293,20 @@ public class ResultsControl {
         this.cityLabels.add(cityName);
     }
 
+    /**
+     * Procedure which reload all the page when a changing is made. Call {@link #refreshSelectShownCitiesGrid()}, {@link #refreshTable()} and {@link #refreshCharts()}
+     */
     public void reloadView() {
+        //reset lists
         this.cityLabelsGrid.getChildren().clear();
-        this.averageCityData.clear();
         this.cityLabels.clear();
         this.tableRows.clear();
 
         for (Commune city : this.selectedCities) {
             this.createCityLabel(city);
-            DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
-            this.averageCityData.add(data);
-            
+            //Create and add a new TableData object to the list attribute, if its checkbox is selected
             if(this.shownCities.contains(city)) {
+                DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
                 TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
                     data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
                     data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
@@ -217,6 +318,7 @@ public class ResultsControl {
         refreshTable();
         refreshCharts();
 
+        //Place markers on the map
         ArrayList<Double> latitudes = new ArrayList<Double>();
         ArrayList<Double> longitudes = new ArrayList<Double>();
         for (Commune city : selectedCities) {
@@ -228,6 +330,9 @@ public class ResultsControl {
                 + transformToJavascriptArray(longitudes) + ")");
     }
 
+    /**
+     * Procedure which reload the checkboxes of cities in the bottom left settings pane. A checkbox is created for each city
+     */
     public void refreshSelectShownCitiesGrid() {
         this.selectShownCitiesGrid.getChildren().clear();
 
@@ -241,9 +346,9 @@ public class ResultsControl {
                 checkBox.setSelected(false);
             }
 
-            checkBox.setOnAction(new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent ev) {
-                    if(checkBox.isSelected()) {
+            checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                public void changed(ObservableValue<? extends Boolean> obs, Boolean oldV, Boolean newV) {
+                    if(newV) {
                         shownCities.add(city);
                     } else {
                         shownCities.remove(city);
@@ -256,6 +361,9 @@ public class ResultsControl {
         }
     }
 
+    /**
+     * Procedure which reload the top left table. Show the cities of which checkbox is selected
+     */
     public void refreshTable() {
         ObservableList<TableData> dataList = FXCollections.observableArrayList();
 
@@ -266,6 +374,7 @@ public class ResultsControl {
 
             ArrayList<TableColumn<TableData, String>> columns = new ArrayList<TableColumn<TableData, String>>();
             for (TableColumn<TableData, ?> column : this.tableView.getColumns()) {
+                //Unchecked cast because TableView.getColumns() return a non-typed object, compile anyway
                 columns.add((TableColumn<TableData, String>) column);
             }
 
@@ -285,40 +394,53 @@ public class ResultsControl {
 
     }
 
+    /**
+     * Procedure which reload charts with selected cities and data
+     */
     public void refreshCharts() {
-        // Average chart (re)loading
+        /* ---- Average chart (re)loading 
+         * The Data<String, Double> class represent a bar of the graphic
+         * The Series<String, Double> class represent all data of city
+         * All same data type for each city will be stacked together
+        */
         ArrayList<Series<String, Double>> citySeriesList = new ArrayList<>();
-
-        String population = "Population";
-        String houses = "Nombre\nde maisons";
-        String aparts = "Nombre\nd'appartements";
-        String cost = "Coût moyen";
-        String m2Cost = "Coût du\nm² moyen";
-        String surface = "Surface\nmoyenne";
-        String spendings = "Dépenses\nculturelles";
-        String budget = "Budget moyen";
-
+        
         for (TableData data : this.tableRows) {
             Series<String, Double> city = new Series<>();
             city.setName(data.getName());
 
-            Data<String, Double> popBarData = new Data<String, Double>(population, Double.parseDouble(data.getPopulation()));
-            Data<String, Double> housesBarData = new Data<String, Double>(houses, Double.parseDouble(data.getHouses()));
-            Data<String, Double> apartsBarData = new Data<String, Double>(aparts, Double.parseDouble(data.getApartments()));
-            Data<String, Double> costBarData = new Data<String, Double>(cost, Double.parseDouble(data.getCost()));
-            Data<String, Double> m2CostBarData = new Data<String, Double>(m2Cost, Double.parseDouble(data.getM2Cost()));
-            Data<String, Double> surfaceBarData = new Data<String, Double>(surface, Double.parseDouble(data.getSurface()));
-            Data<String, Double> spendingsBarData = new Data<String, Double>(spendings, Double.parseDouble(data.getSpendings()));
-            Data<String, Double> budgetBarData = new Data<String, Double>(budget, Double.parseDouble(data.getBudget()));
+            Data<String, Double> popBarData = new Data<String, Double>("Population", Double.parseDouble(data.getPopulation()));
+            Data<String, Double> housesBarData = new Data<String, Double>("Nombre\nde maisons", Double.parseDouble(data.getHouses()));
+            Data<String, Double> apartsBarData = new Data<String, Double>("Nombre\nd'appartements", Double.parseDouble(data.getApartments()));
+            Data<String, Double> costBarData = new Data<String, Double>("Prix moyen", Double.parseDouble(data.getCost()));
+            Data<String, Double> m2CostBarData = new Data<String, Double>("Prix moyen\n du m²", Double.parseDouble(data.getM2Cost()));
+            Data<String, Double> surfaceBarData = new Data<String, Double>("Surface\nmoyenne", Double.parseDouble(data.getSurface()));
+            Data<String, Double> spendingsBarData = new Data<String, Double>("Dépenses\nculturelles", Double.parseDouble(data.getSpendings()));
+            Data<String, Double> budgetBarData = new Data<String, Double>("Budget moyen", Double.parseDouble(data.getBudget()));
 
-            city.setData(FXCollections.observableList(List.of(popBarData, housesBarData, apartsBarData, costBarData,
-                    m2CostBarData, surfaceBarData, spendingsBarData, budgetBarData)));
+            //Adding Data object only if the city checkbox is selected
+            ArrayList<Data<String, Double>> dataList = new ArrayList<>();
+            if(this.dataCheckBoxNames.contains("Population")) {dataList.add(popBarData);}
+            if(this.dataCheckBoxNames.contains("Nombre de maisons")) {dataList.add(housesBarData);}
+            if(this.dataCheckBoxNames.contains("Nombre d'appartements")) {dataList.add(apartsBarData);}
+            if(this.dataCheckBoxNames.contains("Prix moyen")) {dataList.add(costBarData);}
+            if(this.dataCheckBoxNames.contains("Prix moyen du m²")) {dataList.add(m2CostBarData);}
+            if(this.dataCheckBoxNames.contains("Surface moyenne")) {dataList.add(surfaceBarData);}
+            if(this.dataCheckBoxNames.contains("Dépenses culturelles")) {dataList.add(spendingsBarData);}
+            if(this.dataCheckBoxNames.contains("Budget")) {dataList.add(budgetBarData);}
+
+            city.setData(FXCollections.observableList(dataList));
             citySeriesList.add(city);
         }
 
         this.averageChart.setData(FXCollections.observableList(citySeriesList));
 
-        // Evolution chart (re)loading
+        /* ---- Evolution chart (re)loading
+         *          <year>  <data>
+         * The Data<Double, Double> class represents a point on the graphic
+         * The Series<Double, Double> class represents the line linking several points
+         * There is a line (=Series) by data type, meaning there are 8 lines by city
+         */
         ArrayList<Series<Double, Double>> series = new ArrayList<>();
         try {
             ArrayList<Annee> years = dbAnnee.selectQuery("SELECT DISTINCT annee.* FROM annee JOIN donneesannuelles ON lAnnee = annee ORDER BY annee;");
@@ -367,9 +489,20 @@ public class ResultsControl {
                 m2CostSeries.setName(city.getNomCommune() + " : Prix moyen du m²");
                 surfaceSeries.setName(city.getNomCommune() + " : Surface moyenne");
                 spendingsSeries.setName(city.getNomCommune() + " : Dépences culturelles");
-                budgetSeries.setName(city.getNomCommune() + " : Budget");
+                budgetSeries.setName(city.getNomCommune() + " : Budget moyen");
+                
+                //Adding Data object only if the city checkbox is selected
+                ArrayList<Series<Double, Double>> dataList = new ArrayList<>();
+                if(this.dataCheckBoxNames.contains("Population")) {dataList.add(popSeries);}
+                if(this.dataCheckBoxNames.contains("Nombre de maisons")) {dataList.add(housesSeries);}
+                if(this.dataCheckBoxNames.contains("Nombre d'appartements")) {dataList.add(apartSeries);}
+                if(this.dataCheckBoxNames.contains("Prix moyen")) {dataList.add(costSeries);}
+                if(this.dataCheckBoxNames.contains("Prix moyen du m²")) {dataList.add(m2CostSeries);}
+                if(this.dataCheckBoxNames.contains("Surface moyenne")) {dataList.add(surfaceSeries);}
+                if(this.dataCheckBoxNames.contains("Dépenses culturelles")) {dataList.add(spendingsSeries);}
+                if(this.dataCheckBoxNames.contains("Budget")) {dataList.add(budgetSeries);}
 
-                series.addAll(List.of(popSeries, housesSeries, apartSeries, costSeries, m2CostSeries, surfaceSeries, spendingsSeries, budgetSeries));
+                series.addAll(dataList);
             }
         } catch (SQLException ex) {
             System.out.println("Unexpected exception with query : SELECT * FROM annee;");
@@ -379,6 +512,11 @@ public class ResultsControl {
         this.evolutionChart.setData(FXCollections.observableList(series));
     }
 
+    /**
+     * Transform a java{@link ArrayList} object to javascript array
+     * @param arr the java array object
+     * @return the javascript object as {@link String}
+     */
     private String transformToJavascriptArray(ArrayList<Double> arr) {
         StringBuffer sb = new StringBuffer();
         sb.append("[");
@@ -395,19 +533,47 @@ public class ResultsControl {
         return sb.toString();
     }
 
+    /**
+     * A nested class which is used for the table and average chart data
+     * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+     */
     private class TableData {
+        /** The list for all others properties attributes */
         private List<StringProperty> properties;
+        /** The name of the city */
         private StringProperty name;
+        /** The département of the city's name */
         private StringProperty dep;
+        /** The average population of the city */
         private StringProperty population;
+        /** The average sold houses number per year in the city */
         private StringProperty houses;
+        /** The average sold apartements number per year in the city */
         private StringProperty apartments;
+        /** The average cost of houses and apartments per year in the city */
         private StringProperty cost;
+        /** The average m² cost of houses and apartments per year in the city */
         private StringProperty m2Cost;
+        /** The average surface of sold houses and apartments per year in the city */
         private StringProperty surface;
+        /** The average spendings per year by the city */
         private StringProperty spendings;
+        /** The average budget of the city */
         private StringProperty budget;
 
+        /** 
+         * Call {@link #TableData(String, String, String ,String, String, String, String, String, String, String)} with doubles converted to Strings
+         * @param name The name of the city
+         * @param dep The département of the city's name
+         * @param pop The average population of the city
+         * @param houses The average sold houses number per year in the city
+         * @param apartments The average sold apartements number per year in the city
+         * @param cost The average cost of houses and apartments per year in the city
+         * @param m2Cost The average m² cost of houses and apartments per year in the city
+         * @param surface The average surface of sold houses and apartments per year in the city
+         * @param spendings The average spendings per year by the city 
+         * @param budget The average budget of the city
+         */
         public TableData(String name, String dep, double pop, double houses, double apartments, double cost,
                 double m2Cost, double surface, double spendings, double budget) {
             this(name, dep, Double.toString(pop), Double.toString(houses), Double.toString(apartments),
@@ -415,6 +581,19 @@ public class ResultsControl {
                     Double.toString(spendings), Double.toString(budget));
         }
 
+        /**
+         * Initiate an instance of TableData with given params
+         * @param name The name of the city
+         * @param dep The département of the city's name
+         * @param pop The average population of the city
+         * @param houses The average sold houses number per year in the city
+         * @param apartments The average sold apartements number per year in the city
+         * @param cost The average cost of houses and apartments per year in the city
+         * @param m2Cost The average m² cost of houses and apartments per year in the city
+         * @param surface The average surface of sold houses and apartments per year in the city
+         * @param spendings The average spendings per year by the city 
+         * @param budget The average budget of the city
+         */
         public TableData(String name, String dep, String pop, String houses, String apartments, String cost,
                 String m2Cost, String surface, String spendings, String budget) {
             this.name = new SimpleStringProperty(name);
@@ -432,42 +611,82 @@ public class ResultsControl {
                     this.m2Cost, this.surface, this.spendings, this.budget);
         }
 
+        /**
+         * Return the properties list
+         * @return The properties list
+         */
         public List<StringProperty> getProperties() {
             return this.properties;
         }
 
+        /**
+         * Return the name of the city
+         * @return the name as String
+         */
         public String getName() {
             return this.name.get();
         }
 
+        /**
+         * Return the average population of the city
+         * @return The population as String
+         */
         public String getPopulation() {
             return this.population.get();
         }
-
+        
+        /**
+         * Return the average number of sold houses
+         * @return The number of sold houses as String
+         */
         public String getHouses() {
             return this.houses.get();
         }
 
+        /**
+         * Return the average number of sold apartments
+         * @return The number of sold apartments as String
+         */
         public String getApartments() {
             return this.apartments.get();
         }
 
+        /**
+         * Return the average cost of houses and apartments
+         * @return The cost as String
+         */
         public String getCost() {
             return this.cost.get();
         }
 
+        /**
+         * Return the average m² cost of houses and apartments
+         * @return The m² cost as String
+         */
         public String getM2Cost() {
             return this.m2Cost.get();
         }
 
+        /**
+         * Return the average surface of houses and apartments
+         * @return The surface as String
+         */
         public String getSurface() {
             return this.surface.get();
         }
 
+        /**
+         * Return the average spendings
+         * @return The spendings as String
+         */
         public String getSpendings() {
             return this.spendings.get();
         }
 
+        /**
+         * Return the total budget
+         * @return The budget as String
+         */
         public String getBudget() {
             return this.budget.get();
         }

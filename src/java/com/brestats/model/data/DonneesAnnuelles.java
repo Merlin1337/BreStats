@@ -3,34 +3,51 @@ package com.brestats.model.data;
 import com.brestats.model.Model;
 
 /**
- * The {@code DonneesAnnuelles} class represents annual data for a specific municipality and year. 
- * It implements the {@code Model} interface and provides methods to access and manipulate the annual data.
+ * The {@code DonneesAnnuelles} class represents annual data for a specific
+ * municipality and year.
+ * It implements the {@code Model} interface and provides methods to access and
+ * manipulate the annual data.
  *
- * <p>This class includes methods to get and set the number of houses, number of apartments, average price, 
- * average price per square meter, average surface area, total cultural expenses, total budget, and population.</p>
+ * <p>
+ * This class includes methods to get and set the number of houses, number of
+ * apartments, average price,
+ * average price per square meter, average surface area, total cultural
+ * expenses, total budget, and population.
+ * </p>
  *
  * @see Model
  */
 public class DonneesAnnuelles implements Model {
-
+    /** Number of houses sold in city for the year */
     private int nbMaison;
+    /** Number of apartements sold in city for the year */
     private int nbAppart;
+    /** Average cost of houses and apartments */
     private double prixMoyen;
+    /** Average m² cost for sold houses and apartments */
     private double prixM2Moyen;
+    /** Average surface for sold houses and apartments */
     private double surfaceMoyenne;
+    /** Sum of cultural spendings by the city */
     private double depCulturelTotales;
+    /** Sum of the city budget */
     private double budgetTotal;
+    /** Population for the city and the year */
     private double population;
+    /** The year */
     private Annee lAnnee;
+    /** The city */
     private Commune laCom;
 
     /**
-     * Constructs a new {@code DonneesAnnuelles} with the specified municipality and year.
+     * Constructs a new {@code DonneesAnnuelles} with the specified municipality and
+     * year.
      * All other values are initialized to zero.
      *
-     * @param com the municipality
+     * @param com   the municipality
      * @param annee the year
-     * @throws NullPointerException if any of the {@code annee} or {@code com} parameters are null
+     * @throws NullPointerException if any of the {@code annee} or {@code com}
+     *                              parameters are null
      */
     public DonneesAnnuelles(Commune com, Annee annee) {
         this(com, annee, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -39,21 +56,25 @@ public class DonneesAnnuelles implements Model {
     /**
      * Constructs a new {@code DonneesAnnuelles} with the specified parameters.
      *
-     * @param com the municipality
-     * @param annee the year
-     * @param nbMaisons the number of houses
-     * @param nbAppart the number of apartments
-     * @param prixMoyen the average price
-     * @param prixM2Moyen the average price per square meter
-     * @param surfaceMoy the average surface area
+     * @param com                   the municipality
+     * @param annee                 the year
+     * @param nbMaisons             the number of houses
+     * @param nbAppart              the number of apartments
+     * @param prixMoyen             the average price
+     * @param prixM2Moyen           the average price per square meter
+     * @param surfaceMoy            the average surface area
      * @param depCulturellesTotales the total cultural expenses
-     * @param budgetTotal the total budget
-     * @param pop the population
-     * @throws NullPointerException if any of the {@code com} or {@code annee} parameters are null
+     * @param budgetTotal           the total budget
+     * @param pop                   the population
+     * @throws NullPointerException if any of the {@code com} or {@code annee}
+     *                              parameters are null
      */
-    public DonneesAnnuelles(Commune com, Annee annee, int nbMaisons, int nbAppart, double prixMoyen, double prixM2Moyen, double surfaceMoy, double depCulturellesTotales, double budgetTotal, double pop) {
-        if(com == null || annee == null) {
-            throw new NullPointerException("null values : " + com + ";" + annee + ";" + nbMaisons + ";" + nbAppart + ";" + prixMoyen + ";" + prixM2Moyen + ";" + surfaceMoy + ";" +depCulturellesTotales + ";" + budgetTotal + ";" + pop);
+    public DonneesAnnuelles(Commune com, Annee annee, int nbMaisons, int nbAppart, double prixMoyen, double prixM2Moyen,
+            double surfaceMoy, double depCulturellesTotales, double budgetTotal, double pop) {
+        if (com == null || annee == null) {
+            throw new NullPointerException("null values : " + com + ";" + annee + ";" + nbMaisons + ";" + nbAppart + ";"
+                    + prixMoyen + ";" + prixM2Moyen + ";" + surfaceMoy + ";" + depCulturellesTotales + ";" + budgetTotal
+                    + ";" + pop);
         }
 
         this.laCom = com;
@@ -69,7 +90,8 @@ public class DonneesAnnuelles implements Model {
     }
 
     /**
-     * Returns the identifier of the annual data, composed of the municipality ID and the year ID like "city-year".
+     * Returns the identifier of the annual data, composed of the municipality ID
+     * and the year ID like "city-year".
      *
      * @return the identifier of the annual data
      */
@@ -276,19 +298,20 @@ public class DonneesAnnuelles implements Model {
     }
 
     /**
-     * Returns a string representation of the annual data, including the municipality name and year.
+     * Returns a string representation of the annual data, including the
+     * municipality name and year.
      *
      * @return a string representation of the annual data
      */
     public String toString() {
         return "Donnees : " + this.laCom.getNomCommune() + " - " + this.lAnnee.getAnnee() + "\n\t"
-            + this.nbMaison + " Maisons\n\t"
-            + this.nbAppart + " Apparts\n\t"
-            + this.prixMoyen + "€ en Moyenne\n\t"
-            + this.prixM2Moyen + "€/m² en Moyenne\n\t"
-            + this.surfaceMoyenne + "m² en moyenne\n\t"
-            + this.depCulturelTotales + "€ de dépenses culturelles\n\t"
-            + this.budgetTotal + "€ de budget total\n\t"
-            + this.population + " hab.";
+                + this.nbMaison + " Maisons\n\t"
+                + this.nbAppart + " Apparts\n\t"
+                + this.prixMoyen + "€ en Moyenne\n\t"
+                + this.prixM2Moyen + "€/m² en Moyenne\n\t"
+                + this.surfaceMoyenne + "m² en moyenne\n\t"
+                + this.depCulturelTotales + "€ de dépenses culturelles\n\t"
+                + this.budgetTotal + "€ de budget total\n\t"
+                + this.population + " hab.";
     }
 }
