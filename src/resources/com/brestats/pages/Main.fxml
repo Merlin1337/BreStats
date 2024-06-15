@@ -7,8 +7,10 @@
 <?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+
 <!-- prefHeight="799.0" prefWidth="1171.0" -->
-<BorderPane  stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.MainControl">
+
+<BorderPane stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.MainControl">
    <top>
       <GridPane prefHeight="213.0" prefWidth="1525.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -43,8 +45,8 @@
             </BorderPane>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
-                  <TextField fx:id="searchBar" id="searchBar" alignment="TOP_LEFT" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" onKeyPressed="#handleKeyPressed"/>
-                  <Button minWidth="150.0" mnemonicParsing="false" stylesheets="@../files/style.css" text="Rechercher" fx:id="searchButton" onAction="#handleSearch">
+                  <TextField id="searchBar" fx:id="searchBar" alignment="TOP_LEFT" onKeyPressed="#handleKeyPressed" prefWidth="850.0" promptText="Rechercher une commune ou un departement ..." styleClass="text-field" stylesheets="@../files/style.css" />
+                  <Button fx:id="searchButton" minWidth="150.0" mnemonicParsing="false" onAction="#handleSearch" stylesheets="@../files/style.css" text="Rechercher">
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin>
@@ -57,7 +59,15 @@
          </children>
       </GridPane>
    </top>
+   <bottom>
+      <Button fx:id="graphButton" mnemonicParsing="false" onAction="#switchGraph" text="Graphe" BorderPane.alignment="CENTER" />
+   </bottom>
    <center>
-      <WebView fx:id="webView" prefHeight="847.0" prefWidth="1479.0" BorderPane.alignment="CENTER" onMouseClicked="#handleMapDoubleClick"/>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <WebView fx:id="webView" prefHeight="847.0" prefWidth="1479.0" />
+            <Pane fx:id="graphPane" prefHeight="847.0" prefWidth="1479.0" style="-fx-background-color: red;" visible="false" />
+         </children>
+      </StackPane>
    </center>
 </BorderPane>

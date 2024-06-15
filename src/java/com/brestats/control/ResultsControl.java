@@ -395,6 +395,9 @@ public class ResultsControl {
         return sb.toString();
     }
 
+    
+
+
     private class TableData {
         private List<StringProperty> properties;
         private StringProperty name;

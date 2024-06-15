@@ -44,6 +44,8 @@ import javafx.stage.Window;
 import javafx.stage.PopupWindow.AnchorLocation;
 import netscape.javascript.JSObject;
 
+
+
 /**
  * Controller of Main.fxml view
  * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
@@ -55,6 +57,10 @@ public class MainControl {
     private TextField searchBar;
     @FXML
     private WebView webView;
+    @FXML 
+    private Button graphButton;
+    @FXML 
+    private Pane graphPane;
 
     private WebEngine engine; 
     private Popup searchProps;
@@ -76,6 +82,7 @@ public class MainControl {
         this.scrollPane = new ScrollPane();
         this.gridProps = new GridPane(); //Grid pane used in seachProps
         this.previousSelectedCities = new ArrayList<Commune>();
+        
     }
 
     /**
@@ -394,6 +401,25 @@ public class MainControl {
                     scrollPane.setVvalue(1);
                 }
             }
+        }
+    }
+
+    @FXML
+    public void switchGraph(Event ev){
+        boolean isWebView = webView.isVisible();
+        try {
+            
+            if (!isWebView) {
+                webView.setVisible(true);
+                graphPane.setVisible(false);
+                graphButton.setText("Graphe");
+            }else{
+                webView.setVisible(false);
+                graphPane.setVisible(true);
+                graphButton.setText("Carte");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

@@ -2,6 +2,7 @@
     "java.project.sourcePaths": ["src/java"],
     "java.project.outputPath": "class",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "lib/**/*.jar",
+        "c:\\Users\\theau\\Documents\\cours\\SAE Graphes\\java\\lib\\smartgraph-2.0.0.jar"
     ]
 }
