@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.print.DocFlavor.STRING;
 
 import com.brestats.model.dao.DAO;
 import com.brestats.model.dao.DBCommune;
@@ -24,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -65,7 +69,7 @@ public class MainControl {
     @FXML 
     private Button graphButton;
     @FXML 
-    private Pane graphPane;
+    private ImageView graphPane;
 
     /** The web view engine, for the map and the link with javascript */
     private WebEngine engine;

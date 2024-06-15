@@ -66,7 +66,11 @@
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <WebView fx:id="webView" prefHeight="847.0" prefWidth="1479.0" />
-            <Pane fx:id="graphPane" prefHeight="847.0" prefWidth="1479.0" style="-fx-background-color: red;" visible="false" />
+            <ImageView fx:id="graphPane" fitHeight="700.0" fitWidth="1479.0" layoutX="1479.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="CENTER">
+               <image>
+                  <Image url="@Graph.png" />
+               </image>
+            </ImageView>
          </children>
       </StackPane>
    </center>
