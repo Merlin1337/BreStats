@@ -44,6 +44,8 @@ import javafx.stage.Window;
 import javafx.stage.PopupWindow.AnchorLocation;
 import netscape.javascript.JSObject;
 
+
+
 /**
  * Controller of Main.fxml view
  * 
@@ -60,6 +62,10 @@ public class MainControl {
     /** The web view containing the map */
     @FXML
     private WebView webView;
+    @FXML 
+    private Button graphButton;
+    @FXML 
+    private Pane graphPane;
 
     /** The web view engine, for the map and the link with javascript */
     private WebEngine engine;
@@ -92,6 +98,7 @@ public class MainControl {
         this.scrollPane = new ScrollPane();
         this.gridProps = new GridPane(); // Grid pane used in seachProps
         this.previousSelectedCities = new ArrayList<Commune>();
+        
     }
 
     /**
@@ -332,6 +339,25 @@ public class MainControl {
             if (ev.getClickCount() == 2) { // if doubled clicked on map
                 handleSearch(ev); // start the research
             }
+        }
+    }
+
+    @FXML
+    public void switchGraph(Event ev){
+        boolean isWebView = webView.isVisible();
+        try {
+            
+            if (!isWebView) {
+                webView.setVisible(true);
+                graphPane.setVisible(false);
+                graphButton.setText("Graphe");
+            }else{
+                webView.setVisible(false);
+                graphPane.setVisible(true);
+                graphButton.setText("Carte");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 

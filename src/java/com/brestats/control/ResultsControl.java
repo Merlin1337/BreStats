@@ -532,7 +532,7 @@ public class ResultsControl {
 
         return sb.toString();
     }
-
+    
     /**
      * A nested class which is used for the table and average chart data
      * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC

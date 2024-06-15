@@ -2,6 +2,6 @@
     "java.project.sourcePaths": ["src/java"],
     "java.project.outputPath": "class",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "lib/**/*.jar",
     ]
 }
