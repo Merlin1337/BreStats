@@ -122,7 +122,7 @@ public class DBCommune extends DBObject<Commune> {
 
     /**
      * Fullfill the neighbours' list with previous queried cities
-     * @param com
+     * @param com The city to fullfill its neighbours
      */
     private void fullfillNeighbours(Commune com) {
         for (Commune voisin : this.list) {

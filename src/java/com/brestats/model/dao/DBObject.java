@@ -25,13 +25,13 @@ import com.brestats.model.Model;
  */
 public abstract class DBObject<T extends Model> {
     /** Constant for driver class name */
-    private final String driverClassName = "com.mysql.cj.jdbc.Driver";
+    private static final String driverClassName = "com.mysql.cj.jdbc.Driver";
     /** Constant for the database URL */
-    private final String url = "jdbc:mysql://45.147.98.227:3306/brestats_db";
+    private static final String url = "jdbc:mysql://45.147.98.227:3306/brestats_db";
     /** Constant for the database username */
-    private final String username = "brestats_db";
+    private static final String username = "brestats_db";
     /** Constant for the database password */
-    private final String password = "Xb390cc!2";
+    private static final String password = "Xb390cc!2";
 
     /** The connection to the database, using previous constants */
     private Connection con;
@@ -194,16 +194,21 @@ public abstract class DBObject<T extends Model> {
      */
     protected abstract String getWhereClause(String id);
 
+    /**
+     * Create and return a connection to the database with login information
+     * @return A Connection object, representing the link with the database
+     * @throws SQLException If a database connection error occurs
+     */
     private Connection getConnection() throws SQLException {
         // Charger la classe du pilote
         try {
-            Class.forName(this.driverClassName);
+            Class.forName(driverClassName);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
             return null;
         }
         // Obtenir la connection
-        return DriverManager.getConnection(this.url, this.username, this.password);
+        return DriverManager.getConnection(url, username, password);
     }
 
 }
