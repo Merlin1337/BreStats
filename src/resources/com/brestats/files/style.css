@@ -143,7 +143,7 @@
 }
 
 
-#userField, #passField {
+.loginField {
     -fx-background-color: white; 
     -fx-border-color: white white black white;
     -fx-border-width: 1px;
@@ -161,8 +161,14 @@
     -fx-background-image: url("img/user-icon.png");
 }
 
-#passField {
+.passField {
     -fx-background-image: url("img/lock-icon.png");
+}
+
+#showPasswordIcon {
+    -fx-background-color: white; 
+    -fx-border-color: white white black white;
+    -fx-border-width: 1px;
 }
 
 .check-box > .box {

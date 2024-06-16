@@ -229,7 +229,7 @@ public class MainControl {
                 ex.printStackTrace();
             }
         } else { // if no city is selected, meaning search bar is empty, show an alert window
-            Alert errorAlert = new Alert(AlertType.ERROR, "Please enter at least 3 characters for the name of a city.",
+            Alert errorAlert = new Alert(AlertType.ERROR, "Vous devez taper au moins trois caractères pour lancer une recherche",
                     ButtonType.OK);
             errorAlert.show();
         }

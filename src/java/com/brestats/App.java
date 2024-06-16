@@ -15,8 +15,9 @@ public class App extends Application  {
         Parent main = FXMLLoader.load(getClass().getResource("/com/brestats/pages/Main.fxml"));
         
         Scene scene = new Scene(main);
+        
         primaryStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
-
+        primaryStage.setTitle("Brestast");
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.show();

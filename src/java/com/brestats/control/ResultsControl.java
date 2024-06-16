@@ -41,6 +41,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -292,6 +293,27 @@ public class ResultsControl {
         this.selectAllData.setSelected(selected);
 
         refreshCharts();
+    }
+
+    /**
+     * Mouse clicked event listener for the edit button. Display the login page
+     * @param ev Mouse event
+     */
+    @FXML
+    public void handleEdit(MouseEvent ev) {
+        try {
+            FXMLLoader mainView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Login.fxml"));
+            Parent main = mainView.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(main));
+
+            stage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
+            stage.setTitle("Edition - Brestats");
+            stage.show();
+        } catch (IOException ex) {
+            System.out.println("Cannot change scene");
+            ex.printStackTrace();
+        }
     }
 
     /**

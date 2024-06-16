@@ -20,7 +20,6 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
@@ -56,7 +55,14 @@
                   </ImageView>
                </center>
                <right>
-                  <Pane prefHeight="115.0" prefWidth="148.0" BorderPane.alignment="CENTER" />
+                  <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#handleEdit" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@../files/img/edit-icon.png" />
+                     </image>
+                     <BorderPane.margin>
+                        <Insets right="20.0" />
+                     </BorderPane.margin>
+                  </ImageView>
                </right>
             </BorderPane>
          </children>
