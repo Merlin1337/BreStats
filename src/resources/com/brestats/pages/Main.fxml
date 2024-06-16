@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
@@ -66,11 +67,26 @@
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <WebView fx:id="webView" prefHeight="847.0" prefWidth="1479.0" />
-            <ImageView fx:id="graphPane" fitHeight="700.0" fitWidth="1479.0" layoutX="1479.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="CENTER">
-               <image>
-                  <Image url="@Graph.png" />
-               </image>
-            </ImageView>
+            <HBox fx:id="graphBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ImageView fx:id="graphPane" fitHeight="700.0" fitWidth="1479.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <image>
+                        <Image url="@../files/img/Graph.png" />
+                     </image>
+                  </ImageView>
+                  <FlowPane alignment="TOP_CENTER" hgap="20.0" prefHeight="200.0" prefWidth="200.0" vgap="30.0">
+                     <children>
+                        <Label fx:id="DescribLab" graphicTextGap="20.0" lineSpacing="100.0" text="Graphe de l'attractivité d'une commune" visible="false">
+                           <font>
+                              <Font size="19.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="DescribLab1" text="Calculée en fonction de la présence d'un aéroport, d'une gare et de ll'exentricité de la commune" visible="false" />
+                        <Label fx:id="DescribLab2" text="Plus la couleur est claire plus la commune est attractive" visible="false" />
+                     </children>
+                  </FlowPane>
+               </children>
+            </HBox>
          </children>
       </StackPane>
    </center>
