@@ -1,5 +1,5 @@
 var markers = new Array();
-var redMarkers = new Array();
+var selectedMarkers = new Array();
 
 var lat = 48.2; 
 var lon = -3.0; 
@@ -55,16 +55,39 @@ function setMarkers(latitudes, longitudes) {
 }
 
 function setRedMarkers(latitudes, longitudes) {
-    redMarkers.forEach(element => {
+    selectedMarkers.forEach(element => {
         map.removeLayer(element)
         console.log("removed")
     });
-    redMarkers = new Array()
+    selectedMarkers = new Array()
 
     for(var i = 0 ; i < latitudes.length ; i++) {
         var marker = new L.marker(L.latLng(latitudes[i], longitudes[i]), {icon: redMarker})
 
-        redMarkers.push(marker)
+        selectedMarkers.push(marker)
+        marker.addTo(map)
+    }
+}
+
+function setColoredMarkers(latitudes, longitudes) {
+    var colors = ["blue", "gold", "red", "green", "orange", "yellow", "violet"]
+
+    selectedMarkers.forEach(element => {
+        map.removeLayer(element)
+        console.log("removed")
+    });
+    selectedMarkers = new Array()
+
+    for(var i = 0 ; i < latitudes.length ; i++) {
+        var icon = new L.icon({
+            iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-" + colors[selectedMarkers.length % colors.length] +".png",
+            shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+            iconAnchor: L.point(12, 41)
+        })
+
+        var marker = new L.marker(L.latLng(latitudes[i], longitudes[i]), {icon: icon})
+
+        selectedMarkers.push(marker)
         marker.addTo(map)
     }
 }

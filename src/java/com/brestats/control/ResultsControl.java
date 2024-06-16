@@ -160,7 +160,7 @@ public class ResultsControl {
                         longitudes.add(city.getLongitude());
                     }
 
-                    engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + ","
+                    engine.executeScript("setColoredMarkers(" + transformToJavascriptArray(latitudes) + ","
                             + transformToJavascriptArray(longitudes) + ")");
                 }
             }
@@ -191,34 +191,38 @@ public class ResultsControl {
 
     // @FXML
     // public void testSnapshot(ActionEvent ev) {
-    //     WritableImage img = this.averageChart.snapshot(new SnapshotParameters(), null);
+    // WritableImage img = this.averageChart.snapshot(new SnapshotParameters(),
+    // null);
 
-    //     // try (FileOutputStream fos = new FileOutputStream("test.png")) {
-    //     //     // Get pixel data from the image
-    //     //     PixelReader pixelReader = img.getPixelReader();
-    //     //     int width = (int) img.getWidth();
-    //     //     int height = (int) img.getHeight();
-    //     //     int[] pixels = new int[width * height];
-    //     //     pixelReader.getPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), pixels, 0, width);
+    // // try (FileOutputStream fos = new FileOutputStream("test.png")) {
+    // // // Get pixel data from the image
+    // // PixelReader pixelReader = img.getPixelReader();
+    // // int width = (int) img.getWidth();
+    // // int height = (int) img.getHeight();
+    // // int[] pixels = new int[width * height];
+    // // pixelReader.getPixels(0, 0, width, height,
+    // PixelFormat.getIntArgbInstance(), pixels, 0, width);
 
-    //     //     // Convert pixel data to byte array
-    //     //     ByteBuffer byteBuffer = ByteBuffer.allocate(width * height * 4); // 4 bytes per pixel (ARGB)
-    //     //     IntBuffer intBuffer = byteBuffer.asIntBuffer();
-    //     //     intBuffer.put(pixels);
+    // // // Convert pixel data to byte array
+    // // ByteBuffer byteBuffer = ByteBuffer.allocate(width * height * 4); // 4
+    // bytes per pixel (ARGB)
+    // // IntBuffer intBuffer = byteBuffer.asIntBuffer();
+    // // intBuffer.put(pixels);
 
-    //     //     // Write the byte array to the file
-    //     //     fos.write(byteBuffer.array());
-    //     //     System.out.println("Screenshot saved");
-    //     // } catch (IOException e) {
-    //     //     System.err.println("Failed to save screenshot: " + e.getMessage());
-    //     // }
+    // // // Write the byte array to the file
+    // // fos.write(byteBuffer.array());
+    // // System.out.println("Screenshot saved");
+    // // } catch (IOException e) {
+    // // System.err.println("Failed to save screenshot: " + e.getMessage());
+    // // }
 
-    //     try {
-    //         ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", new File("test.png"));
-    //         System.out.println("Screenshot saved");
-    //     } catch (IOException e) {
-    //         System.err.println("Failed to save screenshot: " + e.getMessage());
-    //     }
+    // try {
+    // ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", new
+    // File("test.png"));
+    // System.out.println("Screenshot saved");
+    // } catch (IOException e) {
+    // System.err.println("Failed to save screenshot: " + e.getMessage());
+    // }
     // }
 
     /**
@@ -364,14 +368,19 @@ public class ResultsControl {
      * @param city The city of which label is created
      */
     public void createCityLabel(Commune city) {
+        ArrayList<String> hexColors = new ArrayList<>(
+                List.of("#2A81CB", "#FFD326", "#CB2B3E", "#2AAD27", "#CB8427", "#CAC428", "#9C2BCB"));
+
         BorderPane borderPane = new BorderPane();
-        Label numLabel = new Label(Integer.toString(this.cityLabels.size() + 1));
+        Label numLabel = new Label(" ");
         Label cityName = new Label(city.getNomCommune());
         ImageView removeIcon = new ImageView(
                 getClass().getResource("/com/brestats/files/img/remove-icon.png").toExternalForm());
         HBox labelBox = new HBox(numLabel, cityName, removeIcon);
 
         numLabel.getStyleClass().add("numero");
+        numLabel.setStyle(
+                "-fx-background-color: " + hexColors.get(this.cityLabelsGrid.getChildren().size() % hexColors.size()));
         cityName.getStyleClass().add("ville");
         labelBox.setSpacing(15);
         borderPane.setCenter(labelBox);
@@ -432,7 +441,7 @@ public class ResultsControl {
             longitudes.add(city.getLongitude());
         }
 
-        engine.executeScript("setRedMarkers(" + transformToJavascriptArray(latitudes) + ","
+        engine.executeScript("setColoredMarkers(" + transformToJavascriptArray(latitudes) + ","
                 + transformToJavascriptArray(longitudes) + ")");
     }
 
