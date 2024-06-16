@@ -297,6 +297,7 @@ public class ResultsControl {
 
     /**
      * Mouse clicked event listener for the edit button. Display the login page
+     * 
      * @param ev Mouse event
      */
     @FXML
@@ -307,7 +308,8 @@ public class ResultsControl {
             Stage stage = new Stage();
             stage.setScene(new Scene(main));
 
-            stage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
+            stage.getIcons()
+                    .add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
             stage.setTitle("Edition - Brestats");
             stage.show();
         } catch (IOException ex) {
@@ -638,6 +640,7 @@ public class ResultsControl {
          * The Data<Double, Double> class represents a point on the graphic
          * The Series<Double, Double> class represents the line linking several points
          * There is a line (=Series) by data type, meaning there are 8 lines by city
+         * If a value is equal to -1, meaning the value is not known, we do not include it in the Serie
          */
         ArrayList<Series<Double, Double>> series = new ArrayList<>();
         try {
@@ -662,14 +665,31 @@ public class ResultsControl {
                 for (Annee year : years) {
                     DonneesAnnuelles row = this.dbValeursCommuneAnnee.getItem(city.getId() + "-" + year.getId());
 
-                    popArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPopulation()));
-                    housesArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbMaison()));
-                    apartsArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbAppart()));
-                    costArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixMoyen()));
-                    m2CostArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixM2Moyen()));
-                    surfaceArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getSurfaceMoyenne()));
-                    spendingsArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getDepCulturelTotales()));
-                    budgetArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getBudgetTotal()));
+                    if (row.getPopulation() != -1) {
+                        popArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPopulation()));
+                    }
+                    if (row.getNbMaison() != -1) {
+                        housesArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbMaison()));
+                    }
+                    if (row.getNbAppart() != -1) {
+                        apartsArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbAppart()));
+                    }
+                    if (row.getPrixMoyen() != -1) {
+                        costArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixMoyen()));
+                    }
+                    if (row.getPrixM2Moyen() != -1) {
+                        m2CostArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixM2Moyen()));
+                    }
+                    if (row.getSurfaceMoyenne() != -1) {
+                        surfaceArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getSurfaceMoyenne()));
+                    }
+                    if (row.getDepCulturelTotales() != -1) {
+                        spendingsArray
+                                .add(new Data<Double, Double>((double) year.getAnnee(), row.getDepCulturelTotales()));
+                    }
+                    if (row.getBudgetTotal() != -1) {
+                        budgetArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getBudgetTotal()));
+                    }
                 }
 
                 Series<Double, Double> popSeries = new Series<>(FXCollections.observableList(popArray));
