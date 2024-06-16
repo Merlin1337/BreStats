@@ -49,8 +49,6 @@ import javafx.stage.Window;
 import javafx.stage.PopupWindow.AnchorLocation;
 import netscape.javascript.JSObject;
 
-
-
 /**
  * Controller of Main.fxml view
  * 
@@ -67,9 +65,9 @@ public class MainControl {
     /** The web view containing the map */
     @FXML
     private WebView webView;
-    @FXML 
+    @FXML
     private Button graphButton;
-    @FXML 
+    @FXML
     private HBox graphBox;
 
     @FXML
@@ -114,7 +112,7 @@ public class MainControl {
         this.scrollPane = new ScrollPane();
         this.gridProps = new GridPane(); // Grid pane used in seachProps
         this.previousSelectedCities = new ArrayList<Commune>();
-        
+
     }
 
     /**
@@ -228,8 +226,7 @@ public class MainControl {
             try {
                 FXMLLoader resultsFXML = new FXMLLoader(getClass().getResource("/com/brestats/pages/Results.fxml"));
                 Parent results = resultsFXML.load();
-                stage.setScene(new Scene(results, ((Node) ev.getSource()).getScene().getWidth(),
-                        ((Node) ev.getSource()).getScene().getHeight()));
+                stage.setScene(new Scene(results, stage.getScene().getWidth(), stage.getScene().getHeight()));
                 ResultsControl control = (ResultsControl) resultsFXML.getController();
 
                 for (Commune commune : this.previousSelectedCities) {
@@ -241,7 +238,8 @@ public class MainControl {
                 ex.printStackTrace();
             }
         } else { // if no city is selected, meaning search bar is empty, show an alert window
-            Alert errorAlert = new Alert(AlertType.ERROR, "Vous devez taper au moins trois caractères pour lancer une recherche",
+            Alert errorAlert = new Alert(AlertType.ERROR,
+                    "Vous devez taper au moins trois caractères pour lancer une recherche",
                     ButtonType.OK);
             errorAlert.show();
         }
@@ -359,10 +357,10 @@ public class MainControl {
     }
 
     @FXML
-    public void switchGraph(Event ev){
+    public void switchGraph(Event ev) {
         boolean isWebView = webView.isVisible();
         try {
-            
+
             if (!isWebView) {
                 webView.setVisible(true);
                 graphBox.setVisible(false);
@@ -372,7 +370,7 @@ public class MainControl {
                 DescribLab2.setVisible(false);
                 graphButton.setText("Graphe");
 
-            }else{
+            } else {
                 webView.setVisible(false);
                 graphBox.setVisible(true);
                 graphPane.setVisible(true);
@@ -421,8 +419,9 @@ public class MainControl {
         /** The index of the current colored label in popup */
         private int coloredLabelInd = 0;
 
-        /** 
-         * Initiate an instance of PopupMouseEventHandler, with {@link #cities} as {@code null}
+        /**
+         * Initiate an instance of PopupMouseEventHandler, with {@link #cities} as
+         * {@code null}
          */
         public PopupMouseEventHandler() {
             this.cities = null;
@@ -430,6 +429,7 @@ public class MainControl {
 
         /**
          * Setter for the {@link #cities} attribute
+         * 
          * @param cities List of suggested cities
          */
         public void setCitiesArray(ArrayList<Commune> cities) {
