@@ -2,6 +2,7 @@ package com.brestats.control;
 
 import java.sql.SQLException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -46,16 +49,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Callback;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -74,6 +83,9 @@ public class ResultsControl {
     /** The button allowing to go back to the main view to selected an other city */
     @FXML
     private Button addNewCity;
+    /** The button for exporting data in .csv file */
+    @FXML
+    private Button exportButton;
     /**
      * The grid pane containing all checkboxes of cities to show in table and charts
      */
@@ -305,18 +317,18 @@ public class ResultsControl {
      */
     @FXML
     public void handleEdit(MouseEvent ev) {
-        if(!loginStage.isShowing()) {
+        if (!loginStage.isShowing()) {
             try {
                 FXMLLoader loginView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Login.fxml"));
                 Parent main = loginView.load();
                 LoginControl control = loginView.getController();
-    
+
                 loginStage.setScene(new Scene(main));
                 loginStage.getIcons()
                         .add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
                 loginStage.setTitle("Edition - Brestats");
                 loginStage.show();
-    
+
                 control.setAttributes((Stage) ((Node) ev.getSource()).getScene().getWindow(), this.selectedCities);
             } catch (IOException ex) {
                 System.out.println("Cannot change scene");
@@ -324,6 +336,116 @@ public class ResultsControl {
             }
         } else {
             this.loginStage.requestFocus();
+        }
+    }
+
+    /**
+     * Action event listener for the export button. Open a save file dialog window,
+     * and write displayed data into the file
+     * 
+     * @param ev an Action event
+     */
+    @FXML
+    public void handleExport(ActionEvent ev) {
+        Window thisStage = ((Node) ev.getSource()).getScene().getWindow();
+
+        // The save file system dialog window
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Exporter les données des communes sélectionnées");
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Comma-separated values", "*.csv"));
+        File selectedFile = fileChooser.showSaveDialog(thisStage);
+
+        if (selectedFile != null) {
+            // Write into the file
+            try (PrintWriter p = new PrintWriter(selectedFile)) {
+                // Adding Data object only if the city checkbox is selected
+                ArrayList<String> dataList = new ArrayList<>();
+
+                // csv headers
+                dataList.addAll(List.of("COMMUNE", "DEPARTEMENT", "ANNEE"));
+                if (this.dataCheckBoxNames.contains("Population")) {
+                    dataList.add("POPULATION");
+                }
+                if (this.dataCheckBoxNames.contains("Nombre de maisons")) {
+                    dataList.add("NBMAISONS");
+                }
+                if (this.dataCheckBoxNames.contains("Nombre d'appartements")) {
+                    dataList.add("NBAPPARTEMENTS");
+                }
+                if (this.dataCheckBoxNames.contains("Prix moyen")) {
+                    dataList.add("PRIX");
+                }
+                if (this.dataCheckBoxNames.contains("Prix moyen du m²")) {
+                    dataList.add("PRIXM2");
+                }
+                if (this.dataCheckBoxNames.contains("Surface moyenne")) {
+                    dataList.add("SURFACE");
+                }
+                if (this.dataCheckBoxNames.contains("Dépenses culturelles")) {
+                    dataList.add("DEPENSESCULTURELLES");
+                }
+                if (this.dataCheckBoxNames.contains("Budget")) {
+                    dataList.add("BUDGET");
+                }
+
+                // printing into file headers + ",", except the last one
+                dataList.stream().filter(s -> dataList.indexOf(s) < dataList.size() - 1).map(s -> s + ",")
+                        .forEach(p::print);
+                // print the last header, and go to a new line
+                p.println(dataList.getLast());
+
+                ArrayList<Annee> years;
+                try {
+                    years = dbAnnee.selectQuery(
+                            "SELECT DISTINCT annee.* FROM annee JOIN donneesannuelles ON lAnnee = annee ORDER BY annee;");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    years = new ArrayList<>();
+                }
+
+                // for each year and each city
+                for (Commune city : this.shownCities) {
+                    for (Annee year : years) {
+                        DonneesAnnuelles row = this.dbValeursCommuneAnnee.getItem(city.getId() + "-" + year.getId());
+
+                        dataList.clear();
+                        dataList.addAll(List.of(city.getNomCommune(), city.getDep().getNomDep(),
+                                Integer.toString(row.getLAnnee().getAnnee())));
+
+                        if (this.dataCheckBoxNames.contains("Population")) {
+                            dataList.add(Double.toString(row.getPopulation()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Nombre de maisons")) {
+                            dataList.add(Double.toString(row.getNbMaison()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Nombre d'appartements")) {
+                            dataList.add(Double.toString(row.getNbAppart()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Prix moyen")) {
+                            dataList.add(Double.toString(row.getPrixMoyen()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Prix moyen du m²")) {
+                            dataList.add(Double.toString(row.getPrixM2Moyen()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Surface moyenne")) {
+                            dataList.add(Double.toString(row.getSurfaceMoyenne()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Dépenses culturelles")) {
+                            dataList.add(Double.toString(row.getDepCulturelTotales()));
+                        }
+                        if (this.dataCheckBoxNames.contains("Budget")) {
+                            dataList.add(Double.toString(row.getBudgetTotal()));
+                        }
+
+                        dataList.stream().filter(s -> dataList.indexOf(s) < dataList.size() - 1).map(s -> s + ",")
+                                .forEach(p::print);
+                        p.println(dataList.getLast());
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                Alert alert = new Alert(AlertType.ERROR, "Emplacement introuvable", ButtonType.OK);
+                alert.show();
+            }
         }
     }
 
@@ -379,7 +501,7 @@ public class ResultsControl {
                                                                                        // years
         // A TableData object containing all city's data, used for the table and the bar
         // chart
-        TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
+        TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(), 0,
                 data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
                 data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(), data.getBudgetTotal());
 
@@ -454,7 +576,7 @@ public class ResultsControl {
             // is selected
             if (this.shownCities.contains(city)) {
                 DonneesAnnuelles data = this.dbValeursCommuneAnnee.getAverageItemByCity(city);
-                TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(),
+                TableData row = new TableData(data.getLaCom().getNomCommune(), data.getLaCom().getDep().getNomDep(), 0,
                         data.getPopulation(), data.getNbMaison(), data.getNbAppart(), data.getPrixMoyen(),
                         data.getPrixM2Moyen(), data.getSurfaceMoyenne(), data.getDepCulturelTotales(),
                         data.getBudgetTotal());
@@ -476,6 +598,10 @@ public class ResultsControl {
 
         engine.executeScript("setColoredMarkers(" + transformToJavascriptArray(latitudes) + ","
                 + transformToJavascriptArray(longitudes) + ")");
+
+        // Disable/Enable export button, depending on whether there is at least one
+        // selected city
+        this.exportButton.setDisable(this.selectedCities.size() == 0);
     }
 
     /**
@@ -564,11 +690,15 @@ public class ResultsControl {
             for (int i = 0; i < columns.size(); i++) {
                 int ind = i; // Cannot use i in anonymous class, because it must be at least effectively
                              // final
+
+                // Getting all used properties
+                int[] usedPropertiesInd = { 0, 1, 3, 4, 5, 6, 7, 8, 9, 10 };
+
                 // Setting up data in columns by passing TableData's StringPropery attributes
                 columns.get(i).setCellValueFactory(
                         new Callback<CellDataFeatures<TableData, String>, ObservableValue<String>>() {
                             public ObservableValue<String> call(CellDataFeatures<TableData, String> p) {
-                                return p.getValue().getProperties().get(ind);
+                                return p.getValue().getProperties().get(usedPropertiesInd[ind]);
                             }
                         });
             }
@@ -649,7 +779,8 @@ public class ResultsControl {
          * The Data<Double, Double> class represents a point on the graphic
          * The Series<Double, Double> class represents the line linking several points
          * There is a line (=Series) by data type, meaning there are 8 lines by city
-         * If a value is equal to -1, meaning the value is not known, we do not include it in the Serie
+         * If a value is equal to -1, meaning the value is not known, we do not include
+         * it in the Serie
          */
         ArrayList<Series<Double, Double>> series = new ArrayList<>();
         try {
@@ -776,186 +907,5 @@ public class ResultsControl {
         sb.append("]");
 
         return sb.toString();
-    }
-
-    /**
-     * A nested class which is used for the table and average chart data
-     * 
-     * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin
-     *         CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
-     */
-    private class TableData {
-        /** The list for all others properties attributes */
-        private List<StringProperty> properties;
-        /** The name of the city */
-        private StringProperty name;
-        /** The département of the city's name */
-        private StringProperty dep;
-        /** The average population of the city */
-        private StringProperty population;
-        /** The average sold houses number per year in the city */
-        private StringProperty houses;
-        /** The average sold apartements number per year in the city */
-        private StringProperty apartments;
-        /** The average cost of houses and apartments per year in the city */
-        private StringProperty cost;
-        /** The average m² cost of houses and apartments per year in the city */
-        private StringProperty m2Cost;
-        /** The average surface of sold houses and apartments per year in the city */
-        private StringProperty surface;
-        /** The average spendings per year by the city */
-        private StringProperty spendings;
-        /** The average budget of the city */
-        private StringProperty budget;
-
-        /**
-         * Call
-         * {@link #TableData(String, String, String ,String, String, String, String, String, String, String)}
-         * with doubles converted to Strings
-         * 
-         * @param name       The name of the city
-         * @param dep        The département of the city's name
-         * @param pop        The average population of the city
-         * @param houses     The average sold houses number per year in the city
-         * @param apartments The average sold apartements number per year in the city
-         * @param cost       The average cost of houses and apartments per year in the
-         *                   city
-         * @param m2Cost     The average m² cost of houses and apartments per year in
-         *                   the city
-         * @param surface    The average surface of sold houses and apartments per year
-         *                   in the city
-         * @param spendings  The average spendings per year by the city
-         * @param budget     The average budget of the city
-         */
-        public TableData(String name, String dep, double pop, double houses, double apartments, double cost,
-                double m2Cost, double surface, double spendings, double budget) {
-            this(name, dep, Double.toString(pop), Double.toString(houses), Double.toString(apartments),
-                    Double.toString(cost), Double.toString(m2Cost), Double.toString(surface),
-                    Double.toString(spendings), Double.toString(budget));
-        }
-
-        /**
-         * Initiate an instance of TableData with given params
-         * 
-         * @param name       The name of the city
-         * @param dep        The département of the city's name
-         * @param pop        The average population of the city
-         * @param houses     The average sold houses number per year in the city
-         * @param apartments The average sold apartements number per year in the city
-         * @param cost       The average cost of houses and apartments per year in the
-         *                   city
-         * @param m2Cost     The average m² cost of houses and apartments per year in
-         *                   the city
-         * @param surface    The average surface of sold houses and apartments per year
-         *                   in the city
-         * @param spendings  The average spendings per year by the city
-         * @param budget     The average budget of the city
-         */
-        public TableData(String name, String dep, String pop, String houses, String apartments, String cost,
-                String m2Cost, String surface, String spendings, String budget) {
-            this.name = new SimpleStringProperty(name);
-            this.dep = new SimpleStringProperty(dep);
-            this.population = new SimpleStringProperty(pop);
-            this.houses = new SimpleStringProperty(houses);
-            this.apartments = new SimpleStringProperty(apartments);
-            this.cost = new SimpleStringProperty(cost);
-            this.m2Cost = new SimpleStringProperty(m2Cost);
-            this.surface = new SimpleStringProperty(surface);
-            this.spendings = new SimpleStringProperty(spendings);
-            this.budget = new SimpleStringProperty(budget);
-
-            this.properties = List.of(this.name, this.dep, this.population, this.houses, this.apartments, this.cost,
-                    this.m2Cost, this.surface, this.spendings, this.budget);
-        }
-
-        /**
-         * Return the properties list
-         * 
-         * @return The properties list
-         */
-        public List<StringProperty> getProperties() {
-            return this.properties;
-        }
-
-        /**
-         * Return the name of the city
-         * 
-         * @return the name as String
-         */
-        public String getName() {
-            return this.name.get();
-        }
-
-        /**
-         * Return the average population of the city
-         * 
-         * @return The population as String
-         */
-        public String getPopulation() {
-            return this.population.get();
-        }
-
-        /**
-         * Return the average number of sold houses
-         * 
-         * @return The number of sold houses as String
-         */
-        public String getHouses() {
-            return this.houses.get();
-        }
-
-        /**
-         * Return the average number of sold apartments
-         * 
-         * @return The number of sold apartments as String
-         */
-        public String getApartments() {
-            return this.apartments.get();
-        }
-
-        /**
-         * Return the average cost of houses and apartments
-         * 
-         * @return The cost as String
-         */
-        public String getCost() {
-            return this.cost.get();
-        }
-
-        /**
-         * Return the average m² cost of houses and apartments
-         * 
-         * @return The m² cost as String
-         */
-        public String getM2Cost() {
-            return this.m2Cost.get();
-        }
-
-        /**
-         * Return the average surface of houses and apartments
-         * 
-         * @return The surface as String
-         */
-        public String getSurface() {
-            return this.surface.get();
-        }
-
-        /**
-         * Return the average spendings
-         * 
-         * @return The spendings as String
-         */
-        public String getSpendings() {
-            return this.spendings.get();
-        }
-
-        /**
-         * Return the total budget
-         * 
-         * @return The budget as String
-         */
-        public String getBudget() {
-            return this.budget.get();
-        }
     }
 }

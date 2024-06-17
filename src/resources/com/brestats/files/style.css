@@ -66,6 +66,19 @@
     -fx-background-color: #1e40af; /* Even darker blue when pressed */
 }
 
+#removeButton {
+    -fx-background-color: #eb2525 ; /* Blue background */
+
+}
+
+#removeButton:hover {
+    -fx-background-color: #d81d1d;
+}
+
+#removeButton:pressed {
+    -fx-background-color: #af1e1e;
+}
+
 .separator {
     -fx-background-color: black; /* Example: change color to red */
     -fx-padding: 0.5px;         /* Example: add some padding */

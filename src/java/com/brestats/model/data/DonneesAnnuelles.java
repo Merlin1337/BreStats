@@ -50,7 +50,7 @@ public class DonneesAnnuelles implements Model {
      *                              parameters are null
      */
     public DonneesAnnuelles(Commune com, Annee annee) {
-        this(com, annee, 0, 0, 0, 0, 0, 0, 0, 0);
+        this(com, annee, -1, -1, -1, -1, -1, -1, -1, -1);
     }
 
     /**
