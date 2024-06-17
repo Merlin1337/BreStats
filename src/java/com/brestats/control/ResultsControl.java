@@ -125,6 +125,8 @@ public class ResultsControl {
     private ArrayList<TableData> tableRows;
     /** Array of city's name checkboxes */
     private ArrayList<String> dataCheckBoxNames;
+    /** Stage for Login page */
+    private Stage loginStage;
 
     /**
      * Initialize empty Array Lists
@@ -135,6 +137,7 @@ public class ResultsControl {
         this.tableRows = new ArrayList<>();
         this.dataCheckBoxNames = new ArrayList<>();
         this.cityLabels = new ArrayList<>();
+        this.loginStage = new Stage();
     }
 
     /**
@@ -302,19 +305,25 @@ public class ResultsControl {
      */
     @FXML
     public void handleEdit(MouseEvent ev) {
-        try {
-            FXMLLoader mainView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Login.fxml"));
-            Parent main = mainView.load();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(main));
-
-            stage.getIcons()
-                    .add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
-            stage.setTitle("Edition - Brestats");
-            stage.show();
-        } catch (IOException ex) {
-            System.out.println("Cannot change scene");
-            ex.printStackTrace();
+        if(!loginStage.isShowing()) {
+            try {
+                FXMLLoader loginView = new FXMLLoader(getClass().getResource("/com/brestats/pages/Login.fxml"));
+                Parent main = loginView.load();
+                LoginControl control = loginView.getController();
+    
+                loginStage.setScene(new Scene(main));
+                loginStage.getIcons()
+                        .add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
+                loginStage.setTitle("Edition - Brestats");
+                loginStage.show();
+    
+                control.setAttributes((Stage) ((Node) ev.getSource()).getScene().getWindow(), this.selectedCities);
+            } catch (IOException ex) {
+                System.out.println("Cannot change scene");
+                ex.printStackTrace();
+            }
+        } else {
+            this.loginStage.requestFocus();
         }
     }
 

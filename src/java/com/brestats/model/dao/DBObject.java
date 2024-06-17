@@ -139,7 +139,7 @@ public abstract class DBObject<T extends Model> {
             Statement statement = this.con.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException e) {
-            System.out.println("Unexpected exception");
+            System.out.println("Unexpected exception with query : " + query);
             e.printStackTrace();
         }
     }

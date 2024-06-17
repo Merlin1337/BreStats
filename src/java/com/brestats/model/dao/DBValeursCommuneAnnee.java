@@ -103,12 +103,12 @@ public class DBValeursCommuneAnnee extends DBObject<DonneesAnnuelles> {
         String query;
 
         if (this.getItem(obj.getId()) == null) {
-            query = "INSERT INTO annee VALUES (" + obj.getLAnnee().getAnnee() + "," + obj.getLaCom().getIdCommune()
+            query = "INSERT INTO donneesannuelles VALUES (" + obj.getLAnnee().getAnnee() + "," + obj.getLaCom().getIdCommune()
                     + "," + obj.getNbMaison() + "," + obj.getNbAppart() + "," + obj.getPrixMoyen() + ","
                     + obj.getPrixM2Moyen() + "," + obj.getSurfaceMoyenne() + "," + obj.getDepCulturelTotales() + ","
                     + obj.getBudgetTotal() + "," + obj.getPopulation() + ");";
         } else {
-            query = "UPDATE annee SET nbMaison = " + obj.getNbMaison() + ", nbAppart = " + obj.getNbAppart()
+            query = "UPDATE donneesannuelles SET nbMaison = " + obj.getNbMaison() + ", nbAppart = " + obj.getNbAppart()
                     + ", prixMoyen = " + obj.getPrixMoyen() + ", prixM2Moyen = " + obj.getPrixM2Moyen()
                     + ", surfaceMoy = " + obj.getSurfaceMoyenne() + ", depensesCulturellesTotales = "
                     + obj.getDepCulturelTotales() + ", budgetTotal = " + obj.getBudgetTotal() + ", population = "
