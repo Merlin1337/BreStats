@@ -86,12 +86,13 @@ public class AddYearControl {
         try {
             Annee year = dbAnnee.getItem(this.yearField.getText());
             double typedRate = Double.parseDouble(this.rateField.getText());
-            double yearRate = year.getTauxInflation();
+            double yearRate;
             int yearInt = Integer.parseInt(this.yearField.getText());
 
             // If the year already exists in the database but have a different inflation
             // rate, asks the user which value he wants to keep
             if (year != null && year.getTauxInflation() != typedRate) {
+                yearRate = year.getTauxInflation();
                 Alert alert = new Alert(AlertType.WARNING,
                         "Une Année similaire avec un taux d'inflation différent existe déjà. Souhaitez-vous le remplacer par le nouveau ? ("
                                 + year.getTauxInflation() + " par " + typedRate + ")",

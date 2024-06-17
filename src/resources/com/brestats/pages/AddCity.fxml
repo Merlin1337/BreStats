@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="540.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.AddCityControl">
+   <top>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Ajouter une nouvelle commune :">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" top="20.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <HBox alignment="CENTER" spacing="30.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <TextField fx:id="cityField" prefHeight="25.0" prefWidth="196.0" promptText="Nom de la commune" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <TextField fx:id="inseeNumberField" promptText="N° INSEE" />
+                        <ComboBox fx:id="depComboBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Département" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Button mnemonicParsing="false" onAction="#handleAdd" text="Ajouter" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+   </center>
+   <bottom>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Indiquez l'emplacement de la ville :">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <WebView fx:id="webView" minHeight="-1.0" minWidth="-1.0" prefHeight="228.0" prefWidth="540.0" />
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>

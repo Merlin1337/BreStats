@@ -22,8 +22,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
@@ -37,10 +38,10 @@ import javafx.stage.Stage;
 public class EditControl {
     /** The choice box for cities */
     @FXML
-    private ChoiceBox<String> cityChoiceBox;
+    private ComboBox<Commune> cityComboBox;
     /** The choice box for years */
     @FXML
-    private ChoiceBox<Annee> yearChoiceBox;
+    private ComboBox<Annee> yearComboBox;
     /** The field for the number of houses */
     @FXML
     private TextField housesNumberField;
@@ -76,6 +77,8 @@ public class EditControl {
     private ArrayList<DonneesAnnuelles> data;
     /** The stage for the AddYear view */
     private Stage addYearStage;
+    /** The stage for the AddCity view */
+    private Stage addCityStage;
 
     /**
      * Constructs and initializes arrays, stage and db connection
@@ -88,6 +91,11 @@ public class EditControl {
 
         this.addYearStage = new Stage();
         this.addYearStage.setTitle("Ajouter une année - Brestats");
+        this.addYearStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
+        this.addCityStage = new Stage();
+        this.addCityStage.setTitle("Ajouter une commune - Brestats");
+        this.addCityStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
+
 
     }
 
@@ -97,16 +105,16 @@ public class EditControl {
     @FXML
     public void initialize() {
         // A listener for when the selected city in choice box is changed
-        this.cityChoiceBox.valueProperty().addListener(new ChangeListener<String>() {
-            public void changed(ObservableValue<? extends String> obs, String oldV, String newV) {
-                refreshYearChoiceBox();
+        this.cityComboBox.valueProperty().addListener(new ChangeListener<Commune>() {
+            public void changed(ObservableValue<? extends Commune> obs, Commune oldV, Commune newV) {
+                refreshYearComboBox();
             }
         });
 
         // A listener for when the selected year in choice box is changed
-        this.yearChoiceBox.valueProperty().addListener(new ChangeListener<Annee>() {
+        this.yearComboBox.valueProperty().addListener(new ChangeListener<Annee>() {
             public void changed(ObservableValue<? extends Annee> obs, Annee oldV, Annee newV) {
-                int i = yearChoiceBox.getSelectionModel().getSelectedIndex();
+                int i = yearComboBox.getSelectionModel().getSelectedIndex();
                 if (data != null && i < data.size()) {
                     DonneesAnnuelles row = data.get(i);
 
@@ -130,9 +138,9 @@ public class EditControl {
         // A listener for when the AddYear window opens of closes
         this.addYearStage.showingProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> obs, Boolean oldV, Boolean newV) {
-                cityChoiceBox.setDisable(newV); // Disable/Enable the cities' choice box depending on whether the
+                cityComboBox.setDisable(newV); // Disable/Enable the cities' choice box depending on whether the
                                                 // AddYear window is open
-                refreshYearChoiceBox();
+                refreshYearComboBox();
             }
         });
     }
@@ -175,8 +183,8 @@ public class EditControl {
     @FXML
     public void handleSave(ActionEvent ev) {
         // Selected item indexes for choices boxes
-        int cityInd = this.cityChoiceBox.getSelectionModel().getSelectedIndex();
-        int yearInd = this.yearChoiceBox.getSelectionModel().getSelectedIndex();
+        int cityInd = this.cityComboBox.getSelectionModel().getSelectedIndex();
+        int yearInd = this.yearComboBox.getSelectionModel().getSelectedIndex();
 
         if (yearInd != -1 && cityInd != -1) {
             try {
@@ -229,7 +237,22 @@ public class EditControl {
      */
     @FXML
     public void handleAddCity(MouseEvent ev) {
-        // Not yet implemented
+        try {
+            FXMLLoader addYear = new FXMLLoader(getClass().getResource("/com/brestats/pages/AddCity.fxml"));
+            Parent addYearScene = addYear.load();
+            // AddCityControl control = addYear.getController();
+
+            this.addCityStage.setScene(new Scene(addYearScene));
+            this.addCityStage.show();
+
+            // // Pass data for the table inside the AddYear view
+            // for (DonneesAnnuelles row : this.data) {
+            //     control.setData(row);
+            // }
+        } catch (IOException ex) {
+            System.out.println("Cannot change scene");
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -241,7 +264,7 @@ public class EditControl {
      */
     @FXML
     public void handleAddYear(MouseEvent ev) {
-        int cityInd = this.cityChoiceBox.getSelectionModel().getSelectedIndex();
+        int cityInd = this.cityComboBox.getSelectionModel().getSelectedIndex();
         if (cityInd != -1) {
             try {
                 FXMLLoader addYear = new FXMLLoader(getClass().getResource("/com/brestats/pages/AddYear.fxml"));
@@ -282,8 +305,8 @@ public class EditControl {
                 // If user has clicked on the yes button, sends a delete query to the database
                 // and refreshes the choice boxes
                 if (response.equals(ButtonType.YES)) {
-                    dbValeursCommuneAnnee.deleteQuery(data.get(yearChoiceBox.getSelectionModel().getSelectedIndex()));
-                    refreshYearChoiceBox();
+                    dbValeursCommuneAnnee.deleteQuery(data.get(yearComboBox.getSelectionModel().getSelectedIndex()));
+                    refreshYearComboBox();
                 }
             }
         });
@@ -297,36 +320,32 @@ public class EditControl {
     public void setSelectedCities(ArrayList<Commune> cities) {
         this.selectedCities = cities;
 
-        ArrayList<String> cityNames = new ArrayList<>();
-        for (Commune city : this.selectedCities) {
-            cityNames.add(city.getNomCommune());
-        }
-
         // Set the passed selected cities into the choice box
-        this.cityChoiceBox.setItems(FXCollections.observableList(cityNames));
+        this.cityComboBox.setItems(FXCollections.observableList(this.selectedCities));
     }
 
     /**
      * Procedure refreshing years' choice box
      */
-    private void refreshYearChoiceBox() {
-        if (cityChoiceBox.getSelectionModel().getSelectedIndex() != -1) {
+    private void refreshYearComboBox() {
+        if (cityComboBox.getSelectionModel().getSelectedIndex() != -1) {
             try {
                 // update data for the city
                 data = dbValeursCommuneAnnee.selectQuery(
                         "SELECT donneesannuelles.* FROM donneesannuelles JOIN commune ON laCommune = idCommune WHERE nomCommune = '"
-                                + cityChoiceBox.getSelectionModel().getSelectedItem() + "';");
+                                + cityComboBox.getSelectionModel().getSelectedItem() + "';");
 
+                years.clear();
                 for (DonneesAnnuelles row : data) {
                     years.add(row.getLAnnee());
                 }
 
                 // Set new items into the choice box
-                yearChoiceBox.setItems(FXCollections.observableList(years));
+                yearComboBox.setItems(FXCollections.observableList(years));
             } catch (SQLException ex) {
                 System.out.println(
                         "Unexpected excepetion with query : SELECT donneesannuelles.* FROM donneesannuelles JOIN commune ON laCommune = idCommune WHERE nomCommune = '"
-                                + cityChoiceBox.getSelectionModel().getSelectedItem() + "';");
+                                + cityComboBox.getSelectionModel().getSelectedItem() + "';");
                 ex.printStackTrace();
             }
         }

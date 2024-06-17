@@ -53,7 +53,7 @@ public class LoginControl {
                     EditControl control = edit.getController();
 
                     this.mainStage.setScene(
-                            new Scene(editScene, this.mainStage.getWidth(), this.mainStage.getScene().getHeight()));
+                            new Scene(editScene, this.mainStage.getScene().getWidth(), this.mainStage.getScene().getHeight()));
 
                     control.setSelectedCities(this.cities);
                     ((Stage) ((Node) ev.getSource()).getScene().getWindow()).close();

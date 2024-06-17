@@ -149,7 +149,11 @@ public class ResultsControl {
         this.tableRows = new ArrayList<>();
         this.dataCheckBoxNames = new ArrayList<>();
         this.cityLabels = new ArrayList<>();
+
         this.loginStage = new Stage();
+        this.loginStage.setTitle("Edition - Brestats");
+        this.loginStage.getIcons()
+                .add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
     }
 
     /**
@@ -324,9 +328,6 @@ public class ResultsControl {
                 LoginControl control = loginView.getController();
 
                 loginStage.setScene(new Scene(main));
-                loginStage.getIcons()
-                        .add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
-                loginStage.setTitle("Edition - Brestats");
                 loginStage.show();
 
                 control.setAttributes((Stage) ((Node) ev.getSource()).getScene().getWindow(), this.selectedCities);
@@ -807,15 +808,17 @@ public class ResultsControl {
 
                     // if there are data for the city and the year
                     // we add values only if they are present (meaning different of -1)
-                    if(row != null) {
+                    if (row != null) {
                         if (row.getPopulation() != -1) {
                             popArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPopulation()));
                         }
                         if (row.getNbMaison() != -1) {
-                            housesArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbMaison()));
+                            housesArray.add(
+                                    new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbMaison()));
                         }
                         if (row.getNbAppart() != -1) {
-                            apartsArray.add(new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbAppart()));
+                            apartsArray.add(
+                                    new Data<Double, Double>((double) year.getAnnee(), (double) row.getNbAppart()));
                         }
                         if (row.getPrixMoyen() != -1) {
                             costArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixMoyen()));
@@ -824,11 +827,13 @@ public class ResultsControl {
                             m2CostArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getPrixM2Moyen()));
                         }
                         if (row.getSurfaceMoyenne() != -1) {
-                            surfaceArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getSurfaceMoyenne()));
+                            surfaceArray
+                                    .add(new Data<Double, Double>((double) year.getAnnee(), row.getSurfaceMoyenne()));
                         }
                         if (row.getDepCulturelTotales() != -1) {
                             spendingsArray
-                                    .add(new Data<Double, Double>((double) year.getAnnee(), row.getDepCulturelTotales()));
+                                    .add(new Data<Double, Double>((double) year.getAnnee(),
+                                            row.getDepCulturelTotales()));
                         }
                         if (row.getBudgetTotal() != -1) {
                             budgetArray.add(new Data<Double, Double>((double) year.getAnnee(), row.getBudgetTotal()));

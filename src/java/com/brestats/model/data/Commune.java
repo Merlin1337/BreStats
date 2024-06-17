@@ -72,7 +72,7 @@ public class Commune implements Model {
      *                              {@code voisins} parameters are null
      */
     public Commune(int id, String nom, Departement dep, ArrayList<Commune> voisins) {
-        new Commune(id, nom, dep, voisins);
+        this(id, nom, dep, voisins, 0, 0);
     }
 
     /**
