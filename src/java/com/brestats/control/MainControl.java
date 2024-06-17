@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.print.DocFlavor.STRING;
 
 import com.brestats.model.dao.DAO;
 import com.brestats.model.dao.DBCommune;
@@ -27,7 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -38,8 +34,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -68,18 +64,7 @@ public class MainControl {
     @FXML
     private Button graphButton;
     @FXML
-    private HBox graphBox;
-
-    @FXML
-    private ImageView graphPane;
-
-    @FXML
-    private Label DescribLab;
-
-    @FXML
-    private Label DescribLab1;
-    @FXML
-    private Label DescribLab2;
+    private BorderPane graphBox;
 
     /** The web view engine, for the map and the link with javascript */
     private WebEngine engine;
@@ -364,19 +349,11 @@ public class MainControl {
             if (!isWebView) {
                 webView.setVisible(true);
                 graphBox.setVisible(false);
-                graphPane.setVisible(false);
-                DescribLab.setVisible(false);
-                DescribLab1.setVisible(false);
-                DescribLab2.setVisible(false);
                 graphButton.setText("Graphe");
 
             } else {
                 webView.setVisible(false);
                 graphBox.setVisible(true);
-                graphPane.setVisible(true);
-                DescribLab.setVisible(true);
-                DescribLab1.setVisible(true);
-                DescribLab2.setVisible(true);
                 graphButton.setText("Carte");
             }
         } catch (Exception e) {
