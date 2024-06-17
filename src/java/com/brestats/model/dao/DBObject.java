@@ -78,8 +78,6 @@ public abstract class DBObject<T extends Model> {
                 ArrayList<T> res = this.selectQuery(query);
                 if (res.size() > 0) {
                     item = res.get(res.size() - 1);
-                } else {
-                    throw new NullPointerException("No results with query : " + query);
                 }
             } catch (SQLException e) {
                 System.out.println("Unexpected exception with query : " + query);
