@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.brestats"},{"l":"com.brestats.control"},{"l":"com.brestats.exceptions"},{"l":"com.brestats.model"},{"l":"com.brestats.model.dao"},{"l":"com.brestats.model.data"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.brestats.control"},{"l":"com.brestats.exceptions"},{"l":"com.brestats.model"},{"l":"com.brestats.model.dao"},{"l":"com.brestats.model.data"}];updateSearchResults();
