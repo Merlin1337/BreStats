@@ -6,10 +6,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * A nested class which is used for the table and average chart data
+ * A class representing {@link com.brestats.model.data.DonneesAnnuelles} data with {@link StringProperty} objects
  * 
  * @author IUT de Vannes - info 1B2 - Nathan ALEXANDRE - Louan CARRE - Merlin
  *         CAROMEL - Tasnim ISMAIL OMAR - Théau LEFRANC
+ * @see ResultsControl
+ * @see AddYearControl
  */
 public class TableData {
     /** 
