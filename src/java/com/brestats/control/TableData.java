@@ -14,17 +14,17 @@ import javafx.beans.property.StringProperty;
 public class TableData {
     /** 
      * The list for all others properties attributes. In order :  <br>
-     * <tr> 0 - {@link #name} <br>
-     * <tr> 1 - {@link #dep} <br>
-     * <tr> 2 - {@link #year} <br>
-     * <tr> 3 - {@link #population} <br>
-     * <tr> 4 - {@link #houses} <br>
-     * <tr> 5 - {@link #apartements} <br>
-     * <tr> 6 - {@link #cost} <br>
-     * <tr> 7 - {@link #m2Cost} <br>
-     * <tr> 8 - {@link #surface} <br>
-     * <tr> 9 - {@link #spendings} <br>
-     * <tr> 10 - {@link #budget}
+     * &nbsp; 0 - {@link #name} <br>
+     * &nbsp; 1 - {@link #dep} <br>
+     * &nbsp; 2 - {@link #year} <br>
+     * &nbsp; 3 - {@link #population} <br>
+     * &nbsp; 4 - {@link #houses} <br>
+     * &nbsp; 5 - {@link #apartments} <br>
+     * &nbsp; 6 - {@link #cost} <br>
+     * &nbsp; 7 - {@link #m2Cost} <br>
+     * &nbsp; 8 - {@link #surface} <br>
+     * &nbsp; 9 - {@link #spendings} <br>
+     * &nbsp; 10 - {@link #budget}
      */
     private List<StringProperty> properties;
     /** The name of the city */
@@ -52,7 +52,7 @@ public class TableData {
 
     /**
      * Call
-     * {@link #TableData(String, String, String ,String, String, String, String, String, String, String)}
+     * {@link #TableData(String, String, String ,String, String, String, String, String, String, String, String)}
      * with doubles converted to Strings
      * 
      * @param name       The name of the city

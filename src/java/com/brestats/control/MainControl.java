@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -61,8 +62,10 @@ public class MainControl {
     /** The web view containing the map */
     @FXML
     private WebView webView;
+    /** The graph and map switch button */
     @FXML
     private Button graphButton;
+    /** The pane that contain the graph */
     @FXML
     private BorderPane graphBox;
 
@@ -341,8 +344,12 @@ public class MainControl {
         }
     }
 
+    /**
+     * Action event listener for the graph and map switch button
+     * @param ev An action event
+     */
     @FXML
-    public void switchGraph(Event ev) {
+    public void switchGraph(ActionEvent ev) {
         boolean isWebView = webView.isVisible();
         try {
 
