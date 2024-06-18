@@ -190,3 +190,54 @@
     -fx-border-radius: 2px;
     -fx-background-color: white;
 }
+
+
+.table-view {
+    -fx-border-color: #ffffff;
+    -fx-background-color: #ffffff;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2563eb; /* Change the header background color to green */
+}
+
+.table-view .column-header {
+    -fx-border-width: 0px;
+    -fx-background-color: #2563eb; /* Change the header background color to green */
+    -fx-text-fill: #ffffff; /* White text color for header */
+    -fx-font-weight: bold; /* Bold font for header */
+    -fx-alignment: CENTER; /* Center text alignment */
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .cell {
+    -fx-alignment: CENTER; /* Center text alignment */
+}
+
+.table-view .cell:nth-row(odd) {
+    -fx-background-color: #e1e1e1; /* Light gray background for odd rows */
+}
+
+.table-view .cell:nth-row(even) {
+    -fx-background-color: #ffffff; /* White background for even rows */
+}
+
+.table-view .cell:selected {
+    -fx-background-color: #ececec; /* Light gray background for selected row */
+    -fx-text-fill: #000000; /* Black text color for selected row */
+}
+
+.table-view .cell:selected .label {
+    -fx-text-fill: #000000; /* Black text color for selected row */
+}
+
+/* styles.css */
+.table-row-cell:selected .text {
+    -fx-fill: #000000; /* Change this color to your desired text color */
+    -fx-font-weight: bold;
+}
