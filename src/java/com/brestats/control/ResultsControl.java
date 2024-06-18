@@ -353,7 +353,7 @@ public class ResultsControl {
                 }
 
                 // printing into file headers + ",", except the last one
-                dataList.stream().filter(s -> dataList.indexOf(s) < dataList.size() - 1).map(s -> s + ",")
+                dataList.stream().filter(s -> dataList.indexOf(s) < dataList.size() - 1).map(s -> s + ";")
                         .forEach(p::print);
                 // print the last header, and go to a new line
                 p.println(dataList.getLast());
@@ -401,7 +401,7 @@ public class ResultsControl {
                             dataList.add(Double.toString(row.getBudgetTotal()));
                         }
 
-                        dataList.stream().filter(s -> dataList.indexOf(s) < dataList.size() - 1).map(s -> s + ",")
+                        dataList.stream().filter(s -> dataList.indexOf(s) < dataList.size() - 1).map(s -> s + ";")
                                 .forEach(p::print);
                         p.println(dataList.getLast());
                     }
