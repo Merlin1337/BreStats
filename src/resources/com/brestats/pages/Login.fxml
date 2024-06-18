@@ -30,13 +30,13 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
                      </children>
                   </HBox>
-                  <TextField id="userField" fx:id="userField" styleClass="loginField" />
+                  <TextField id="userField" fx:id="userField" onKeyPressed="#handleEnter" styleClass="loginField" />
                   <HBox>
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
                      </children>
                   </HBox>
-                  <PasswordField fx:id="passField">
+                  <PasswordField fx:id="passField" onKeyPressed="#handleEnter">
                      <styleClass>
                         <String fx:value="passField" />
                         <String fx:value="loginField" />

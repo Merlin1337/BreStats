@@ -14,14 +14,11 @@ import com.brestats.model.data.Commune;
 import com.brestats.model.data.DonneesAnnuelles;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker.State;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -42,6 +39,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.image.Image;
@@ -54,6 +52,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -64,8 +63,7 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
-import javax.imageio.ImageIO;
+import java.io.FileOutputStream;
 
 /**
  * Controller of Results.fxml view
@@ -86,11 +84,12 @@ public class ResultsControl {
     /** The button for exporting data in .csv file */
     @FXML
     private Button exportButton;
-    /**
-     * The grid pane containing all checkboxes of cities to show in table and charts
-     */
+    /** The grid pane containing all checkboxes of cities to show in table and charts */
     @FXML
     private GridPane selectShownCitiesGrid;
+    /** The tab pane containing the charts and their settings */
+    @FXML
+    private TabPane tabPane;
     /** The VBox pane which contains the data checkboxes */
     @FXML
     private VBox dataCheckBoxes;
@@ -208,42 +207,6 @@ public class ResultsControl {
         }
 
     }
-
-    // @FXML
-    // public void testSnapshot(ActionEvent ev) {
-    // WritableImage img = this.averageChart.snapshot(new SnapshotParameters(),
-    // null);
-
-    // // try (FileOutputStream fos = new FileOutputStream("test.png")) {
-    // // // Get pixel data from the image
-    // // PixelReader pixelReader = img.getPixelReader();
-    // // int width = (int) img.getWidth();
-    // // int height = (int) img.getHeight();
-    // // int[] pixels = new int[width * height];
-    // // pixelReader.getPixels(0, 0, width, height,
-    // PixelFormat.getIntArgbInstance(), pixels, 0, width);
-
-    // // // Convert pixel data to byte array
-    // // ByteBuffer byteBuffer = ByteBuffer.allocate(width * height * 4); // 4
-    // bytes per pixel (ARGB)
-    // // IntBuffer intBuffer = byteBuffer.asIntBuffer();
-    // // intBuffer.put(pixels);
-
-    // // // Write the byte array to the file
-    // // fos.write(byteBuffer.array());
-    // // System.out.println("Screenshot saved");
-    // // } catch (IOException e) {
-    // // System.err.println("Failed to save screenshot: " + e.getMessage());
-    // // }
-
-    // try {
-    // ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", new
-    // File("test.png"));
-    // System.out.println("Screenshot saved");
-    // } catch (IOException e) {
-    // System.err.println("Failed to save screenshot: " + e.getMessage());
-    // }
-    // }
 
     /**
      * Action event listener for the "Ajouter une ville" button. It loads the main
@@ -447,6 +410,96 @@ public class ResultsControl {
                 Alert alert = new Alert(AlertType.ERROR, "Emplacement introuvable", ButtonType.OK);
                 alert.show();
             }
+        }
+    }
+
+    @FXML
+    public void handleExportBarChart(ActionEvent ev) {
+        // Get a screenshot of the bar chart
+        this.tabPane.getSelectionModel().select(1);
+        WritableImage img = this.averageChart.snapshot(new SnapshotParameters(), null);
+        this.tabPane.getSelectionModel().select(0);
+
+        // Instantiate the window to choose the location of the image
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Exporter diagramme en barres");
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Portable Network Graphics", "*.png"));
+        fileChooser.setInitialFileName("Sans titre.png");
+
+        File file = fileChooser.showSaveDialog(((Node) ev.getSource()).getScene().getWindow());
+
+
+        int width = (int) img.getWidth();
+        int height = (int) img.getHeight();
+        int[] pixels = new int[width * height * 3]; // 3 ints by pixels (because of 3 colors)
+
+        /*
+         * Creating an array of pixels containing rgb values between 0 and 255 like :
+         * {R1, G1, B1, R2, G2, B2, ...}
+         */
+        for (int k = 0; k < height * width; k++) {
+            int i = k % width; // 0 <= i < width
+            int j = k / width; // 0 <= j < height
+            Color color = img.getPixelReader().getColor(i, j);
+
+            pixels[k * 3] = (int) (color.getRed() * 255);
+            pixels[k * 3 + 1] = (int) (color.getGreen() * 255);
+            pixels[k * 3 + 2] = (int) (color.getBlue() * 255);
+        }
+
+        // Writing image into the selected file
+        try(FileOutputStream out = new FileOutputStream(file)) {
+            byte[] imgByte = PngCreator.createPng(width,height, pixels);
+
+            out.write(imgByte);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleExportLineChart(ActionEvent ev) {
+        // Get a screenshot of the bar chart
+        this.tabPane.getSelectionModel().select(2);
+        WritableImage img = this.evolutionChart.snapshot(new SnapshotParameters(), null);
+        this.tabPane.getSelectionModel().select(0);
+
+        // Instantiate the window to choose the location of the image
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Exporter diagramme en barres");
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Portable Network Graphics", "*.png"));
+        fileChooser.setInitialFileName("Sans titre.png");
+
+        File file = fileChooser.showSaveDialog(((Node) ev.getSource()).getScene().getWindow());
+
+
+        int width = (int) img.getWidth();
+        int height = (int) img.getHeight();
+        int[] pixels = new int[width * height * 3]; // 3 ints by pixels (because of 3 colors)
+
+        /*
+         * Creating an array of pixels containing rgb values between 0 and 255 like :
+         * {R1, G1, B1, R2, G2, B2, ...}
+         */
+        for (int k = 0; k < height * width; k++) {
+            int i = k % width; // 0 <= i < width
+            int j = k / width; // 0 <= j < height
+            Color color = img.getPixelReader().getColor(i, j);
+
+            pixels[k * 3] = (int) (color.getRed() * 255);
+            pixels[k * 3 + 1] = (int) (color.getGreen() * 255);
+            pixels[k * 3 + 2] = (int) (color.getBlue() * 255);
+        }
+
+        // Writing image into the selected file
+        try(FileOutputStream out = new FileOutputStream(file)) {
+            byte[] imgByte = PngCreator.createPng(width,height, pixels);
+
+            out.write(imgByte);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

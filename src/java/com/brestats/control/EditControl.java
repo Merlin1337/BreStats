@@ -77,8 +77,6 @@ public class EditControl {
     private ArrayList<DonneesAnnuelles> data;
     /** The stage for the AddYear view */
     private Stage addYearStage;
-    /** The stage for the AddCity view */
-    private Stage addCityStage;
 
     /**
      * Constructs and initializes arrays, stage and db connection
@@ -92,11 +90,6 @@ public class EditControl {
         this.addYearStage = new Stage();
         this.addYearStage.setTitle("Ajouter une année - Brestats");
         this.addYearStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
-        this.addCityStage = new Stage();
-        this.addCityStage.setTitle("Ajouter une commune - Brestats");
-        this.addCityStage.getIcons().add(new Image(getClass().getResource("/com/brestats/files/img/favicon.png").toExternalForm()));
-
-
     }
 
     /**
@@ -229,33 +222,6 @@ public class EditControl {
     }
 
     /**
-     * A mouse clicked event listener for when the add icon besides the cities'
-     * choice box is clicked. Open an other window in which the user is able to
-     * create a new city
-     * 
-     * @param ev A mouse event
-     */
-    @FXML
-    public void handleAddCity(MouseEvent ev) {
-        try {
-            FXMLLoader addYear = new FXMLLoader(getClass().getResource("/com/brestats/pages/AddCity.fxml"));
-            Parent addYearScene = addYear.load();
-            // AddCityControl control = addYear.getController();
-
-            this.addCityStage.setScene(new Scene(addYearScene));
-            this.addCityStage.show();
-
-            // // Pass data for the table inside the AddYear view
-            // for (DonneesAnnuelles row : this.data) {
-            //     control.setData(row);
-            // }
-        } catch (IOException ex) {
-            System.out.println("Cannot change scene");
-            ex.printStackTrace();
-        }
-    }
-
-    /**
      * A mouse clicked event listener for when the add icon besides the years'
      * choice box is clicked. Open an other window in which the user is able to add
      * new year data for the current selected city
@@ -328,12 +294,13 @@ public class EditControl {
      * Procedure refreshing years' choice box
      */
     private void refreshYearComboBox() {
-        if (cityComboBox.getSelectionModel().getSelectedIndex() != -1) {
+        Commune city = cityComboBox.getValue();
+        if (city != null) {
             try {
                 // update data for the city
                 data = dbValeursCommuneAnnee.selectQuery(
                         "SELECT donneesannuelles.* FROM donneesannuelles JOIN commune ON laCommune = idCommune WHERE nomCommune = '"
-                                + cityComboBox.getSelectionModel().getSelectedItem() + "';");
+                                + city.getNomCommune() + "';");
 
                 years.clear();
                 for (DonneesAnnuelles row : data) {
@@ -345,7 +312,7 @@ public class EditControl {
             } catch (SQLException ex) {
                 System.out.println(
                         "Unexpected excepetion with query : SELECT donneesannuelles.* FROM donneesannuelles JOIN commune ON laCommune = idCommune WHERE nomCommune = '"
-                                + cityComboBox.getSelectionModel().getSelectedItem() + "';");
+                                + city.getNomCommune() + "';");
                 ex.printStackTrace();
             }
         }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.brestats.model.data.Commune;
 
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -17,6 +17,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 /**
  * Controller for the Login view
@@ -38,12 +40,14 @@ public class LoginControl {
     private ArrayList<Commune> cities = null;
 
     /**
-     * Action event listener for Login button. Change to Edit page
+     * Action event listener for Login button. Change to Edit page. This method can
+     * be called from {@link #handleEnter(KeyEvent)}, hence the parameter is
+     * Event-typed
      * 
-     * @param ev Action event
+     * @param ev Action or key event
      */
     @FXML
-    public void handleLogin(ActionEvent ev) {
+    public void handleLogin(Event ev) {
         // if user and password are "admin", change page. Otherwise show an alert popup
         if (userField.getText().equals("admin") && passField.getText().equals("admin")) {
             if (this.mainStage != null && this.cities != null) {
@@ -53,7 +57,8 @@ public class LoginControl {
                     EditControl control = edit.getController();
 
                     this.mainStage.setScene(
-                            new Scene(editScene, this.mainStage.getScene().getWidth(), this.mainStage.getScene().getHeight()));
+                            new Scene(editScene, this.mainStage.getScene().getWidth(),
+                                    this.mainStage.getScene().getHeight()));
 
                     control.setSelectedCities(this.cities);
                     ((Stage) ((Node) ev.getSource()).getScene().getWindow()).close();
@@ -70,6 +75,17 @@ public class LoginControl {
         } else {
             Alert wrongId = new Alert(AlertType.ERROR, "Mauvais identifiant ou mot de passe", ButtonType.OK);
             wrongId.show();
+        }
+    }
+
+    /**
+     * Key event listener for when the enter key is pressed when one text field is focused. Call {@link #handleLogin(Event)} method
+     * @param ev Key event
+     */
+    @FXML
+    public void handleEnter(KeyEvent ev) {
+        if (ev.getCode().equals(KeyCode.ENTER)) {
+            handleLogin(ev);
         }
     }
 

@@ -10,8 +10,10 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="999.0" stylesheets="@../files/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brestats.control.EditControl">
@@ -31,6 +33,9 @@
                                  <BorderPane.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </BorderPane.margin>
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
                               </Text>
                            </left>
                            <right>
@@ -40,11 +45,7 @@
                                  </BorderPane.margin>
                                  <children>
                                     <ComboBox fx:id="cityComboBox" prefWidth="150.0" promptText="---- Ville ----" />
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleAddCity" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
-                                       <image>
-                                          <Image url="@../files/img/add-icon.png" />
-                                       </image>
-                                    </ImageView>
+                                    <Pane prefWidth="25.0" />
                                  </children>
                               </HBox>
                            </right>
@@ -55,6 +56,9 @@
                                  <BorderPane.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </BorderPane.margin>
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
                               </Text>
                            </left>
                            <right>
@@ -81,6 +85,9 @@
                      <BorderPane.margin>
                         <Insets />
                      </BorderPane.margin>
+                     <font>
+                        <Font size="15.0" />
+                     </font>
                   </Button>
                </right>
                <VBox.margin>
@@ -112,26 +119,54 @@
                            <GridPane.margin>
                               <Insets left="20.0" />
                            </GridPane.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
                         </Text>
-                        <TextField fx:id="housesNumberField" GridPane.columnIndex="1" />
+                        <TextField fx:id="housesNumberField" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre d'appartements :" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="20.0" />
                            </GridPane.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
                         </Text>
-                        <TextField fx:id="apartsNumberField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="apartsNumberField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coût moyen :" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets left="20.0" />
                            </GridPane.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
                         </Text>
-                        <TextField fx:id="costField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="costField" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coût moyen du m² :" GridPane.rowIndex="3">
                            <GridPane.margin>
                               <Insets left="20.0" />
                            </GridPane.margin>
+                           <font>
+                              <Font size="15.0" />
+                           </font>
                         </Text>
-                        <TextField fx:id="m2CostField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="m2CostField" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
                      </children>
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -149,14 +184,46 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Surface moyenne :" />
-                        <TextField fx:id="averageSurfaceField" GridPane.columnIndex="1" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Population :" GridPane.rowIndex="1" />
-                        <TextField fx:id="populationField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Budget Total :" GridPane.rowIndex="2" />
-                        <TextField fx:id="budgetField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Depenses culturelles totales :" GridPane.rowIndex="3" />
-                        <TextField fx:id="spendingsField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Surface moyenne :">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <TextField fx:id="averageSurfaceField" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Population :" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <TextField fx:id="populationField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Budget Total :" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <TextField fx:id="budgetField" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Depenses culturelles totales :" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <TextField fx:id="spendingsField" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
                      </children>
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -203,6 +270,9 @@
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </BorderPane.margin>
+         <font>
+            <Font size="15.0" />
+         </font>
       </Button>
    </bottom>
 </BorderPane>
