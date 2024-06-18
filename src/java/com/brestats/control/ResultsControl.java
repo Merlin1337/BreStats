@@ -413,6 +413,10 @@ public class ResultsControl {
         }
     }
 
+    /**
+     * Action event listener for when clicking on the bar chart export button. Export the chart as a png image
+     * @param ev Action event
+     */
     @FXML
     public void handleExportBarChart(ActionEvent ev) {
         // Get a screenshot of the bar chart
@@ -458,6 +462,10 @@ public class ResultsControl {
         }
     }
 
+    /**
+     * Action event listener for when clicking on the line chart export button. Export the chart as a png image
+     * @param ev Action event
+     */
     @FXML
     public void handleExportLineChart(ActionEvent ev) {
         // Get a screenshot of the bar chart
