@@ -433,32 +433,33 @@ public class ResultsControl {
 
         File file = fileChooser.showSaveDialog(((Node) ev.getSource()).getScene().getWindow());
 
-
-        int width = (int) img.getWidth();
-        int height = (int) img.getHeight();
-        int[] pixels = new int[width * height * 3]; // 3 ints by pixels (because of 3 colors)
-
-        /*
-         * Creating an array of pixels containing rgb values between 0 and 255 like :
-         * {R1, G1, B1, R2, G2, B2, ...}
-         */
-        for (int k = 0; k < height * width; k++) {
-            int i = k % width; // 0 <= i < width
-            int j = k / width; // 0 <= j < height
-            Color color = img.getPixelReader().getColor(i, j);
-
-            pixels[k * 3] = (int) (color.getRed() * 255);
-            pixels[k * 3 + 1] = (int) (color.getGreen() * 255);
-            pixels[k * 3 + 2] = (int) (color.getBlue() * 255);
-        }
-
-        // Writing image into the selected file
-        try(FileOutputStream out = new FileOutputStream(file)) {
-            byte[] imgByte = PngCreator.createPng(width,height, pixels);
-
-            out.write(imgByte);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        if(file != null) {
+            int width = (int) img.getWidth();
+            int height = (int) img.getHeight();
+            int[] pixels = new int[width * height * 3]; // 3 ints by pixels (because of 3 colors)
+    
+            /*
+             * Creating an array of pixels containing rgb values between 0 and 255 like :
+             * {R1, G1, B1, R2, G2, B2, ...}
+             */
+            for (int k = 0; k < height * width; k++) {
+                int i = k % width; // 0 <= i < width
+                int j = k / width; // 0 <= j < height
+                Color color = img.getPixelReader().getColor(i, j);
+    
+                pixels[k * 3] = (int) (color.getRed() * 255);
+                pixels[k * 3 + 1] = (int) (color.getGreen() * 255);
+                pixels[k * 3 + 2] = (int) (color.getBlue() * 255);
+            }
+    
+            // Writing image into the selected file
+            try(FileOutputStream out = new FileOutputStream(file)) {
+                byte[] imgByte = PngCreator.createPng(width,height, pixels);
+    
+                out.write(imgByte);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
