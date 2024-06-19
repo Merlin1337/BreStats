@@ -78,7 +78,7 @@
    <center>
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <WebView fx:id="webView" prefHeight="847.0" prefWidth="-1.0" />
+            <WebView fx:id="webView" onMouseClicked="#handleMapDoubleClick" prefHeight="847.0" prefWidth="-1.0" />
             <BorderPane fx:id="graphBox" visible="false">
                <left>
                   <ImageView fitHeight="700.0" fitWidth="1479.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
