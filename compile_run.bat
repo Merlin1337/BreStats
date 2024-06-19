@@ -23,7 +23,7 @@ REM Compile tous les fichiers trouvés
 if not "!FILE_LIST!"=="" (
     echo Compiling java files:
     echo %FILE_LIST%
-    javac -d class --module-path "lib;lib/win/lib" --add-modules javafx.controls,javafx.graphics,javafx.web,javafx.fxml,javafx.swing %FILE_LIST%
+    javac -d class --module-path "lib;lib/win/lib" --add-modules javafx.controls,javafx.graphics,javafx.web,javafx.fxml %FILE_LIST%
 ) else (
     echo No .java file found
 )
@@ -32,5 +32,5 @@ echo Project compiled
 
 echo Running java project...
 @REM --add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED
-java -cp "class;src/resources" -p "lib/win/lib;lib/mysql-connector-j-8.4.0.jar" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.web,javafx.swing com.brestats.App
+java -cp "class;src/resources" -p "lib/win/lib;lib/mysql-connector-j-8.4.0.jar" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.web com.brestats.App
 pause

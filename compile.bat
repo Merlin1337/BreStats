@@ -23,7 +23,7 @@ REM Compile tous les fichiers trouvés
 if not "!FILE_LIST!"=="" (
     echo Compiling java files:
     echo %FILE_LIST%
-    javac -d class --module-path "lib;lib/win/lib" --add-modules javafx.controls,javafx.graphics,javafx.web,javafx.fxml,javafx.swing %FILE_LIST%
+    javac -d class --module-path "lib;lib/win/lib" --add-modules javafx.controls,javafx.graphics,javafx.web,javafx.fxml %FILE_LIST%
 ) else (
     echo No .java file found
 )
