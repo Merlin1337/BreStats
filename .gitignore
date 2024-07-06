@@ -1,3 +1,4 @@
 #lib files are ignored by git, because some are too large (> 100MB)
 /lib
 /class
+/.vscode
